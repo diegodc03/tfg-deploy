@@ -117,7 +117,9 @@ def get_fixture_data(url, league, league_id, season, season_id, type_of_competit
         # Esto tengo que mejorarlo
         if len(match_links) != len(fixtures):
             match_links = match_links[:len(fixtures)]
+            fixtures = fixtures[:len(match_links)]
 
+        print(len(match_links), len(fixtures))
             
         fixtures = get_only_new_match_filter(fixtures, match_links, league_id, spark, jdbc_url, db_properties)
         if fixtures.empty:

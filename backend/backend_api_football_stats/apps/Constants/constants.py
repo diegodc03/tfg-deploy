@@ -75,3 +75,23 @@ stats_columns_player = {
 # Para las comparaciones de los equipos de futbol se va a hacer con lo de arriba, pero se van a mostrar todas las estadísticas, ya que no pasa como en un partido que 
 # muchas pueden ser 0
 # para un equipo tambien se van a mostrar las unitarias de equipo, que puede ser interesante
+
+filter_labels = {
+    "passes_player": "Distribución de pases",
+    "passes_player_completed": "Pases completados",
+    "passes_player_pct": "Porcentajes de pase",
+    "tackles_player": "Entradas defensivas",
+    "aerials_player": "Duelos aéreos",
+    "types_passes_player": "Tipos de pase",
+    "shots_player": "Tiros y asistencias esperadas"
+}
+
+filter_labels_match = {
+    "stats_summary": "Resumen de estadísticas",
+    "stats_possession_summary": "Estadísticas de posesión",
+    "stats_passTypes_summary": "Estadísticas de Tipos de pase",
+    "stats_passing_summary": "Estadísticas de pases",
+    "stats_miscellaneous_summary": "Estadísticas de estadísticas varias",
+    "stats_defensiveactions_summary": "Estadísticas de acciones defensivas",
+    "stats_gk_summary": "Estadísticas del portero"
+}
