@@ -1,0 +1,8 @@
+Django>=4.2
+djangorestframework>=3.14.0
+mysqlclient>=2.1
+djangorestframework-simplejwt==4.5.0
+django-model-utils==4.0.0
+drf-spectacular>=0.26.5
+django-cors-headers
+gunicorn>=21.2

@@ -1,0 +1,207 @@
+
+
+from dataBase.functions.stats_match.defensive.bloque_bajo import (
+    get_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_creativo,
+    get_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_lateral,
+    get_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_defensivo,
+    get_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_ofensivo,
+    get_stats_to_defensive_player_and_bloque_bajo_type_of_defense_central_defenders,
+    get_stats_to_defensive_player_and_bloque_bajo_type_of_defense_laterales,
+    get_stats_to_defensive_player_and_bloque_bajo_type_of_forward_delantero_centro,
+    get_stats_to_defensive_player_and_bloque_bajo_type_of_forward_delantero_extremo
+)
+
+from dataBase.functions.stats_match.defensive.bloque_medio import (
+    get_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_creativo,
+    get_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_lateral,
+    get_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_defensivo,
+    get_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_ofensivo,
+    get_stats_to_defensive_player_and_bloque_medio_type_of_defense_central_defenders,
+    get_stats_to_defensive_player_and_bloque_medio_type_of_defense_laterales,
+    get_stats_to_defensive_player_and_bloque_medio_type_of_forward_delantero_centro,
+    get_stats_to_defensive_player_and_bloque_medio_type_of_forward_delantero_extremo
+)
+
+from dataBase.functions.stats_match.defensive.contraataque import (
+    get_stats_to_defensive_player_and_contraataque_type_of_centrocampista_creativo,
+    get_stats_to_defensive_player_and_contraataque_type_of_centrocampista_lateral,
+    get_stats_to_defensive_player_and_contraataque_type_of_centrocampista_defensivo,
+    get_stats_to_defensive_player_and_contraataque_type_of_centrocampista_ofensivo,
+    get_stats_to_defensive_player_and_contraataque_type_of_defense_central_defenders,
+    get_stats_to_defensive_player_and_contraataque_type_of_defense_laterales,
+    get_stats_to_defensive_player_and_contraataque_type_of_forward_delantero_centro,
+    get_stats_to_defensive_player_and_contraataque_type_of_forward_delantero_extremo,
+)
+
+from dataBase.functions.stats_match.offensive.juego_por_bandas import (
+    get_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_creativo,
+    get_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_lateral,
+    get_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_defensivo,
+    get_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_ofensivo,
+    get_stats_to_offensive_player_and_juego_por_bandas_type_of_defense_central_defenders,
+    get_stats_to_offensive_player_and_juego_por_bandas_type_of_defense_laterales,
+    get_stats_to_offensive_player_and_juego_por_bandas_type_of_delantero_centro,
+    get_stats_to_offensive_player_and_juego_por_bandas_type_of_delantero_extremo
+)
+
+from dataBase.functions.stats_match.offensive.tiki_taka import (
+    get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_creativo,
+    get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_lateral,
+    get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_defensivo,
+    get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_ofensivo,
+    get_stats_to_offensive_player_and_tiki_taka_type_of_defense_central_defenders,
+    get_stats_to_offensive_player_and_tiki_taka_type_of_defense_laterales,
+    get_stats_to_offensive_player_and_tiki_taka_type_of_delantero_centro,
+    get_stats_to_offensive_player_and_tiki_taka_type_of_delantero_extremo
+)
+
+from dataBase.functions.stats_match.offensive.presion_alta import (
+    get_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_creativo,
+    get_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_defensivo,
+    get_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_lateral,
+    get_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_ofensivo,
+    get_stats_to_offensive_player_and_presion_alta_type_of_defense_central_defenders,
+    get_stats_to_offensive_player_and_presion_alta_type_of_defense_laterales,
+    get_stats_to_offensive_player_and_presion_alta_type_of_delantero_centro,
+    get_stats_to_offensive_player_and_presion_alta_type_of_delantero_extremo
+)
+
+
+######### AVG SEASON #########
+
+from dataBase.functions.avg_season.deffensive.bloque_bajo_avg import (
+    get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_defense_central_defenders,
+    get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_defense_laterales,
+    get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_creativo,
+    get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_lateral,
+    get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_defensivo,
+    get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_ofensivo,
+    get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_forward_delantero_centro,
+    get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_forward_delantero_extremo
+)
+
+from dataBase.functions.avg_season.deffensive.bloque_medio_avg import (
+    get_avg_stats_to_defensive_player_and_bloque_medio_type_of_defense_central_defenders,
+    get_avg_stats_to_defensive_player_and_bloque_medio_type_of_defense_laterales,
+    get_avg_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_creativo,
+    get_avg_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_lateral,
+    get_avg_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_defensivo,
+    get_avg_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_ofensivo,
+    get_avg_stats_to_defensive_player_and_bloque_medio_type_of_forward_delantero_centro,
+    get_avg_stats_to_defensive_player_and_bloque_medio_type_of_forward_delantero_extremo
+)
+
+from dataBase.functions.avg_season.deffensive.contraataque_avg import (
+    get_avg_stats_to_defensive_player_and_contraataque_type_of_defense_central_defenders,
+    get_avg_stats_to_defensive_player_and_contraataque_type_of_defense_laterales,   
+    get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_creativo,
+    get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_lateral,
+    get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_defensivo,
+    get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_ofensivo,
+    get_avg_stats_to_defensive_player_and_contraataque_type_of_forward_delantero_centro,
+    get_avg_stats_to_defensive_player_and_contraataque_type_of_forward_delantero_extremo
+)
+
+
+from dataBase.functions.avg_season.offensive.juego_por_bandas import (
+    get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_defense_central_defenders,
+    get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_defense_laterales,
+    get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_creativo,
+    get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_lateral,
+    get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_defensivo,
+    get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_ofensivo,
+    get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_delantero_centro,
+    get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_delantero_extremo     
+)
+
+from dataBase.functions.avg_season.offensive.tiki_taka_avg import (
+    get_avg_stats_to_offensive_player_and_tiki_taka_type_of_defense_central_defenders,
+    get_avg_stats_to_offensive_player_and_tiki_taka_type_of_defense_laterales,
+    get_avg_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_creativo,
+    get_avg_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_lateral,
+    get_avg_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_defensivo,
+    get_avg_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_ofensivo,
+    get_avg_stats_to_offensive_player_and_tiki_taka_type_of_delantero_centro,
+    get_avg_stats_to_offensive_player_and_tiki_taka_type_of_delantero_extremo
+)
+from dataBase.functions.avg_season.offensive.presion_alta_avg import (
+    get_avg_stats_to_offensive_player_and_presion_alta_type_of_defense_central_defenders,
+    get_avg_stats_to_offensive_player_and_presion_alta_type_of_defense_laterales,
+    get_avg_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_creativo,
+    get_avg_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_defensivo,
+    get_avg_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_lateral,
+    get_avg_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_ofensivo,
+    get_avg_stats_to_offensive_player_and_presion_alta_type_of_delantero_centro,
+    get_avg_stats_to_offensive_player_and_presion_alta_type_of_delantero_extremo
+)
+
+
+
+
+
+
+FUNCTION_REGISTRY = {
+                                            # tupla de valores
+    ("deffensive", "fullback", "bloque_bajo"):(get_stats_to_defensive_player_and_bloque_bajo_type_of_defense_laterales, get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_defense_laterales),
+    ("deffensive", "central_defender", "bloque_bajo"):(get_stats_to_defensive_player_and_bloque_bajo_type_of_defense_central_defenders, get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_defense_central_defenders),
+    ("deffensive", "defensive_midfielder", "bloque_bajo"):(get_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_defensivo, get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_defensivo),
+    ("deffensive", "offensive_midfielder","bloque_bajo"):(get_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_ofensivo, get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_ofensivo),
+    ("deffensive", "center_midfielder","bloque_bajo"):(get_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_creativo, get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_creativo),
+    ("deffensive", "lateral_midfielder","bloque_bajo"):(get_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_lateral, get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_lateral),
+    ("deffensive", "winger","bloque_bajo"):(get_stats_to_defensive_player_and_bloque_bajo_type_of_forward_delantero_extremo, get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_forward_delantero_extremo),
+    ("deffensive", "forward","bloque_bajo"):(get_stats_to_defensive_player_and_bloque_bajo_type_of_forward_delantero_centro, get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_forward_delantero_centro),
+    
+    
+    ("deffensive", "fullback", "bloque_medio"):(get_stats_to_defensive_player_and_bloque_medio_type_of_defense_laterales, get_avg_stats_to_defensive_player_and_bloque_medio_type_of_defense_laterales),
+    ("deffensive", "central_defender", "bloque_medio"):(get_stats_to_defensive_player_and_bloque_medio_type_of_defense_central_defenders, get_avg_stats_to_defensive_player_and_bloque_medio_type_of_defense_central_defenders),
+    ("deffensive", "defensive_midfielder", "bloque_medio"):(get_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_defensivo, get_avg_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_defensivo),
+    ("deffensive", "offensive_midfielder","bloque_medio"):(get_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_ofensivo, get_avg_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_ofensivo),
+    ("deffensive", "center_midfielder","bloque_medio"):(get_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_creativo, get_avg_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_creativo),
+    ("deffensive", "lateral_midfielder","bloque_medio"):(get_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_lateral, get_avg_stats_to_defensive_player_and_bloque_medio_type_of_centrocampista_lateral),
+    ("deffensive", "winger","bloque_medio"):(get_stats_to_defensive_player_and_bloque_medio_type_of_forward_delantero_extremo, get_avg_stats_to_defensive_player_and_bloque_medio_type_of_forward_delantero_extremo),
+    ("deffensive", "forward","bloque_medio"):(get_stats_to_defensive_player_and_bloque_medio_type_of_forward_delantero_centro, get_avg_stats_to_defensive_player_and_bloque_medio_type_of_forward_delantero_centro),
+    
+    
+    ("deffensive", "fullback", "contraataque"):(get_stats_to_defensive_player_and_contraataque_type_of_defense_laterales, get_avg_stats_to_defensive_player_and_contraataque_type_of_defense_laterales),
+    ("deffensive", "central_defender", "contraataque"):(get_stats_to_defensive_player_and_contraataque_type_of_defense_central_defenders, get_avg_stats_to_defensive_player_and_contraataque_type_of_defense_central_defenders),
+    ("deffensive", "defensive_midfielder", "contraataque"):(get_stats_to_defensive_player_and_contraataque_type_of_centrocampista_defensivo, get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_defensivo),
+    ("deffensive", "offensive_midfielder","contraataque"):(get_stats_to_defensive_player_and_contraataque_type_of_centrocampista_ofensivo, get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_ofensivo),
+    ("deffensive", "center_midfielder","contraataque"):(get_stats_to_defensive_player_and_contraataque_type_of_centrocampista_creativo, get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_creativo),
+    ("deffensive", "lateral_midfielder","contraataque"):(get_stats_to_defensive_player_and_contraataque_type_of_centrocampista_lateral, get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_lateral),
+    ("deffensive", "winger","contraataque"):(get_stats_to_defensive_player_and_contraataque_type_of_forward_delantero_extremo, get_avg_stats_to_defensive_player_and_contraataque_type_of_forward_delantero_extremo),
+    ("deffensive", "forward","contraataque"):(get_stats_to_defensive_player_and_contraataque_type_of_forward_delantero_centro, get_avg_stats_to_defensive_player_and_contraataque_type_of_forward_delantero_centro),
+    
+    
+    ("offensive", "fullback", "juego_por_bandas"): (get_stats_to_offensive_player_and_juego_por_bandas_type_of_defense_laterales, get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_defense_laterales),
+    ("offensive", "central_defender", "juego_por_bandas"): (get_stats_to_offensive_player_and_juego_por_bandas_type_of_defense_central_defenders, get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_defense_central_defenders),
+    ("offensive", "defensive_midfielder", "juego_por_bandas"): (get_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_defensivo, get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_defensivo),
+    ("offensive", "offensive_midfielder","juego_por_bandas"): (get_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_ofensivo, get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_ofensivo),
+    ("offensive", "center_midfielder","juego_por_bandas"): (get_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_creativo, get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_creativo),
+    ("offensive", "lateral_midfielder","juego_por_bandas"): (get_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_lateral, get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_centrocampista_lateral),
+    ("offensive", "winger","juego_por_bandas"): (get_stats_to_offensive_player_and_juego_por_bandas_type_of_delantero_extremo, get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_delantero_extremo),
+    ("offensive", "forward","juego_por_bandas"): (get_stats_to_offensive_player_and_juego_por_bandas_type_of_delantero_centro, get_avg_stats_to_offensive_player_and_juego_por_bandas_type_of_delantero_centro),
+    
+    
+    ("offensive", "fullback", "tiki_taka"):(get_stats_to_offensive_player_and_tiki_taka_type_of_defense_laterales, get_avg_stats_to_offensive_player_and_tiki_taka_type_of_defense_laterales),
+    ("offensive", "central_defender", "tiki_taka"):(get_stats_to_offensive_player_and_tiki_taka_type_of_defense_central_defenders, get_avg_stats_to_offensive_player_and_tiki_taka_type_of_defense_central_defenders),
+    ("offensive", "defensive_midfielder", "tiki_taka"):(get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_defensivo, get_avg_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_defensivo),
+    ("offensive", "offensive_midfielder","tiki_taka"):(get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_ofensivo, get_avg_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_ofensivo),
+    ("offensive", "center_midfielder","tiki_taka"):(get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_creativo, get_avg_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_creativo),
+    ("offensive", "lateral_midfielder","tiki_taka"):(get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_lateral, get_avg_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_lateral),
+    ("offensive", "winger","tiki_taka"):(get_stats_to_offensive_player_and_tiki_taka_type_of_delantero_extremo, get_avg_stats_to_offensive_player_and_tiki_taka_type_of_delantero_extremo),
+    ("offensive", "forward","tiki_taka"):(get_stats_to_offensive_player_and_tiki_taka_type_of_delantero_centro, get_avg_stats_to_offensive_player_and_tiki_taka_type_of_delantero_centro),
+
+    
+    ("offensive", "fullback", "presion_alta"):(get_stats_to_offensive_player_and_presion_alta_type_of_defense_laterales, get_avg_stats_to_offensive_player_and_presion_alta_type_of_defense_laterales),
+    ("offensive", "central_defender", "presion_alta"):(get_stats_to_offensive_player_and_presion_alta_type_of_defense_central_defenders, get_avg_stats_to_offensive_player_and_presion_alta_type_of_defense_central_defenders),
+    ("offensive", "defensive_midfielder", "presion_alta"):(get_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_defensivo, get_avg_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_defensivo),
+    ("offensive", "offensive_midfielder","presion_alta"):(get_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_ofensivo, get_avg_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_ofensivo),
+    ("offensive", "center_midfielder","presion_alta"):(get_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_creativo, get_avg_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_creativo),
+    ("offensive", "lateral_midfielder","presion_alta"):(get_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_lateral, get_avg_stats_to_offensive_player_and_presion_alta_type_of_centrocampista_lateral),
+    ("offensive", "winger","presion_alta"):(get_stats_to_offensive_player_and_presion_alta_type_of_delantero_extremo, get_avg_stats_to_offensive_player_and_presion_alta_type_of_delantero_extremo),
+    ("offensive", "forward","presion_alta"):(get_stats_to_offensive_player_and_presion_alta_type_of_delantero_centro, get_avg_stats_to_offensive_player_and_presion_alta_type_of_delantero_centro),
+    
+
+
+    
+}

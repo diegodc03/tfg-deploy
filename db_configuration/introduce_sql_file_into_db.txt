@@ -1,0 +1,7 @@
+
+
+docker cp '..\tfg_1_base_datos_partido_prueba (1).sql' ene-este-github-tfg-db-1:/tmp/init.sql
+
+docker exec -it ene-este-github-tfg-db-1 bash
+
+mysql -u root -p tfg_1_base_datos_partido_prueba < /tmp/init.sql

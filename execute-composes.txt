@@ -1,0 +1,10 @@
+El de desarrollo es el siguiente:
+docker-compose.yml 
+ 
+docker-compose up
+
+
+El de producción es el siguiente:
+docker-compose -f docker-compose.prod.yml up -d --build
+
+
