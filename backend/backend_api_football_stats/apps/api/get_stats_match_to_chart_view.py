@@ -9,7 +9,7 @@ from ..models import PositionMatchPlayerRelation
 from ..models import FootballMatch
 from ..models import MatchStatistics
 
-from ..Constants.constants import stats_columns, stats_columns_player, model_map
+from ..constants.constants import stats_columns, stats_columns_player, model_map
 
 
 
@@ -43,11 +43,11 @@ class GetStatsMatchToChartView(APIView):
         if basic_position_id and not is_valid_int(basic_position_id):
             errores['basic_position_id'] = "El parámetro 'basic_position_id' debe ser un número."
             
-        if type_table_stats:
-            if not is_valid_str(type_table_stats):
-                errores['type_table_stats'] = "El parámetro 'type_table_stats' debe ser un string válido."
-            elif type_table_stats not in stats_columns + stats_columns_player:
-                errores['type_table_stats'] = "El parámetro 'type_table_stats' no es reconocido."
+        
+        if not is_valid_str(type_table_stats):
+            errores['type_table_stats'] = "El parámetro 'type_table_stats' debe ser un string válido."
+        elif type_table_stats not in stats_columns:
+            errores['type_table_stats'] = "El parámetro 'type_table_stats' no es reconocido."
 
         # Si hay errores, devolverlos
         if errores:

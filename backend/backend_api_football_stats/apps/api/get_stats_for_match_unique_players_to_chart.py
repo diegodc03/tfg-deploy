@@ -10,7 +10,7 @@ from ..models import FootballMatch
 from ..models import MatchStatistics
 
 
-from ..Constants.constants import stats_columns, stats_columns_player, model_map
+from ..constants.constants import stats_columns, stats_columns_player, model_map
 
 
 
@@ -18,12 +18,10 @@ from ..Constants.constants import stats_columns, stats_columns_player, model_map
 
 class GetStatsPlayersToChartView(APIView):
 
-    
     def get(self, request):
     
         def is_valid_int(value):
             return value is not None and value.isdigit()
-
         def is_valid_str(value):
             return isinstance(value, str) and value.strip() != ''
     
@@ -33,7 +31,7 @@ class GetStatsPlayersToChartView(APIView):
         # basic_position
         basic_position_id = request.query_params.get('basic_position', None)
         # type_table_stats
-        type_table_stats = request.query_params.get('type_table_stats', 'stats_summary')
+        type_table_stats = request.query_params.get('type_table_stats', 'passes_player_pct')
         
         response_data = None
         response_status = status.HTTP_400_BAD_REQUEST
@@ -48,11 +46,11 @@ class GetStatsPlayersToChartView(APIView):
         if basic_position_id and not is_valid_int(basic_position_id):
             errores['basic_position_id'] = "El parámetro 'basic_position_id' debe ser un número."
             
-        if type_table_stats:
-            if not is_valid_str(type_table_stats):
-                errores['type_table_stats'] = "El parámetro 'type_table_stats' debe ser un string válido."
-            elif type_table_stats not in stats_columns + stats_columns_player:
-                errores['type_table_stats'] = "El parámetro 'type_table_stats' no es reconocido."
+        
+        if not is_valid_str(type_table_stats):
+            errores['type_table_stats'] = "El parámetro 'type_table_stats' debe ser un string válido."
+        elif type_table_stats not in stats_columns_player:
+            errores['type_table_stats'] = "El parámetro 'type_table_stats' no es reconocido."
 
         # Si hay errores, devolverlos
         if errores:
@@ -98,23 +96,17 @@ class GetStatsPlayersToChartView(APIView):
                         response_status = status.HTTP_400_BAD_REQUEST
                             
                     else:
-                        """    
-                        tables = [type_table_stats]
-                        columns = stats_columns[type_table_stats]
-                        data_columns = {col: [] for col in columns}
-                        """
-                        data_columns = {}
 
-                        for cols in stats_columns_player[type_table_stats].values():
-                            for col in cols:
-                                data_columns[col] = []
+                        data_columns = {}
                                 
                         final_data = []
                         # Obtener el modelo correspondiente a la tabla
                         
+                        tables = stats_columns_player[type_table_stats]["tables"]
+                        columns = stats_columns_player[type_table_stats]["columns"]
+                        
                         # Yo aqui tengo un loop que va a recorrer cada tabla con sus columnas, lo que voy a hacer es ahora añadirlo a un diccionario
-                        for table, columns in stats_columns_player[type_table_stats].items():
-                            
+                        for table in tables:
                             # Obtenemos el modelo
                             model = model_map.get(table)
                             if not model:
@@ -123,26 +115,26 @@ class GetStatsPlayersToChartView(APIView):
                             else:
                                 estadistics = model.objects.filter(stat_id__in=match_stats)
                                 
-                                
                                 for stat in estadistics:
                                     player_name = stat.player_id.player_name if stat.player_id else "Desconocido"
                                     player_id = stat.player_id.player_id if stat.player_id else None
-
+                                    data_columns[player_name] = []
+                                    
                                     for column in columns:
                                         value = getattr(stat, column, None)
                                         if value is not None:
-                                            data_columns[column].append({
+                                            data_columns[player_name].append({
                                                 "player_id": player_id,
-                                                "player_name": player_name,
+                                                "column": column,
                                                 "value": value
                                             })
                                 
                                 # Transformar a formato de salida agrupado por columna
                                 final_data = [
                                     {
-                                        "stat": columna,
-                                        "values": jugadores
-                                    } for columna, jugadores in data_columns.items()
+                                        "jugador": player,
+                                        "values": stats
+                                    } for player, stats in data_columns.items()
                                 ]
 
                                 response_data = final_data

@@ -3,12 +3,17 @@
 # y se van a devolver todos los datos de cada uno de los modelos
 
 
+# Funciona
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from ..Constants.constants import model_map
+from ..models import FootballMatch
+from ..models import MatchStatistics
+
+from ..constants.constants import model_map
 
 # Endpoint que va a llevar a cabo el envio de todas las tablas del partido
 # Tendra una opción de solo enviar una tabla o todas las tablas
@@ -22,7 +27,6 @@ class GetStatsOfPlayersMatchView(APIView):
     
         def is_valid_int(value):
             return value is not None and value.isdigit()
-
         def is_valid_str(value):
             return isinstance(value, str) and value.strip() != ''
     
@@ -55,22 +59,40 @@ class GetStatsOfPlayersMatchView(APIView):
             
         else:
             
-            if type_table_stats != None :
+            
+            
+            football_match =  FootballMatch.objects.filter(match_id=int(match_id)).first()
+            if not football_match:
+                response_data = {"error": "No se encontró el partido."}
+                response_status = status.HTTP_404_NOT_FOUND
+            else: 
                 
-                # Si se especifica un tipo de tabla, devolver solo esa tabla
-                model = model_map[type_table_stats]
-                stats_data = list(model.objects.filter(match_id=match_id).values())
-                response_data = {type_table_stats: stats_data}
-                response_status = status.HTTP_200_OK
-                
-                
-            else:
-                # Si no se especifica el tipo de tabla, devolver todas las tablas
-                stats_data = {}
-                for table_name, model in model_map.items():
-                    stats_data[table_name] = list(model.objects.filter(match_id=match_id).values())
-                response_data = stats_data
-                response_status = status.HTTP_200_OK
+                # Si ese partido existe, ahora hay que recoger los jugadores que participaron en el partido
+                # y filtrar por el id de la posición básica si se proporciona
+
+                match_stats_ids = MatchStatistics.objects.filter(match_id=int(match_id))
+                if not match_stats_ids.exists():
+                    response_data = {"error": "No hay jugadores para este partido cuando se filtra por tipo de jugador."}
+                    response_status = status.HTTP_204_NO_CONTENT
+                    
+                else: 
+                    
+                    if type_table_stats is not None :
+                        # Si se especifica un tipo de tabla, devolver solo esa tabla
+                        
+                        model = model_map[type_table_stats]
+                        stats_data = list(model.objects.filter(stat_id__in=match_stats_ids).values())
+                        
+                        response_data = {type_table_stats: stats_data}
+                        response_status = status.HTTP_200_OK
+                        
+                    else:
+                        # Si no se especifica el tipo de tabla, devolver todas las tablas
+                        stats_data = {}
+                        for table_name, model in model_map.items():
+                            stats_data[table_name] = list(model.objects.filter(stat_id__in=match_stats_ids).values())
+                        response_data = stats_data
+                        response_status = status.HTTP_200_OK
                 
         return Response(response_data, status=response_status)
             

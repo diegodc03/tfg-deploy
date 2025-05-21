@@ -10,6 +10,7 @@ from .game_modes import GameMode
 from .basic_position_category import BasicPositionCategory
 from .specifics_positions_by_category import SpecificsPositionsByCategory
 from .config_estadísticas import ESTADISTICAS_INTERESANTES
+from .match_statistics import MatchStatistics
 
 
 from .tables_stats.stats_defensiveactions_summary import StatsDefenseSummary

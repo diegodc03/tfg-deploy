@@ -19,10 +19,10 @@ class StatsShotsSummary(models.Model):
     distance = models.FloatField(null=True, blank=True)
     body_part = models.ForeignKey(BodyPart, on_delete=models.CASCADE, db_column='body_part', null=True, blank=True)
     notes = models.CharField(max_length=255, null=True, blank=True)
-    player_assisted_1 = models.ForeignKey(Player, on_delete=models.CASCADE, db_column='player_assisted_1', null=True, blank=True)
-    event_type = models.ForeignKey(EventShots, on_delete=models.CASCADE, db_column='event_type', null=True, blank=True)
-    player_assisted_2 = models.ForeignKey(Player, on_delete=models.CASCADE, db_column='player_assisted_2', null=True, blank=True)
-    event_type_2 = models.ForeignKey(EventShots, on_delete=models.CASCADE, db_column='event_type_2', null=True, blank=True)
+    player_assisted_1 = models.ForeignKey(Player, on_delete=models.CASCADE, db_column='player_assisted_1', null=True, blank=True, related_name='primary_assists_player')
+    event_type = models.ForeignKey(EventShots, on_delete=models.CASCADE, db_column='event_type', null=True, blank=True, related_name='primary_event_type')
+    player_assisted_2 = models.ForeignKey(Player, on_delete=models.CASCADE, db_column='player_assisted_2', null=True, blank=True, related_name='second_assists_player')
+    event_type_2 = models.ForeignKey(EventShots, on_delete=models.CASCADE, db_column='event_type_2', null=True, blank=True, related_name='secondary_event_type')
 
     class Meta:
         managed = False

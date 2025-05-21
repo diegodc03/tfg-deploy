@@ -4,8 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
-from ...Constants.constants import filter_labels_unitary_player
+from ...constants.constants import filter_labels_unitary
 
 # GET /api/filtersUnitaryPlayerMatchChart/
 
@@ -13,4 +12,4 @@ from ...Constants.constants import filter_labels_unitary_player
 class FiltersUnitaryPlayerMatchChartView(APIView):
     
     def get(self, request):
-        return Response(filter_labels_unitary_player, status=status.HTTP_200_OK)
+        return Response(filter_labels_unitary, status=status.HTTP_200_OK)

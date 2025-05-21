@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from ...Constants.constants import filter_labels_match
+from ...constants.constants import filter_labels_match
 
 # GET /api/filtersMatchChart/
 

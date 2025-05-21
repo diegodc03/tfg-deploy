@@ -1,5 +1,5 @@
-from . import FootballMatch
-from . import Player
+from .football_match import FootballMatch
+from .player import Player
 from . import SpecificsPositionsByCategory
 from django.db import models
 
