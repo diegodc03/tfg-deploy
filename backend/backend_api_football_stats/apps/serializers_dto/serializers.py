@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from ..models.tables_stats.stats_summary import StatsSummary
+
 from ..models.leagues import Leagues
 from ..models.season import Season
 from ..models.tournament import Tournament
@@ -259,16 +261,6 @@ class BasicMatchStatsSerializer(serializers.Serializer):
         
         
         
-class StatsToChartsSerializer(serializers.Serializer):
-    match_id = serializers.IntegerField()
-    player_id = serializers.IntegerField()
-    stat_name = serializers.CharField()
-    stat_value = serializers.FloatField()
-    
-    class Meta:
-        fields = (
-            'match_id',
-            'player_id',
-            'stat_name',
-            'stat_value',
-        )
+
+        
+

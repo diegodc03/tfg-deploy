@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 
 import { MatchAPISearch } from "../model/MatchAPI";
 import BasicInfoMatch from "../components/BasicInfoMatch";
+import ShowBasicStats from "../components/showBasicStats";
 
 const ShowMatchStats = () => {
 
@@ -87,6 +88,14 @@ const ShowMatchStats = () => {
                     <CardShow title={"Comparacion de jugadores"} text={"Compara los jugadores del partido para poder ver cosas que nunca habias visto"} image={realMadridImg} />
                     <CardShow title={"Puntuaciones"} text={"Puntuaciones de los jugadores del partido segun su posicion y tambien la forma de juego"} image={realMadridImg} navigateElement={`/match-stats-score/${match_id}`}  />
                 </Stack>
+
+                <Typography gutterBottom sx={{ marginTop: 6, fontWeight: 'bold', color: 'black' }}>
+                    <strong>Estadísticas del partido totales</strong>
+                </Typography>
+                <Stack  sx={{  backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 3, marginBottom:6 }} >
+                    <ShowBasicStats matchId={Number(match_id)} />
+                </Stack>
+
             </Container>
         </Box>
     );

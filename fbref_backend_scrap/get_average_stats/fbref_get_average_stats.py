@@ -316,7 +316,7 @@ def get_stats_avg_devs_tip_for_competition_by_players_specific_position(spark, j
 
     except Exception as e:
         print(f"Error en funcion `get_stats_avg_devs_tip_for_competition_by_players_specific_position`: {e}")
-        return pd.DataFrame()
+        returning_value = spark.createDataFrame([], StructType([]))
     
     return returning_value
     

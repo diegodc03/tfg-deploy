@@ -32,13 +32,13 @@ def get_general_match_data(link):
     stats = {}
     dict_teams = {}
     try:
+        
         teams_stats = beatySoup.find('div', id='team_stats')
         if not teams_stats:
             print("No se encontró el contenedor 'team_stats'")
-            return pd.DataFrame(), pd.DataFrame()
+            df1 = pd.DataFrame()
         else: 
             tr_stats = teams_stats.find_all('tr')
-            th_teams = tr_stats[0].find_all('th')
 
             for i in range(1, len(tr_stats), 2):
                 array_teams = []
@@ -48,7 +48,6 @@ def get_general_match_data(link):
                     continue
 
                 stat_name = th_stat.text.strip()
-                print(f"Stat name: {stat_name}")
         
                 if CARDS in stat_name:
                     td_values = tr_stats[i+1].find_all('td')
@@ -84,7 +83,7 @@ def get_general_match_data(link):
 
                         dict_teams[stat_name] = array_teams
            
-            # Check if all mandatory columns are present
+           
             if len(dict_teams) < len(MANDATORY_COLUMNS):
                 dict_teams_formated = {}
                 for column in MANDATORY_COLUMNS:
@@ -96,10 +95,11 @@ def get_general_match_data(link):
             
             df1 = check_dataframe_general_match_data(dict_teams, 0)
 
-        teams_stats_extra = beatySoup.find('div', id='team_stats_extra')
 
+        teams_stats_extra = beatySoup.find('div', id='team_stats_extra')
         if not teams_stats_extra:
             print("No se encontró el contenedor 'team_stats_extra'")
+            df2 = pd.DataFrame()
         else:
             stat_blocks = teams_stats_extra.find_all('div')
             for block in stat_blocks:
@@ -119,13 +119,14 @@ def get_general_match_data(link):
             df2 = check_dataframe_general_match_data(stats, 1)    
 
         print('General match data collected...')
-        return df1, df2
+        
     
     except Exception as e:
         print(f"Error al obtener los datos generales del partido: {e}")
-        return pd.DataFrame(), pd.DataFrame()
+        df1 = pd.DataFrame()
+        df2 = pd.DataFrame()
     
-    
+    return df1, df2
 
 
 ##############################################################################

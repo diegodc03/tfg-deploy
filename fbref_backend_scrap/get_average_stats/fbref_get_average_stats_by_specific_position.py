@@ -16,6 +16,7 @@ UMBRAL_DISPERSION = 4
 
 
 def query_to_get_stats(spark, jdbc_url, db_properties, league_id, table_name, position_name):
+    
     # Base query con los joins
     base_query = f"""
         SELECT { "ms.goals, ms.assists," if table_name == "stats_summary" else "" } 
@@ -57,6 +58,16 @@ def check_if_avg_stats_of_league_exists(spark, jdbc_url, db_properties, league_i
     spark_df = spark.read.jdbc(
         url=jdbc_url,
         table=f"({query}) as avg_player_stats",
+        properties=db_properties
+    )
+    return True if spark_df.count() > 0 else False
+
+
+def check_if_avg_teams_stats_of_league_exists(spark, jdbc_url, db_properties, league_id, team_id):
+    query = f"SELECT * FROM avg_teams_stats WHERE league_id = {league_id} and team_id = {team_id}"
+    spark_df = spark.read.jdbc(
+        url=jdbc_url,
+        table=f"({query}) as avg_teams_stats",
         properties=db_properties
     )
     return True if spark_df.count() > 0 else False
@@ -128,8 +139,8 @@ def query_to_get_basic_positions_stats_with_teams(spark, jdbc_url, db_properties
 
 
 
-def query_to_get_stats_with_team(spark, jdbc_url, db_properties, league_id, position_name, table_name, team_id):
-    # Base query con los joins
+def query_to_get_stats_with_team(spark, jdbc_url, db_properties, league_id, table_name, position_name, team_id):
+    # Base query con los joins    
     base_query = f"""
         SELECT { "ms.goals, ms.assists," if table_name == "stats_summary" else "" } 
                tn.*, 
@@ -207,6 +218,24 @@ def create_stat_dict_specific(league_id, position, stat_type, starter_status):
         "starter_status": get_valid_starter_status(starter_status)
     }
 
+
+def init_dicts_specific_teams(league_id, pos_id, tipo, team_id):
+    return (
+        create_stat_dict_specific_teams(league_id, pos_id, "avg", tipo, team_id),
+        create_stat_dict_specific_teams(league_id, pos_id, "desv", tipo, team_id),
+        create_stat_dict_specific_teams(league_id, pos_id, "mode", tipo, team_id),
+    )
+    
+def create_stat_dict_specific_teams(league_id, position, stat_type, starter_status, team_id):
+    return {
+        "league_id": league_id,
+        "team_id": team_id,
+        "position_player": position,
+        "type_of_stat": get_valid_type_of_stat(stat_type),
+        "starter_status": get_valid_starter_status(starter_status)
+    }
+
+
 def value_setting(value, avg, desv):
     
     if avg is None or desv is None or avg == 0:
@@ -279,6 +308,14 @@ def query_to_get_stats_by_specific_position(spark, jdbc_url, db_properties, leag
     
 def check_if_avg_stats_of_league_exists_by_basic_position(spark, jdbc_url, db_properties, league_id, position):
     query = f"SELECT apsp.id FROM avg_player_stats_by_basic_positions apsp WHERE league_id = {league_id} AND position_player = {position}"
+    
+    spark_df = read_data_with_spark(spark, jdbc_url, db_properties, query)
+    
+    return True if spark_df.count() > 0 else False
+
+
+def check_if_avg_teams_stats_of_league_exists_by_basic_position(spark, jdbc_url, db_properties, league_id, position, team_id):
+    query = f"SELECT ats.id FROM avg_teams_stats_by_basic_positions ats WHERE league_id = {league_id} AND position_player = {position} AND team_id = {team_id}"
     
     spark_df = read_data_with_spark(spark, jdbc_url, db_properties, query)
     

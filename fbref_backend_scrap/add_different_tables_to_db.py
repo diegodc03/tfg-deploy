@@ -4,7 +4,7 @@ import pandas as pd
 from pyspark.sql.types import StructType
 from spark_schema import get_type_position_schema, get_event_shots_schema, get_body_part_schema, get_outcome_schema
 from write_dataframe_to_mysql_file import write_dataframe_to_mysql
-
+from constants import type_shots, body_parts, outcomes, type_positions
 
 
 
@@ -20,7 +20,6 @@ def add_type_shots_to_database(spark, jdbc_url, db_properties):
         print("Type of position on the field already exists in database") 
     else:
         try:
-            type_shots = ["Pass (Dead)", "Pass (Live)", "Tackle", "Shot", "Fouled", "Take-On"]
             df = pd.DataFrame({"event_shot_name": type_shots}).drop_duplicates()
 
             schema = get_event_shots_schema()
@@ -47,11 +46,9 @@ def add_body_part_to_database(spark, jdbc_url, db_properties):
        
     else:
         try:
-            body_parts = ["Right Foot", "Left Foot", "Head", "Other"]
             df = pd.DataFrame({"body_part_name": body_parts}).drop_duplicates()
 
             schema = get_body_part_schema()
-
             df_spark = spark.createDataFrame(df, schema)
             write_dataframe_to_mysql(df_spark, jdbc_url, db_properties, "body_part")
             success = df_spark
@@ -71,7 +68,6 @@ def add_outcome_to_database(spark, jdbc_url, db_properties):
         
     else:
         try:
-            outcomes = ["Goal", "Saved", "Off Target", "Post", "Blocked", "Wayward", "Own Goal", "Penalty Saved", "Penalty Missed", "Woodwork", "Other"]
             df = pd.DataFrame({"outcome_name": outcomes}).drop_duplicates()
 
             schema = get_outcome_schema()
@@ -116,8 +112,6 @@ def add_type_of_position_on_field_to_database(spark, jdbc_url, db_properties):
         
     else:
         try:
-            type_positions = ["GK", "DF", "MF", "FW", "FB", "LB", "RB", "CB", "DM", "CM", "LM", "RM", "WM", "LW", "RW", "AM"]
-            
             df = pd.DataFrame({"position_name": type_positions}).drop_duplicates()
             schema = get_type_position_schema()
 
@@ -145,25 +139,48 @@ def insert_categories(spark, jdbc_url, db_properties):
 
 
 
-def insert_position_category_relations(spark, jdbc_url, db_properties):
-    mappings = {
-        "goalkeepers": ["GK"],
-        "defenders": ["DF", "FB", "LB", "RB", "CB"],
-        "midfielders": ["MF", "DM", "CM", "LM", "RM", "WM"],
-        "forwards": ["FW", "LW", "RW", "AM"]
-    }
-    
-    for category, positions in mappings.items():
-        query = f"""
-            INSERT INTO position_category_relation (position_id, category_id)
-            SELECT p.position_id, c.category_id
-            FROM position_on_the_field p
-            JOIN position_category c ON c.category_name = '{category}'
-            WHERE p.position_name IN ({', '.join([f"'{pos}'" for pos in positions])})
-            ON DUPLICATE KEY UPDATE position_id = position_id
-        """
-        spark.sql(query)
-        print(f"Inserted relations for {category}")
+def add_basic_position_to_database(spark, jdbc_url, db_properties):
+    # Esta función añade las posiciones básicas de los jugadores a la base de datos
+    print("Adding basic positions to database")
+    try:
+       
+        
+        #write_dataframe_to_mysql(df, jdbc_url, db_properties, "basic_position")
+        print("Basic positions added successfully")
+    except Exception as e:
+        print(f"Error adding basic positions: {e}")
+        
+def add_specific_position_to_database(spark, jdbc_url, db_properties):
+    # Esta función añade las posiciones específicas de los jugadores a la base de datos
+    print("Adding specific positions to database")
+    try:
+        
+        
+        print("Specific positions added successfully")
+    except Exception as e:
+        print(f"Error adding specific positions: {e}")
+        
+
+def add_basic_game_modes_to_database(spark, jdbc_url, db_properties):
+    # Esta función añade los tipos de posiciones básicas de los jugadores a la base de datos
+    print("Adding basic type positions to database")
+    try:
+        
+        
+        print("Basic type positions added successfully")
+    except Exception as e:
+        print(f"Error adding basic type positions: {e}")
+        
+        
+def add_specific_game_modes_to_database(spark, jdbc_url, db_properties):
+    # Esta función añade los tipos de posiciones específicas de los jugadores a la base de datos
+    print("Adding specific type positions to database")
+    try:
+        
+        
+        print("Specific type positions added successfully")
+    except Exception as e:
+        print(f"Error adding specific type positions: {e}")
 
 
 

@@ -12,6 +12,14 @@ from ..models import StatsPassTypesSummary
 from ..models import StatsPossessionSummary
 from ..models import StatsSummary
 
+
+from ..serializers_dto.tables_serializers import StatsSummarySerializer
+from ..serializers_dto.tables_serializers import StatsDefensiveActionsSerializer
+from ..serializers_dto.tables_serializers import StatsGKSerializer
+from ..serializers_dto.tables_serializers import StatsMiscellaneousSerializer
+from ..serializers_dto.tables_serializers import StatsPassingSerializer
+from ..serializers_dto.tables_serializers import StatsPassTypesSerializer
+from ..serializers_dto.tables_serializers import StatsPossessionSerializer
 # Estadísticas a mostrar en el endPoint de datos
 # Se van a distribuir segun el tipo de tabla para así mostrarse en el frontal mas ordenado
 
@@ -27,8 +35,18 @@ stats_columns = {
 }
 
 
+model_map_serializer = {
+    "stats_defensiveactions_summary": [StatsDefenseSummary, StatsDefensiveActionsSerializer],    
+    "stats_gk_summary": [StatsGoalkeeperSummary, StatsGKSerializer],
+    "stats_miscellaneous_summary": [StatsMiscellaneousSummary, StatsMiscellaneousSerializer],
+    "stats_passing_summary": [StatsPassingSummary, StatsPassingSerializer],
+    "stats_passTypes_summary": [StatsPassTypesSummary, StatsPassTypesSerializer],
+    "stats_possession_summary": [StatsPossessionSummary, StatsPossessionSerializer],
+    "stats_summary": [StatsSummary, StatsSummarySerializer],
+}
+
 model_map = {
-    "stats_defensiveactions_summary": StatsDefenseSummary,
+    "stats_defensiveactions_summary": StatsDefenseSummary, 
     "stats_gk_summary": StatsGoalkeeperSummary,
     "stats_miscellaneous_summary": StatsMiscellaneousSummary,
     "stats_passing_summary": StatsPassingSummary,
@@ -95,3 +113,25 @@ filter_labels_match = {
     "stats_defensiveactions_summary": "Estadísticas de acciones defensivas",
     "stats_gk_summary": "Estadísticas del portero"
 }
+
+
+
+stats_mapping = {
+                "aerials_won": {"type_stat_pct": False},
+                "cards": {"type_stat_pct": False},
+                "clearances": {"type_stat_pct": False},
+                "corners": {"type_stat_pct": False},
+                "crosses": {"type_stat_pct": False},
+                "fouls": {"type_stat_pct": False},
+                "goal_kicks": {"type_stat_pct": False},
+                "interceptions": {"type_stat_pct": False},
+                "long_balls": {"type_stat_pct": False},
+                "offsides": {"type_stat_pct": False},
+                "passing_accuracy": {"type_stat_pct": True},
+                "possession": {"type_stat_pct": True},
+                "saves": {"type_stat_pct": True},
+                "shots_on_target": {"type_stat_pct": True},
+                "tackles": {"type_stat_pct": False},
+                "throw_ins": {"type_stat_pct": False},
+                "touches": {"type_stat_pct": False},
+            }

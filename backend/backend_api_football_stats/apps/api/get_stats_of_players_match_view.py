@@ -13,7 +13,8 @@ from rest_framework import status
 from ..models import FootballMatch
 from ..models import MatchStatistics
 
-from ..constants.constants import model_map
+from ..constants.constants import model_map_serializer
+
 
 # Endpoint que va a llevar a cabo el envio de todas las tablas del partido
 # Tendra una opción de solo enviar una tabla o todas las tablas
@@ -36,7 +37,7 @@ class GetStatsOfPlayersMatchView(APIView):
         # basic_position
         #basic_position_id = request.query_params.get('basic_position', 'stats_summary')
         # type_table_stats
-        type_table_stats = request.query_params.get('type_table_stats', None)
+        type_table_stats = request.query_params.get('type_table_stats', "stats_summary")
         
         response_data = None
         response_status = status.HTTP_400_BAD_REQUEST
@@ -50,7 +51,7 @@ class GetStatsOfPlayersMatchView(APIView):
         if type_table_stats:
             if not is_valid_str(type_table_stats):
                 errores['type_table_stats'] = "El parámetro 'type_table_stats' debe ser un string válido."
-            elif type_table_stats != "all" and type_table_stats not in model_map:
+            elif type_table_stats != "all" and type_table_stats not in model_map_serializer:
                 errores['type_table_stats'] = "El parámetro 'type_table_stats' no es reconocido."
                 
         if errores:
@@ -58,8 +59,6 @@ class GetStatsOfPlayersMatchView(APIView):
             response_data = {"errores": errores}
             
         else:
-            
-            
             
             football_match =  FootballMatch.objects.filter(match_id=int(match_id)).first()
             if not football_match:
@@ -80,19 +79,21 @@ class GetStatsOfPlayersMatchView(APIView):
                     if type_table_stats is not None :
                         # Si se especifica un tipo de tabla, devolver solo esa tabla
                         
-                        model = model_map[type_table_stats]
-                        stats_data = list(model.objects.filter(stat_id__in=match_stats_ids).values())
+                        model_class, serializer_class = model_map_serializer[type_table_stats]
                         
-                        response_data = {type_table_stats: stats_data}
-                        response_status = status.HTTP_200_OK
+                        stats_data = model_class.objects.filter(stat_id__in=match_stats_ids)
+                        #response_data = {type_table_stats: stats_data}
+                        response_data = serializer_class(stats_data, many=True).data
                         
                     else:
                         # Si no se especifica el tipo de tabla, devolver todas las tablas
                         stats_data = {}
-                        for table_name, model in model_map.items():
-                            stats_data[table_name] = list(model.objects.filter(stat_id__in=match_stats_ids).values())
-                        response_data = stats_data
-                        response_status = status.HTTP_200_OK
+                        for table_name, model in model_map_serializer.items():
+                            model_class, serializer_class = model  
+                            stats = model_class.objects.filter(stat_id__in=match_stats_ids)
+                            stats_data[table_name] = serializer_class(stats, many=True).data
+
+                    response_status = status.HTTP_200_OK
                 
         return Response(response_data, status=response_status)
             

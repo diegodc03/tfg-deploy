@@ -31,7 +31,7 @@ def select_football_match(spark, jdbc_url, db_properties, match_id):
         return None
     
     
-    
+
 
 def get_all_matchs_ids_of_league_id(spark, jdbc_url, db_properties, league_id):
     query = f"""
@@ -86,7 +86,7 @@ def check_tournament_exists(nombre_liga, season_tournament_id, spark, jdbc_url, 
 
 
 def get_match_id_by_teams_and_tournament(local_team_id, visitor_team_id, season, spark, jdbc_url, db_properties):
-    print(f"Getting match ID for {local_team_id} vs {visitor_team_id} in season {season}...")
+
     query = f"""
     SELECT match_id FROM football_match
     WHERE Home = {local_team_id}
@@ -155,5 +155,8 @@ def get_teams_in_competition(spark, jdbc_url, db_properties, tournament_id):
 
     """
     return read_data_with_spark(spark, jdbc_url, db_properties, query)
+
+
+
 
 

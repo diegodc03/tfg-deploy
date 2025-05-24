@@ -130,6 +130,7 @@ def get_average_spark_schema_by_positions_gk():
 
     schema = StructType([
         StructField('league_id', IntegerType(), True),
+        StructField('team_id', IntegerType(), True),
         StructField('position_player', IntegerType(), True),
         StructField('type_of_stat', StringType(), True),
         StructField('starter_status', StringType(), True),
@@ -259,6 +260,7 @@ def get_average_spark_schema_by_positions_field_player():
 
     schema = StructType([
         StructField('league_id', IntegerType(), True),
+        StructField('team_id', IntegerType(), True),
         StructField('position_player', IntegerType(), True),
         StructField('type_of_stat', StringType(), True),
         StructField('starter_status', StringType(), True),
@@ -373,10 +375,9 @@ def get_average_spark_schema_by_positions_field_player():
 
 # Tabla a crear en la base de datos
 """
-CREATE TABLE avg_teams_player_stats (
+CREATE TABLE avg_teams_stats (
     id int PRIMARY KEY AUTO_INCREMENT,
     league_id INT,
-    team_id INT,
     starter_status ENUM('starter', 'substitute'),
     goals FLOAT,
     assists FLOAT,
@@ -499,8 +500,7 @@ CREATE TABLE avg_teams_player_stats (
 
 );
 
-ALTER TABLE avg_teams_player_stats ADD FOREIGN KEY (league_id) REFERENCES tournament(tournament_id) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE avg_teams_player_stats ADD FOREIGN KEY (team_id) REFERENCES team(team_id) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE avg_teams_stats ADD FOREIGN KEY (league_id) REFERENCES tournament(tournament_id) ON DELETE CASCADE ON UPDATE CASCADE;
 
 
 """
@@ -511,9 +511,8 @@ ALTER TABLE avg_teams_player_stats ADD FOREIGN KEY (team_id) REFERENCES team(tea
 CREATE TABLE avg_teams_player_stats_by_basic_positions (
     id int PRIMARY KEY AUTO_INCREMENT,
     league_id INT,
-    team_id INT,
     position_player INT, 
-    type_of_stat ENUM('avg', 'desv'),
+    type_of_stat ENUM('avg', 'desv', 'mode'),
     starter_status ENUM('starter', 'substitute'),
     gk_shots_on_target_against FLOAT default 0,
     gk_goals_against FLOAT default 0,
@@ -637,12 +636,8 @@ CREATE TABLE avg_teams_player_stats_by_basic_positions (
 
 ALTER TABLE avg_teams_player_stats_by_basic_positions ADD FOREIGN KEY (league_id) REFERENCES tournament(tournament_id) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE avg_teams_player_stats_by_basic_positions ADD FOREIGN KEY (position_player) REFERENCES position_category(category_id) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE avg_teams_player_stats_by_basic_positions ADD FOREIGN KEY (team_id) REFERENCES team(team_id) ON DELETE CASCADE ON UPDATE CASCADE;
 
 
-crear una columna
-ALTER TABLE avg_player_stats_by_basic_positions ADD COLUMN goals FLOAT;
-ALTER TABLE avg_player_stats_by_basic_positions ADD COLUMN assists FLOAT;
 
 
 """
@@ -654,9 +649,8 @@ ALTER TABLE avg_player_stats_by_basic_positions ADD COLUMN assists FLOAT;
 CREATE TABLE avg_teams_player_stats_by_specific_positions (
     id int PRIMARY KEY AUTO_INCREMENT,
     league_id INT,
-    team_id INT,
     position_player INT, 
-    type_of_stat ENUM('avg', 'desv'),
+    type_of_stat ENUM('avg', 'desv', 'mode'),
     starter_status ENUM('starter', 'substitute'),
     gk_shots_on_target_against FLOAT default 0,
     gk_goals_against FLOAT default 0,
@@ -780,8 +774,6 @@ CREATE TABLE avg_teams_player_stats_by_specific_positions (
 
 ALTER TABLE avg_teams_player_stats_by_specific_positions ADD FOREIGN KEY (league_id) REFERENCES tournament(tournament_id) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE avg_teams_player_stats_by_specific_positions ADD FOREIGN KEY (position_player) REFERENCES positions_specifics_by_category(specific_position_id) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE avg_teams_player_stats_by_specific_positions ADD FOREIGN KEY (team_id) REFERENCES team(team_id) ON DELETE CASCADE ON UPDATE CASCADE;
-
 """
 
 

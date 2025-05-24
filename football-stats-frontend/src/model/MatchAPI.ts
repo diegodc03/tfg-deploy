@@ -1,7 +1,7 @@
 
 import { TeamAPI } from './TeamApi';
 
-import {TournamentAPI} from './TournamentAPI';
+import {Tournament} from './TournamentAPI';
 
 export interface MatchAPI {
     match_id: number;
@@ -10,7 +10,7 @@ export interface MatchAPI {
     Score: string;
     Wk: number | string;
     Date: Date;
-    Season: TournamentAPI;
+    Season: Tournament;
 }
 
 

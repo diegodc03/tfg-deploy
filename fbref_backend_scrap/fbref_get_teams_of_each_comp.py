@@ -2,11 +2,9 @@
 
 from bs4 import BeautifulSoup as soup
 import requests
-import pandas as pd
 from pyspark.sql.functions import col
 
 from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import get_teams_in_competition
-from w_read_dataframe_to_mysql_file import read_data_with_spark
 from spark_schema import get_team_schema
 from write_dataframe_to_mysql_file import write_dataframe_to_mysql
 from pyspark.sql.types import StructType, StringType
@@ -52,7 +50,7 @@ def insert_team_in_competition_on_database(spark, jdbc_url, db_properties, teams
 
 def get_teams_of_competition(spark, jdbc_url, db_properties, league_name, tournament_fbref_id, season, league_id):
 
-    print('Getting teams of competition...')
+
     returning_value = spark.createDataFrame([], StructType([]))
     
     var_key_link = f"https://fbref.com/en/comps/{tournament_fbref_id}/{season}/stats/{season}-{league_name}-Stats"
@@ -70,8 +68,6 @@ def get_teams_of_competition(spark, jdbc_url, db_properties, league_name, tourna
         for team in team_elements:
             team_name = team.find('a').text  # Extraer el texto del enlace
             teams.append((team_name))
-
-        print(f"Equipos de la competición {league_name}: {teams}")
         
         league_name = league_name.replace('-', ' ')
         df = insert_team_in_competition_on_database(spark, jdbc_url, db_properties, teams, league_name, season, league_id)

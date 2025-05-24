@@ -72,25 +72,30 @@ def get_winning_losing_match(spark, jdbc_url, db_properties, match_id):
     
     winning_losing_match = select_football_match(spark, jdbc_url, db_properties, match_id)
     
-    home_score = winning_losing_match["Score"].split("–")[0]
-    away_score = winning_losing_match["Score"].split("–")[1]
-    home_team = winning_losing_match["Home"]
-    away_team = winning_losing_match["Away"]
-        
-    if home_score > away_score:
-        winning_team = home_team
-        lossing_team = away_team
-        home_away = "Home"
-    elif away_score > home_score:
-        winning_team = away_team
-        lossing_team = home_team
-        home_away = "Away"
+    if winning_losing_match is None:
+        print("No se encontró el partido con el ID proporcionado.")
+
     else:
-        winning_team = away_team
-        lossing_team = home_team
-        home_away = "Draw"
+        home_score = winning_losing_match["Score"].split("–")[0]
+        away_score = winning_losing_match["Score"].split("–")[1]
+        home_team = winning_losing_match["Home"]
+        away_team = winning_losing_match["Away"]
+            
+        if home_score > away_score:
+            winning_team = home_team
+            lossing_team = away_team
+            home_away = "Home"
+        elif away_score > home_score:
+            winning_team = away_team
+            lossing_team = home_team
+            home_away = "Away"
+        else:
+            winning_team = away_team
+            lossing_team = home_team
+            home_away = "Draw"
         
-    print("El equipo ganador es", winning_team, "y el perdedor es", lossing_team, "y el local es", home_away)
+        print("El equipo ganador es", winning_team, "y el perdedor es", lossing_team, "y el local es", home_away)
+    
     return winning_team, lossing_team, home_away
 
 

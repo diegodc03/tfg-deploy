@@ -7,7 +7,6 @@ required_football_match_columns = [
 
 
 
-
 ############################################################################################################
 
 stats_summary_player = [
@@ -79,9 +78,6 @@ dic_stats = {
     6: stats_miscellaneous_summary
 }
 
-dic_stats_gk = {
-    1: stats_goalkeeper_summary
-}
 
 table_dic_to_insert = {
     0: "stats_gk_summary",
@@ -96,34 +92,11 @@ table_dic_to_insert = {
 
 
 
-
-
 basic_elements_of_player = ["player", "shirt_number", "nacionality", "position", "age", "minutes", "goals", "assists"]
 basic_elements_of_gk = ["player", "nacionality", "age", "minutes"]
 
-player_stats = ["player", "shirt_number", "nacionality", "position", "age"]
-player_stats_gk = ["player", "nacionality", "age"]
-
 match_statisctics_of_player = ["minutes", "goals", "assists"]
 match_statisctics_of_gk = ["minutes"]
-
-############################################################################################################
-
-
-dict_val_columns_average_stats = {
-    0: 'League',
-    1: 'Standar_Stats',
-    2: "Goalkeeping",
-    3: "Advanced_Goalkeeping",
-    4: "Shooting",
-    5: "Passing",
-    6: "Pass_Types",
-    7: "Goal_and_Shot_Creation",
-    8: "Defensive_Actions",
-    9: "Possession",
-    10: "Playing_Time",
-    11: "Miscellaneous"
-}
 
 
 ############################################################################################################
@@ -169,6 +142,37 @@ var_strings = [
     "player", "nacionality", "position", "Day", "Date", "Time", 
     "Home", "Away", "Score", "season", "Venue", "Referee", 
     "player_id"
+]
+
+
+
+
+
+# Constants for different tables introducie
+
+# Table Type_shots
+type_shots = ["Pass (Dead)", "Pass (Live)", "Tackle", "Shot", "Fouled", "Take-On"]
+# Table body_part
+body_parts = ["Right Foot", "Left Foot", "Head", "Other"]
+# Table outcome_stats
+outcomes = ["Goal", "Saved", "Off Target", "Post", "Blocked", "Wayward", "Own Goal", "Penalty Saved", "Penalty Missed", "Woodwork", "Other"]
+# Table position_on_the_field
+type_positions = ["GK", "DF", "MF", "FW", "FB", "LB", "RB", "CB", "DM", "CM", "LM", "RM", "WM", "LW", "RW", "AM"]
+
+
+# Table Type_of_game
+type_of_game = ["deffensive", "offensive", "No_existencia_de_tipo_de_juego"]
+# Table type_of_games
+game_modes = ["no_existencia", "bloque_bajo", "bloque_medio", "contraataque", "tiki_taka", "presion_alta", "juego_por_bandas"]
+   
+   
+# Posiciones
+# Basic Positions
+basic_positions = ["Goalkeeper", "Defender", "Midfielder", "Forward"]
+# Specific Positions
+specific_positions = [
+    "center_midfielder", "central_defender", "defensive_midfielder", "forward", "fullback",
+    "goalkeeper", "lateral_midfielder", "no_existencia", "offensive_midfielder", "winger"
 ]
 
 

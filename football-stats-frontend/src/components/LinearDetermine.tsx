@@ -21,10 +21,10 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     },
   }));
   
-export default function LinearStatBar({ value }: { value: number }) {
-    return (
-      <Box sx={{ width: '100%' }}>
-        <BorderLinearProgress variant="determinate" value={value} />
-      </Box>
-    );
-  }
+export default function LinearStatBar({ value, reverse = false }: { value: number; reverse?: boolean }) {
+  return (
+    <Box sx={{ width: '100%', transform: reverse ? 'scaleX(-1)' : 'none' }}>
+      <BorderLinearProgress variant="determinate" value={value} />
+    </Box>
+  );
+}

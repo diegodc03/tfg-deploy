@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from ..constants.constants import stats_mapping
 from backend_api_football_stats.apps.serializers_dto.serializers import BasicMatchStatsSerializer, GeneralComparatorMatchStatsSerializer
 
 from ..models import GeneralComparatorMatchStats
@@ -27,30 +27,7 @@ class BasicStatsOfMatchComparatorView(APIView):
         
         else:
             
-            stats_mapping = {
-                "aerials_won": {"type_stat_pct": False},
-                "cards": {"type_stat_pct": False},
-                "clearances": {"type_stat_pct": False},
-                "corners": {"type_stat_pct": False},
-                "crosses": {"type_stat_pct": False},
-                "fouls": {"type_stat_pct": False},
-                "goal_kicks": {"type_stat_pct": False},
-                "interceptions": {"type_stat_pct": False},
-                "long_balls": {"type_stat_pct": False},
-                "offsides": {"type_stat_pct": False},
-                "passing_accuracy": {"type_stat_pct": True},
-                "possession": {"type_stat_pct": True},
-                "saves": {"type_stat_pct": True},
-                "shots_on_target": {"type_stat_pct": True},
-                "tackles": {"type_stat_pct": False},
-                "throw_ins": {"type_stat_pct": False},
-                "touches": {"type_stat_pct": False},
-            }
-            
             gen_stats = GeneralComparatorMatchStats.objects.filter(match_id=match_id).first()
-            
-            
-            
             
                 
             if not gen_stats:
@@ -59,8 +36,8 @@ class BasicStatsOfMatchComparatorView(APIView):
                 
             else:
                 match_stats_dict = build_match_stats_dict(gen_stats)
-                serializer = BasicMatchStatsSerializer(match_stats_dict)
-                response_data = serializer.data
+                #serializer = BasicMatchStatsSerializer(match_stats_dict)
+                response_data = match_stats_dict
 
 
             
@@ -73,7 +50,7 @@ def build_match_stats_dict(instance):
     un diccionario listo para serializar con BasicMatchStatsSerializer.
     """
     result = {
-        "match_id": instance.match_id.id  # o .pk si no usas id directamente
+        "match_id": instance.match_id.match_id  # o .pk si no usas id directamente
     }
 
     for stat_name, is_pct in stats_mapping.items():
@@ -88,7 +65,7 @@ def build_match_stats_dict(instance):
             result[stat_name] = {
                 "local": local_value,
                 "visitor": visitor_value,
-                "type_stat_pct": is_pct
+                "type_stat_pct": is_pct.get("type_stat_pct")
             }
 
     return result

@@ -2,7 +2,8 @@
 
 
 import math
-from pyspark.sql.types import StructType
+from pyspark.sql import Row
+from pyspark.sql.types import StructType, StructField, StringType
 import pandas as pd
 from pyspark.sql import functions as F
 import traceback
@@ -14,7 +15,7 @@ from spark_schema import get_schema_by_index, get_shots_stats_schema, get_match_
 from write_dataframe_to_mysql_file import write_dataframe_to_mysql
 from fbref_db_call_outcome_shots_events import get_player, get_team_id_by_name_andleague_id, get_event_shots, get_body_part, get_outcome
 from clean_dataframe_file import clean_dataframe
-
+from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import select_football_match
 
 
 ############################################################################
@@ -43,40 +44,42 @@ def get_all_data_of_player(match_id, league, league_id, season, season_id, local
         print("\n\n")
 
         success1 = get_player_data(local_field_player, match_id, league, season, local, 0, spark, jdbc_url, db_properties)
-        if success1 is None or success1.empty:
+        if success1 is None or success1.isEmpty():
             print("Error al procesar datos de algunos jugadores locales")
-            return pd.DataFrame()
+            return spark.createDataFrame([], StructType([]))   
         print("\n\n")
 
         success3 = get_player_data(visitor_field_player, match_id, league, season, visitor, 1, spark, jdbc_url, db_properties)
-        if success3 is None or success3.empty:
+        if success3 is None or success3.isEmpty():
             print("Error al procesar datos de algunos jugadores visitantes")
-            return pd.DataFrame()
+            return spark.createDataFrame([], StructType([]))   
         print("\n\n")
         
         success2 = get_gk_data(local_goalkeeper, match_id, league, season, local, 0, spark, jdbc_url, db_properties)
-        if success2 is None or success2.empty:
+        if success2 is None or success2.isEmpty():
             print("Error al procesar datos de los porteros locales")
-            return pd.DataFrame()
+            return spark.createDataFrame([], StructType([]))   
         print("\n\n")
         
         success4 = get_gk_data(visitor_goalkeeper, match_id, league, season, visitor, 1, spark, jdbc_url, db_properties)
-        if success4 is None or success4.empty:
+        if success4 is None or success4.isEmpty():
             print("Error al procesar datos de los porteros visitantes")
-            return pd.DataFrame()
+            return spark.createDataFrame([], StructType([]))   
         print("\n\n")
         
         success5 = get_shots_data(player_data[17], match_id, league_id, season_id, local, visitor, spark, jdbc_url, db_properties)
-        if success5 is None or success5.empty:
+        if success5 is None or success5.isEmpty():
             print("Error al procesar datos de los tiros")
-            return pd.DataFrame()
+            return spark.createDataFrame([], StructType([]))   
 
     except Exception as e:
         print(f"Error en get_all_data_of_player: {e}")
-        return pd.DataFrame()
+        return spark.createDataFrame([], StructType([]))   
 
     print('All data of player collected...')
-    return pd.DataFrame({"Mensaje": ["Datos de los jugadores procesados correctamente."]})
+    schema = StructType([StructField("message", StringType(), True)])
+    data = [Row("Datos de jugadores y porteros procesados correctamente.")]
+    return spark.createDataFrame(data, schema)
     
 
 
@@ -84,6 +87,8 @@ def get_all_data_of_player(match_id, league, league_id, season, season_id, local
 def get_shots_data(data_frame, match_id, league_id, season_id, local, visitor, spark, jdbc_url, db_properties):
     print('Getting shots data...')
     error_shots = []
+    returning_value = spark.createDataFrame([], StructType([]))
+    
     try:
         data_frame = data_frame.copy()
         all_data = []
@@ -153,31 +158,31 @@ def get_shots_data(data_frame, match_id, league_id, season_id, local, visitor, s
             df = pd.DataFrame(all_data)  # Convertir lista de diccionarios en DataFrame
             df_spark = spark.createDataFrame(df, schema)
             write_dataframe_to_mysql(df_spark, jdbc_url, db_properties, "stats_shots_summary")
+            returning_value = df_spark
 
     except Exception as e:
         print(f"Error al obtener los datos de los tiros: {e}")
-        return pd.DataFrame()
+        returning_value = spark.createDataFrame([], StructType([]))
     
     if len(error_shots) > 3:
         print(f"Se encontraron {len(error_shots)} filas con errores en los datos de los tiros.")
         for i, row in enumerate(error_shots):
             print(f"Fila {i + 1}: {row}")
             
-        return pd.DataFrame()
-    else:
-        print(len(error_shots))
+        returning_value = spark.createDataFrame([], StructType([]))
 
     print('Shots data collected...')
-    return df
+    return returning_value
 
 
 
 def add_position_on_field_of_each_player(data_frame, spark, jdbc_url, db_properties):
     print('Adding position on field of each player...')
+    returning_value = spark.createDataFrame([], StructType([]))
+    
     #Se va a añadir la posición en el campo de cada jugador
     data_frame = data_frame.drop_duplicates()
-    
-    query = "SELECT position_id, position_name FROM position_on_the_field"
+ 
     spark_df = spark.read.jdbc(
         url=jdbc_url, 
         table="position_on_the_field", 
@@ -191,7 +196,7 @@ def add_position_on_field_of_each_player(data_frame, spark, jdbc_url, db_propert
     try:
         # Crear una lista para almacenar las filas que vamos a insertar
         positions_to_insert = []
-
+        data_frame = data_frame.toPandas()
         # Iterar sobre cada jugador
         for index, row in data_frame.iterrows():
             player_id = row['player_id']
@@ -218,14 +223,14 @@ def add_position_on_field_of_each_player(data_frame, spark, jdbc_url, db_propert
 
         # Insertar los datos en la base de datos
         write_dataframe_to_mysql(spark_df, jdbc_url, db_properties, "position_player")
-    
-    
+        returning_value = spark_df
+        print("Posiciones añadidas correctamente.")
+        
     except Exception as e:
         print(f"Error al añadir la posición en el campo de cada jugador: {e}")
-        return pd.DataFrame()
+        returning_value = spark.createDataFrame([], StructType([]))
 
-    print("Posiciones añadidas correctamente.")
-    return positions_df
+    return returning_value
 
 
 
@@ -251,7 +256,6 @@ def get_player_data(list_tables_player, match_id, league, season, local_or_visit
     stats_element = dic_stats
     print('Getting player data...')
     index1 = 0
-    error_player = []
 
     try:
         for index, table in enumerate(list_tables_player):
@@ -265,7 +269,6 @@ def get_player_data(list_tables_player, match_id, league, season, local_or_visit
             if len(data_frame.columns) != len(stats):
                 raise ValueError("El número de columnas en la tabla no coincide con los que son en la columna stats")
                 
-
             # Renombrar las columnas
             [col_name for col_name, _ in zip(stats, data_frame.columns)]
             data_frame.columns = stats
@@ -278,27 +281,26 @@ def get_player_data(list_tables_player, match_id, league, season, local_or_visit
                 data_frame_basic["age"] = data_frame_basic["age"].str.split('-').str[0].astype(int, errors="ignore")
          
                 inserts_of_player_and_basic_stats = insert_basic_elements_of_player_into_database(index1, type_of_player, data_frame_basic, match_id, league, season, local_or_visitor_name_team, flag_local_visitor, spark, jdbc_url, db_properties)
-                if inserts_of_player_and_basic_stats.empty:
-                    return pd.DataFrame()
+                if inserts_of_player_and_basic_stats.isEmpty():
+                    return spark.createDataFrame([], StructType([]))
 
                 df_selected = inserts_of_player_and_basic_stats[["position", "match_id", "player_id"]]
-                if add_position_on_field_of_each_player(df_selected, spark, jdbc_url, db_properties).empty:
-                    return pd.DataFrame()
+                if add_position_on_field_of_each_player(df_selected, spark, jdbc_url, db_properties).isEmpty():
+                    return spark.createDataFrame([], StructType([]))
 
             data_frame = clean_dataframe(data_frame)
 
             df = insert_dataframe_into_database_of_player(index1, data_frame, local_or_visitor_name_team, match_id, spark, jdbc_url, db_properties)
             if df.isEmpty():
                 print("Error al insertar los datos de los jugadores.")
-                return pd.DataFrame()
+                return spark.createDataFrame([], StructType([]))
             
 
     except Exception as e:
         print(f"Error procesando el equipo: {e} ")
-        return pd.DataFrame()
-
+        return spark.createDataFrame([], StructType([]))
     
-    return pd.DataFrame({"Mensaje": ["Datos de los jugadores procesados correctamente."]})
+    return df
 
 
 
@@ -319,10 +321,10 @@ def get_player_data(list_tables_player, match_id, league, season, local_or_visit
 def get_gk_data(data_frame, match_id, league, season, local_or_visitor_name_team, flag_local_visitor, spark, jdbc_url, db_properties):
     type_of_player = 1
     print('Getting goalkeeper data...')
+    returning_value = spark.createDataFrame([], StructType([]))
     try:
         if len(data_frame.columns) != len(stats_goalkeeper_summary):
             raise ValueError("El número de columnas en la tabla no coincide con los que son en la columna stats")
-            #return pd.DataFrame()
 
         [col_name for col_name, _ in zip(stats_goalkeeper_summary, data_frame.columns)]
         data_frame.columns = stats_goalkeeper_summary
@@ -342,20 +344,17 @@ def get_gk_data(data_frame, match_id, league, season, local_or_visitor_name_team
         data_frame_cleaned["gk_goals_against"] = data_frame_cleaned["gk_goals_against"].fillna(0).astype(int, errors="ignore")
         data_frame_cleaned["gk_def_actions_outside_pen_area"] = data_frame_cleaned["gk_def_actions_outside_pen_area"].fillna(0).astype(int, errors="ignore")
         
-        if insert_dataframe_into_database_of_player(index, data_frame_cleaned, local_or_visitor_name_team, match_id, spark, jdbc_url, db_properties).rdd.isEmpty():
-            return pd.DataFrame()
+        gk_data = insert_dataframe_into_database_of_player(index, data_frame_cleaned, local_or_visitor_name_team, match_id, spark, jdbc_url, db_properties)
+        if not gk_data.isEmpty():
+            returning_value = gk_data
+        
         
     except Exception as e:
         print(f"Error procesando el equipo: {e} ")
-        return pd.DataFrame()
+        returning_value = spark.createDataFrame([], StructType([]))
 
     print('Goalkeeper data collected...')
-    return data_frame
-
-
-
-
-
+    return returning_value
 
 
 
@@ -371,7 +370,7 @@ def insert_dataframe_into_database_of_player(index, df, local_visitor, match_id,
             print(f"Esquema no encontrado para el índice {index}.")
         
         else: 
-        
+                    
             # Obtener la tabla de jugadores desde la BD
             jugadores_df = spark.read.jdbc(
                 url=jdbc_url, 
@@ -397,7 +396,6 @@ def insert_dataframe_into_database_of_player(index, df, local_visitor, match_id,
             F.col("jugadores.player_id").alias("player_id"))
 
             df_spark = df_spark.drop("player")
-
             df_spark = df_spark.alias("df_spark")
             
             # Filtrar jugadores no encontrados
@@ -408,7 +406,6 @@ def insert_dataframe_into_database_of_player(index, df, local_visitor, match_id,
 
             # Filtrar jugadores que sí tienen ID en la BD
             df_spark = df_spark.filter(F.col("player_id").isNotNull())
-
             df_spark = df_spark.alias("df_spark")
             # Unir con las estadísticas del partido para obtener `estadistica_id`
             df_spark = df_spark.join(
@@ -434,7 +431,7 @@ def insert_dataframe_into_database_of_player(index, df, local_visitor, match_id,
 
                 df = spark.createDataFrame(df_spark.toPandas(), schema_to_insert)
                 write_dataframe_to_mysql(df, jdbc_url, db_properties, table_name)
-                returning_value = df_spark
+                returning_value = df
             else:
                 print("No se insertaron datos, ya que no se encontraron jugadores o estadísticas adecuadas, datos insertados incorrectamente en la tabla.", table_dic_to_insert[index])
                 
@@ -452,20 +449,29 @@ def insert_dataframe_into_database_of_player(index, df, local_visitor, match_id,
 
 def insert_basic_elements_of_player_into_database(index, type_of_player, data_frame_basic, match_id, league, season, local_visitor_team_name, local_visitor_flag, spark, jdbc_url, db_properties):
     try:
-        error_player = []
 
         print("Insertando estadísticas básicas de jugadores en la base de datos...")
+        returning_value = spark.createDataFrame([], StructType([]))
 
         data_frame_basic = data_frame_basic.copy()
         data_frame_basic.loc[:, 'match_id'] = match_id
 
         league = league.replace("-", " ")
 
-        # Obtener el team_id
-        team_id = select_team_id_by_match_id(match_id, local_visitor_flag, spark, jdbc_url, db_properties)
-        if team_id == -1:
-            print("Error: No se pudo obtener el team_id.")
-            return pd.DataFrame()
+        spark_df = select_football_match(spark, jdbc_url, db_properties, match_id)
+        if spark_df is None:
+            print(f"Error: No se encontró el partido con match_id {match_id}.")
+            return spark.createDataFrame([], StructType([]))
+        else:
+            # Verificar si el partido es local o visitante
+            if local_visitor_flag == 0:
+                team_id = spark_df["Home"]
+            elif local_visitor_flag == 1:
+                team_id = spark_df["Away"]
+            else:
+                print("Error: local_visitor_flag debe ser 0 o 1.")
+                return spark.createDataFrame([], StructType([]))
+        
 
         # Obtener IDs de los jugadores en la BD
         existing_players_df = spark.read.jdbc(
@@ -489,10 +495,8 @@ def insert_basic_elements_of_player_into_database(index, type_of_player, data_fr
             existing_players_df = spark.read.jdbc(url=jdbc_url, table="jugador", properties=db_properties).select("player", "player_id")
             data_frame_basic_spark = data_frame_basic_spark.drop("player_id").join(existing_players_df, "player", "left")
 
-
         # Obtener `player_id` correctamente
         data_frame_basic_spark = data_frame_basic_spark.filter(data_frame_basic_spark.player_id.isNotNull())
-
 
         # Verificar si existe la relación `team_player`
         team_player_df = spark.read.jdbc(url=jdbc_url, table="team_player", properties=db_properties).select("player_id", "team_id")
@@ -535,56 +539,20 @@ def insert_basic_elements_of_player_into_database(index, type_of_player, data_fr
             stats_df = missing_stats_df.select(["df_basic.player_id", "df_basic.match_id"] + stats_columns)
 
             write_dataframe_to_mysql(stats_df, jdbc_url, db_properties, "match_statistics")
-
+            
+        else:
+            print("No se encontraron estadísticas faltantes para insertar.")
 
     except Exception as e:
         print("Error al insertar estadísticas básicas de jugadores:")
         traceback.print_exc()
-        return pd.DataFrame()
+        return spark.createDataFrame([], StructType([]))
 
     print("Inserción completada correctamente.")
-    return data_frame_basic_spark.toPandas()
+    return data_frame_basic_spark
 
 
 
-
-
-def select_team_id_by_match_id(match_id, local_visitor_flag, spark, jdbc_url, db_properties):
-
-    try:
-        
-        if local_visitor_flag == 0:       
-            df_team = spark.read.jdbc(
-                url=jdbc_url, 
-                table="football_match", 
-                properties=db_properties
-            ).select("Home").filter(F.col("match_id") == match_id)
-        elif local_visitor_flag == 1:
-            df_team = spark.read.jdbc(
-                url=jdbc_url, 
-                table="football_match", 
-                properties=db_properties
-            ).select("Away").filter(F.col("match_id") == match_id)
-        
-
-        team_id = df_team.first()[0]
-        return int(team_id)
-    except Exception as e:
-        print("Error obtaining team ID", e)
-        print("Partido: ", match_id)
-        
-        return -1
-
-
-def add_all_data_of_match_statistics_to_database(stats_dict, spark, jdbc_url, db_properties):
-
-    try:
-        stats_df = spark.createDataFrame(stats_dict, get_match_stats_schema())
-        write_dataframe_to_mysql(stats_df, jdbc_url, db_properties, "match_statistics")
-
-    except Exception as e:
-        print("Error inserting player statistics:", e)
-        return False
 
 
 
