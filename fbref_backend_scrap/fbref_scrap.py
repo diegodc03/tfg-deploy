@@ -187,6 +187,7 @@ def get_fixture_data(url, league, league_id, season, season_id, type_of_competit
                             continue
                     else:
                         print('Fixture data collected...')
+                        returning_value = pd.DataFrame({"Mensaje": ["No se han encontrado partidos nuevos"]})
                         last_match_id = -1
 
 

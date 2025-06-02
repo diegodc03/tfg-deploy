@@ -26,7 +26,7 @@ export default function GenericSelect<T>({
     onChange(event.target.value);
   };
 
-  const isStringArray = typeof items[0] === 'string';
+  const isStringArray = items && items.length > 0 && typeof items[0] === 'string';
 
 
   return (

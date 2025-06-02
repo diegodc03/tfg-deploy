@@ -8,6 +8,7 @@ import { MatchAPISearch } from "../model/MatchAPI";
 import BasicInfoMatch from "../components/BasicInfoMatch";
 import ShowBasicStats from "../components/showBasicStats";
 
+
 const ShowMatchStats = () => {
 
     const [isLoading, setIsLoading] = useState(true);
@@ -84,9 +85,10 @@ const ShowMatchStats = () => {
                     <strong>Estadísticas disponibles del partido</strong>
                 </Typography>
                 <Stack direction={"row"}  sx={{  backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 3 }} >
-                    <CardShow title={"Estadísticas de jugadores"} text={"Todas las estadísticas de los jugadores (pases, goles...) "} image={realMadridImg} />
-                    <CardShow title={"Comparacion de jugadores"} text={"Compara los jugadores del partido para poder ver cosas que nunca habias visto"} image={realMadridImg} />
-                    <CardShow title={"Puntuaciones"} text={"Puntuaciones de los jugadores del partido segun su posicion y tambien la forma de juego"} image={realMadridImg} navigateElement={`/match-stats-score/${match_id}`}  />
+                    <CardShow title={"Estadísticas de jugadores"} text={"Todas las estadísticas de los jugadores (pases, goles...) "} image={realMadridImg} navigateElement={`/match-players-stats/${match_id}`} />
+                    <CardShow title={"Comparacion de jugadores y Gráficas"} text={"Compara los jugadores del partido para poder ver cosas que nunca habias visto"} image={realMadridImg} navigateElement={`/stats-players-match/${match_id}`}  />
+                    <CardShow title={"Puntuaciones"} text={"Puntuaciones de los jugadores del partido segun su posicion y tambien la forma de juego"} image={realMadridImg} navigateElement={`/scores-of-players-match/${match_id}`}  />
+                    <CardShow title={"Graficos de jugadores"} text={"Graficos de los jugadores según la gráfica"} image={realMadridImg} navigateElement={`/stats-chart-of-match/${match_id}`}  />
                 </Stack>
 
                 <Typography gutterBottom sx={{ marginTop: 6, fontWeight: 'bold', color: 'black' }}>

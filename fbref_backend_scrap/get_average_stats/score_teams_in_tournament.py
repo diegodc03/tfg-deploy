@@ -24,45 +24,50 @@ def get_teams_average_of_5_leagues(spark, jdbc_url, db_properties):
     print(league_df.show())
     try:
         for row in league_df.collect():
-            if row["tournament_id"] == 128:
+            
+            season_id = row["season_tournament_id"]
+            season_year = row["season_year"]
+            tournament_id = row["tournament_id"]
+            tournament_name = row["nombre_liga"]
+            tournament_name = tournament_name.replace(' ', '-')
+            tournament_fbref_id = row["tournament_fbref_id"]
+            type_of_competition = row["type_of_competition"]
+            
+            if tournament_id == 130 or tournament_id == 128:
+                continue
 
-                season_id = row["season_tournament_id"]
-                season_year = row["season_year"]
-                tournament_id = row["tournament_id"]
-                tournament_name = row["nombre_liga"]
-                tournament_name = tournament_name.replace(' ', '-')
-                tournament_fbref_id = row["tournament_fbref_id"]
-                type_of_competition = row["type_of_competition"]
+            url = f'https://fbref.com/en/comps/{tournament_fbref_id}/{season_year}/schedule/{season_year}-{tournament_name}-Scores-and-Fixtures'
+            
+            teams_on_competition_df = get_teams_in_competition(spark, jdbc_url, db_properties, row["tournament_id"])
+            
+      
+            for teams in teams_on_competition_df.collect():
+                team_id = teams["team_id"]
+                print(f"Team ID: {team_id}")
+                
+                
+                df = get_teams_average_of_competitions(spark, jdbc_url, db_properties, row["tournament_id"], team_id)
+                if df.isEmpty():
+                    continue
 
-                url = f'https://fbref.com/en/comps/{tournament_fbref_id}/{season_year}/schedule/{season_year}-{tournament_name}-Scores-and-Fixtures'
                 
-                teams_on_competition_df = get_teams_in_competition(spark, jdbc_url, db_properties, row["tournament_id"])
+                print("")
+                print("")
                 
-                
-                for teams in teams_on_competition_df.collect():
-                    team_id = teams["team_id"]
-                    print(f"Team ID: {team_id}")
-                    
-                    df = get_teams_average_of_competitions(spark, jdbc_url, db_properties, row["tournament_id"], team_id)
-                    if df.isEmpty():
-                        continue
-                    
-                    print("")
-                    print("")
-                    
-                    df_basic = get_teams_stats_avg_devs_tip_for_competition_by_players_position(spark, jdbc_url, db_properties, row["tournament_id"], team_id)
-                    if df_basic.isEmpty():
-                        continue
-                
-                
-                print(url)
-                break
+                df_basic = get_teams_stats_avg_devs_tip_for_competition_by_players_position(spark, jdbc_url, db_properties, row["tournament_id"], team_id)
+                if df_basic.isEmpty():
+                    continue
+            
+            
+            print(url)
+            
     except Exception as e:
         print(f"Error: {e}")
         returning_value = pd.DataFrame()
     
     return returning_value
  
+
  
  
 def get_teams_average_of_competitions(spark, jdbc_url, db_properties, league_id, team_id):
@@ -72,7 +77,7 @@ def get_teams_average_of_competitions(spark, jdbc_url, db_properties, league_id,
     try:
         if check_if_avg_teams_stats_of_league_exists(spark, jdbc_url, db_properties, league_id, team_id):
             print("Ya existen las estadísticas medias de la liga")
-            success = spark.createDataFrame([("Correcto",)], ["Correcto"])
+            success = spark.createDataFrame([("Repetido",)], ["Correcto"])
         else :
             dict_val_columns_average_stats_more = {"league_id": league_id, "starter_status": "starter", "team_id": team_id}
             dict_val_columns_average_stats_less = {"league_id": league_id, "starter_status": "substitute", "team_id": team_id}

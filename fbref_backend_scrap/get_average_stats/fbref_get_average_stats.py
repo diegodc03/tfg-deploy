@@ -40,8 +40,11 @@ def get_average_of_5_leagues(spark, jdbc_url, db_properties):
                 url = f'https://fbref.com/en/comps/{tournament_fbref_id}/{season_year}/schedule/{season_year}-{tournament_name}-Scores-and-Fixtures'
                 
                 df = get_average_of_competitions(spark, jdbc_url, db_properties, row["tournament_id"])
-                if df.isEmpty():
+                print(df.show())
+                if df.filter(col("Correcto") == "Error").count() > 0:   
                     continue
+                elif df.filter(col("Correcto") == "Ya existe").count() > 0:
+                    break
                 
                 print("")
                 print("")
@@ -77,7 +80,7 @@ def get_average_of_competitions(spark, jdbc_url, db_properties, league_id):
     try:
         if check_if_avg_stats_of_league_exists(spark, jdbc_url, db_properties, league_id):
             print("Ya existen las estadísticas medias de la liga")
-            success = spark.createDataFrame([("Correcto",)], ["Correcto"])
+            success = spark.createDataFrame([("Correcto",)], ["Ya existe"])
         else :
             dict_val_columns_average_stats_more = {"league_id": league_id, "starter_status": "starter"}
             dict_val_columns_average_stats_less = {"league_id": league_id, "starter_status": "substitute"}

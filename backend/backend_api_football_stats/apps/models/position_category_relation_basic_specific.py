@@ -25,3 +25,5 @@ class PositionCategoryRelationBasicSpecific(models.Model):
     class Meta:
         managed = False
         db_table = 'position_category_relation'
+        
+        

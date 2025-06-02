@@ -69,6 +69,15 @@ class GetStatsOfPlayersMatchView(APIView):
                 # Si ese partido existe, ahora hay que recoger los jugadores que participaron en el partido
                 # y filtrar por el id de la posición básica si se proporciona
 
+                # También vamos a recoger el equipo al que pertenece el jugador
+                league_id = football_match.Season
+                team_id_local = football_match.Home
+                team_id_visitor = football_match.Away
+                
+                
+
+
+
                 match_stats_ids = MatchStatistics.objects.filter(match_id=int(match_id))
                 if not match_stats_ids.exists():
                     response_data = {"error": "No hay jugadores para este partido cuando se filtra por tipo de jugador."}

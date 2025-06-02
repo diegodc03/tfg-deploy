@@ -104,6 +104,7 @@ const ShowBasicStats = ({ matchId }: MatchIdProp) => {
             
         </>
     );
-
 }
+
+
 export default ShowBasicStats;

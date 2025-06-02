@@ -15,6 +15,7 @@ import {
   Title,
 } from 'chart.js';
 import { StatEntry, ChartType } from '../../model/statsTypes/stats';
+import { StatValues } from '../../model/statsTypes/StatsModel';
 
 ChartJS.register(
   CategoryScale,
@@ -29,6 +30,8 @@ ChartJS.register(
   Title
 );
 
+import { colorBasicPositionsCharts, colorTeamCharts } from '../../model/constants/constants';
+
 const chartMap = {
   bar: Bar,
   line: Line,
@@ -37,23 +40,50 @@ const chartMap = {
   radar: Radar,
 };
 
+const typeOfChartColors = {
+  positions: colorBasicPositionsCharts,
+  teams: colorTeamCharts,
+};
+
 interface Props {
-  stat: StatEntry;
+  stat: StatValues;
+  typeOfChart: string;
+  
 }
 
-export const ReusableChart = ({ stat }: Props) => {
-  const ChartComponent = chartMap[stat.type || 'bar'];
+
+
+
+
+
+export const ReusableChart = ({ stat, typeOfChart }: Props) => {
+  
+  const typeOfChartColor = "positions"; // Default color scheme, can be 'positions' or 'teams'
+
+  const ChartComponent = chartMap[typeOfChart as keyof typeof chartMap] || Bar;
+  const typeColors = typeOfChartColors[typeOfChartColor as keyof typeof typeOfChartColors] || colorBasicPositionsCharts;
+  // Dependiendo el grafico es necesario transformar los datos o no, ya que de linea si, pero de 
+
+  const labels = stat.values.map((entry) => entry.player_name);
+  const dataValues = stat.values.map((entry) => entry.value);
+
+  const isSingleDatasetChart = ['bar', 'line', 'radar'];
+  const isPieLikeChart = ['pie', 'doughnut'];
+  const typeFilterColorChart = []
+
+  const backgroudColors = stat.values.map((entry, index) => {
+    return typeColors[entry.basic_position] || typeColors["other"]
+  });
+
+
 
   const chartData = {
-    labels: stat.labels,
+    labels: labels,
     datasets: [
       {
-        label: stat.title,
-        data: stat.data,
-        backgroundColor: [
-          '#1abc9c', '#3498db', '#9b59b6',
-          '#f1c40f', '#e67e22', '#e74c3c'
-        ],
+        label: stat.stat,
+        data: dataValues,
+        backgroundColor: backgroudColors,
       },
     ],
   };
@@ -66,7 +96,7 @@ export const ReusableChart = ({ stat }: Props) => {
         plugins: {
           title: {
             display: true,
-            text: stat.title,
+            text: stat.stat,
           },
         },
       }}

@@ -13,10 +13,22 @@ import axios from 'axios';
 import { ChartType, StatEntry } from '../../model/statsTypes/stats';
 import { ReusableChart } from '../../components/charts/reusableChart';
 import { StatsList } from '../../components/charts/StatsList';
+import { useParams } from 'react-router-dom';
+import { TablesStats } from '../../model/tablesStats/TablesStats';
+import { Stats } from '../../model/statsTypes/StatsModel';
+import { Box, Container, Stack } from '@mui/material';
+import realMadridImg from '../../images/real_madrid.jpg';
 
 
+export const ShowStatsChartFromMatch = () => {
 
-export const ShowStatsFromMatch = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const { match_id } = useParams();
+
+  const [stats, setStats] = useState<Stats>([]);
+  const [filtersArray, setFiltersArray] = useState<TablesStats[]>([]);
+  const [selectedFilters, setSelectedFilters] = useState<String>('');
+
     const [opciones, setOpciones] = useState<any[]>([]);
     const [tabla, setTabla] = useState('');
     const [columna, setColumna] = useState('');
@@ -25,49 +37,72 @@ export const ShowStatsFromMatch = () => {
     const [labels, setLabels] = useState<string[]>([]);
     const [statsEntryList, setStatsEntryList] = useState<StatEntry[]>([null]);
   
-    useEffect(() => {
-      axios.get('http://localhost:8000/api/estadisticas/opciones/')
-        .then(res => {
-          setOpciones(res.data);
-          if (res.data.length > 0) {
-            setTabla(res.data[0].tabla);
-            setColumna(res.data[0].columnas[0]);
-          }
-        });
-    }, []);
-  
-    useEffect(() => {
-      if (!tabla || !columna) return;
-  
-      axios.get(`http://localhost:8000/api/estadisticas/?tabla=${tabla}&columna=${columna}`)
-        .then(res => {
-          setValores(res.data.valores);
-          setLabels(res.data.labels || res.data.valores.map((_: any, i: number) => `Item ${i + 1}`));
-        });
-    }, [tabla, columna]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
 
-
-    useEffect(() => {
-  
-      axios.get(`http://localhost:8000/api/estadisticas/todas`)
-        .then(res => {
-          const stats = res.data.map((stat: any) => ({
-            title: stat.title,
-            labels: stat.labels,
-            data: stat.data,
-            type: stat.type || 'bar',
-          }));
-          setStatsEntryList(stats);
-        });
-    }
-    , [tabla, columna]);
         
-  
+        const [responseStats, responseFilters] = await Promise.all([
+          fetch(`http://localhost:8000/api/chart/statsPlayersMatchBasic/?match_id=${match_id}`),
+          fetch('http://localhost:8000/api/filter/filtersUnitaryPlayerMatchChart/')
+        ]);
 
-  
-    return (
-      <div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        if (!responseStats.ok || !responseFilters.ok) {
+          throw new Error('Error fetching data');
+        }
+
+        const [statsData, filtersData] = await Promise.all([
+          responseStats.json(),
+          responseFilters.json()
+        ]);
+
+        console.log('Datos de las estadísticas de los jugadores:', statsData);
+        console.log('Datos de los filtros de las tablas:', filtersData);
+
+        setStats(statsData);
+        setFiltersArray(filtersData);
+        setIsLoading(false);          
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+    
+
+  return (
+
+
+    <Box
+              sx={{
+                  backgroundImage: `url(${realMadridImg})`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundAttachment: 'fixed',
+                  backgroundSize: 'cover',
+                  minHeight: '100vh',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  
+              }}>
+
+      <Container>
+        <Stack  sx={{marginTop: 6,  backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
+          <StatsList name={columna} stats={stats} typeOfChart={'bar'}  />
+        </Stack>
+      </Container>
+    
+    </Box>
+  );
+};
+
+
+
+  {
+    /*
+    <div style={{ display: 'flex', gap: '1rem' }}>
           <select onChange={e => {
             const t = e.target.value;
             setTabla(t);
@@ -93,13 +128,5 @@ export const ShowStatsFromMatch = () => {
             <option value="radar">Radar</option>
           </select>
         </div>
-  
-        <div style={{ marginTop: '2rem', maxWidth: '800px' }}>
-  
-          {/* <ReusableChart stat={statEntry} />*/}
-
-          <StatsList name={columna} stats={statsEntryList} />
-        </div>
-      </div>
-    );
-  };
+    */
+  }

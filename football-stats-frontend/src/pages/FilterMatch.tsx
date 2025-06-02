@@ -136,7 +136,7 @@ export default function FilterMatch() {
     };
 
     return (
-            <Box
+        <Box
             sx={{
             backgroundImage: `url(${realMadridImg})`,
             backgroundRepeat: 'no-repeat',

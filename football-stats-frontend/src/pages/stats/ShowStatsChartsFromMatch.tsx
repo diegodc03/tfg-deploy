@@ -1,12 +1,5 @@
 
 
-
-
-
-
-
-
-
 import { Box, Button, Container, Grid, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -14,7 +7,7 @@ import LoadingIndicator from '../../components/LoaqdingIndicator';
 import realMadridImg from "../../images/real_madrid.jpg";
 import GenericSelectProps from '../../components/MultipleSelect';
 import { TablesStats } from '../../model/tablesStats/TablesStats';
-import StatsOfMatchPlayers from '../../components/statsOfMatchPlayers';
+import SpecificStatsOfMatchPlayers from '../../components/SpecificStatsOfMatchPlayers';
 import { StatsList } from '../../components/charts/StatsList';
 /**
  * 
@@ -29,10 +22,10 @@ import { StatsList } from '../../components/charts/StatsList';
 
 
 
-export default function ShowStatsFromTeams() {
+export default function ShowStatsFromMatch() {
 
 
-    const {league_id} = useParams();
+    const {match_id} = useParams();
     const [isLoading, setIsLoading] = useState(true);
 
     const [type_table_stats, setTypeTableStats] = useState<string>('stats_summary'); 
@@ -45,8 +38,8 @@ export default function ShowStatsFromTeams() {
             try {
 
                 const [playersStatsResponse, filterTablesResponse] = await Promise.all([
-                    fetch(`http://localhost:8000/api/stats/getStatsOfMatch/?league_id=${league_id}`),
-                    fetch(`http://localhost:8000/api/filter/filtersMatchChart/`)
+                    fetch(`http://localhost:8000/api/chart/statsPlayersMatchToChart/?match_id=${match_id}`),
+                    fetch(`http://localhost:8000/api/filter/filtersUnitaryPlayerMatchChart/`)
                 ]);
 
                 if (!playersStatsResponse.ok || !filterTablesResponse.ok) {
@@ -73,7 +66,7 @@ export default function ShowStatsFromTeams() {
         
     }
         fetchData();
-    }, [league_id]);
+    }, [match_id]);
 
     const handleChangeTableStats = (value: string) => {
         setTypeTableStats(value);
@@ -135,10 +128,10 @@ export default function ShowStatsFromTeams() {
                     <strong>Listado de resultados </strong>
                 </Typography>
                 <Typography variant="body1">
-                    Tabla de estadísticas los equipos segun la temporada
+                    Tabla de estadísticas de los jugadores
                 </Typography>
                 <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: 4, backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: 3, borderRadius: 2 }} >
-                    <StatsOfMatchPlayers data={data} />
+                    <SpecificStatsOfMatchPlayers data={data} />
                 </Grid>
                 
 

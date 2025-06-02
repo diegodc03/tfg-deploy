@@ -1,21 +1,25 @@
 import { ReusableChart } from './reusableChart';
 import { Bar, Line, Pie, Doughnut, Radar } from 'react-chartjs-2';
 import { PlayerStatGroup, StatEntry } from '../../model/statsTypes/stats';
+import { Stats } from '../../model/statsTypes/StatsModel';
 
 interface Props {
     name: string;
-    stats: StatEntry[];
-
+    stats: Stats;
+    typeOfChart?: 'bar' | 'line' | 'pie' | 'doughnut' | 'radar';
 }
 
-export const StatsList = ({ name, stats }: Props) => {
+
+
+
+export const StatsList = ({ name, stats, typeOfChart }: Props) => {
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">{name}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat, index) => (
           <div key={index} className="bg-white rounded-lg shadow p-4">
-            <ReusableChart stat={stat} />
+            <ReusableChart stat={stat} typeOfChart={typeOfChart} />
           </div>
         ))}
       </div>

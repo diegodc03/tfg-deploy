@@ -1,6 +1,10 @@
 # apps/api/urls/season_tournament_view_urls.py
 from django.urls import path
 
+from ..api.get_stats_match_to_chart_basic_stats import GetStatsMatchToChartBasicStatsView
+
+from ..api.get_stats_teams_view import GetStatsTeamsUnitaryView
+
 
 from ..api.basic_visualize_of_match import BasicVisualizeOfMatchView
 from ..api.basic_stats_of_match_comparator_view import BasicStatsOfMatchComparatorView
@@ -45,7 +49,13 @@ urlpatterns = [
     
     path('chart/statsPlayersMatchToChart/', GetStatsPlayersToChartView.as_view(), name='get_stats_players_to_chart'),  # Ruta para obtener los filtros de los partidos
     path('chart/statsToChart/', GetStatsMatchToChartView.as_view(), name='get_stats_of_match_chart'),  # Ruta para obtener las estadísticas de los jugadores en un partido
+    path('chart/statsPlayersMatchBasic/', GetStatsMatchToChartBasicStatsView.as_view(), name='get_stats_of_match_basic_stats'),  # Ruta para obtener las estadísticas básicas de los jugadores en un partido
+
 
     path('stats/getStatsOfMatch/', GetStatsOfPlayersMatchView.as_view(), name='get_stats_of_players_match'),  # Ruta para obtener las estadísticas de los jugadores en un partido
+    path('stats/getTeamsStats/', GetStatsTeamsUnitaryView.as_view(), name='get_stats_of_teams_match'),  # Ruta para obtener las estadísticas de los equipos en un partido
+    
+
+
 ]
 

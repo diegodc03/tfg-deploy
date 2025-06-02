@@ -8,7 +8,7 @@ from backend_api_football_stats.apps.serializers_dto.serializers import MatchPla
 from ..models import MatchPlayerScore
 
 
-#GET /api/match-stats-score/?match_id=1
+#GET /api/scores-of-players-match/?match_id=1
 #GET /api/match-stats-score/?match_id=1&basic_position=1
 #GET /api/match-stats-score/?match_id=1&specific_position=1
 #GET /api/match-stats-score/?match_id=1&game_mode=1

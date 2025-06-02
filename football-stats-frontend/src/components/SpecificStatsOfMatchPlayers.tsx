@@ -23,16 +23,30 @@ const generateColumns = (data: any[]): GridColDef[] => {
 
 
 
-export default function StatsOfMatchPlayers({data}: Props) {
 
-  const columns = React.useMemo(() => generateColumns(data), [data]);
+
+
+
+export default function SpecificStatsOfMatchPlayers({data}: Props) {
+
+    // Se tiene que convertir en texto plano para que se pueda mostrar el datagrid
+    const transformedData = data.map((row) => {
+        const base = {id: row.values[0]?.player_id || row.jugador, nombre: row.jugador,};
+        row.values.forEach((value) => {
+            base[value.column] = value.value;
+        });
+        return base;
+        
+    });
+    const columns = React.useMemo(() => generateColumns(transformedData), [transformedData]);
+
 
   return (
     <Box sx={{ height: 1000, width: '100%' }}>
       <DataGrid
-        rows={data}
+        rows={transformedData}
         columns={columns}
-        getRowId={(row) => row.estatistic_id}
+        //getRowId={(row) => transformedData.player_id}
         initialState={{
           pagination: {
             paginationModel: {

@@ -11,6 +11,7 @@ from .basic_position_category import BasicPositionCategory
 from .specifics_positions_by_category import SpecificsPositionsByCategory
 from .config_estadísticas import ESTADISTICAS_INTERESANTES
 from .match_statistics import MatchStatistics
+from .team_player import TeamPlayer
 
 
 from .tables_stats.stats_defensiveactions_summary import StatsDefenseSummary
@@ -29,3 +30,7 @@ from .event_shots import EventShots
 from .outcome_stats import OutcomeStats
 
 from .position_player_match_relation import PositionMatchPlayerRelation
+
+
+from .avg_teams_by_basic_positions import AvgTeamsStatsByBasicPositions
+from .avg_teams_stats import AvgTeamsStats

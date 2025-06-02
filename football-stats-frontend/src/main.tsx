@@ -8,6 +8,10 @@ import FilterSeasonLeague from './pages/FilterSeasonLeague.tsx'
 import FilterMatch from './pages/FilterMatch.tsx'
 import ShowMatchStats from './pages/ShowMatchStats.tsx'
 import ShowScores from './pages/ShowScores.tsx'
+import ShowStatsOfPlayersTables from './pages/stats/ShowStatsOfPlayersTables.tsx'
+
+import { ShowStatsChartFromMatch } from './pages/stats/ShowStatsFromMatch.tsx'
+import ShowStatsFromMatch from './pages/stats/ShowStatsChartsFromMatch.tsx'
 
 
 
@@ -20,7 +24,10 @@ const router = createHashRouter([
       { path: 'filter-by-season-and-league', element: <FilterSeasonLeague /> },
       { path: 'filter-match/:leagueId', element: <FilterMatch /> },
       { path: 'show-match/:match_id', element: <ShowMatchStats /> },
-      { path: 'match-stats-score/:match_id', element: <ShowScores /> },
+      { path: 'scores-of-players-match/:match_id', element: <ShowScores /> },
+      { path: 'match-players-stats/:match_id', element: <ShowStatsOfPlayersTables /> },
+      { path: 'stats-players-match/:match_id', element: <ShowStatsFromMatch /> },
+      { path: 'stats-chart-of-match/:match_id', element: <ShowStatsChartFromMatch /> },
     ],
   },
   {

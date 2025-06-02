@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from ..models.basic_position_category import BasicPositionCategory
-from ..models.team_player import TeamPlayer
+
+from ..models import TeamPlayer
 
 from ..models import PositionCategoryRelationBasicSpecific
 from ..models import PositionMatchPlayerRelation
@@ -12,13 +13,13 @@ from ..models import PositionMatchPlayerRelation
 from ..models import FootballMatch
 from ..models import MatchStatistics
 
-from ..constants.constants import stats_columns, stats_columns_player, model_map
+from ..constants.constants import stats_columns_player, model_map
 
 
 
 # GET /api/charts/statsPlayersMatchToChart/?match_id=1&basic_position=1&type_table_stats=1
 
-class GetStatsMatchToChartView(APIView):
+class GetStatsMatchToChartBasicStatsView(APIView):
 
     def get(self, request):
     
@@ -32,7 +33,7 @@ class GetStatsMatchToChartView(APIView):
         # basic_position
         basic_position_id = request.query_params.get('basic_position', None)
         # type_table_stats
-        type_table_stats = request.query_params.get('type_table_stats', 'stats_summary')
+        type_table_stats = request.query_params.get('type_table_stats', 'passes_player_pct')
         
         response_data = None
         response_status = status.HTTP_400_BAD_REQUEST
@@ -49,7 +50,7 @@ class GetStatsMatchToChartView(APIView):
         
         if not is_valid_str(type_table_stats):
             errores['type_table_stats'] = "El parámetro 'type_table_stats' debe ser un string válido."
-        elif type_table_stats not in stats_columns:
+        elif type_table_stats not in stats_columns_player:
             errores['type_table_stats'] = "El parámetro 'type_table_stats' no es reconocido."
 
         # Si hay errores, devolverlos
@@ -65,6 +66,7 @@ class GetStatsMatchToChartView(APIView):
                 response_status = status.HTTP_404_NOT_FOUND
             else: 
                 
+                season_id = football_match.Season
                 # Si ese partido existe, ahora hay que recoger los jugadores que participaron en el partido
                 # y filtrar por el id de la posición básica si se proporciona
 
@@ -90,30 +92,32 @@ class GetStatsMatchToChartView(APIView):
 
                         match_stats = match_stats.filter(player_id__in=jugadores_filtrados)
                   
-                  
-                    if type_table_stats not in stats_columns:
-                        response_data = {"error": "El parámetro 'type_table_stats' no es reconocido."}
-                        response_status = status.HTTP_400_BAD_REQUEST
-                            
-                    else:
-                            
-                        tables = [type_table_stats]
-                        columns = stats_columns[type_table_stats]
+                       
+                       
+                    tables = stats_columns_player[type_table_stats]["tables"]
+                    columns = stats_columns_player[type_table_stats]["columns"]
 
-                        final_data = []
-                        # Obtener el modelo correspondiente a la tabla
-                        modelo = model_map.get(tables[0])
-                        if not modelo:
-                            response_data = {"error": "El modelo no está mapeado."}
+                    final_data = []
+                    # Obtener el modelo correspondiente a la tabla
+                    
+                    for table in tables:
+                        
+                        model = model_map.get(table)
+                        
+                        if not model:
+                            response_data = {"error": f"La tabla '{table}' no está mapeada."}
                             response_status = status.HTTP_400_BAD_REQUEST
+                            break
+                    
+                        else:
                             
-                        else: 
-                            estadisticas = modelo.objects.filter(stat_id__in=match_stats)
+                            player_statistics = model.objects.filter(stat_id__in=match_stats)
+                    
                             data_por_columna = {col: [] for col in columns}
 
-                                # Recorremos las estadísticas, van a ir pasando por cada columna
-                                # y se van a ir guardando en un diccionario
-                            for stat in estadisticas:
+                            # Recorremos las estadísticas, van a ir pasando por cada columna
+                            # y se van a ir guardando en un diccionario
+                            for stat in player_statistics:
                                 jugador_nombre = stat.player_id.player_name if stat.player_id else "Desconocido"
                                 jugador_id = stat.player_id.player_id if stat.player_id else None
 
@@ -132,7 +136,7 @@ class GetStatsMatchToChartView(APIView):
                                     "values": jugadores
                                 } for columna, jugadores in data_por_columna.items()
                             ]
-
+                            
                             # Se va a añadir tanto el nombre del equipo y si es local o visitante
                             # y también el tipo de jugador básico
                             for data in final_data:
@@ -179,7 +183,7 @@ class GetStatsMatchToChartView(APIView):
                                             value['basic_position'] = "neutral"
                                     else:
                                         value['basic_position'] = "neutral"
-
+                        
                             response_data = final_data
                             response_status = status.HTTP_200_OK
 
