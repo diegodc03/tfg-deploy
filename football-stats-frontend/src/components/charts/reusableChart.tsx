@@ -49,10 +49,8 @@ interface Props {
   stat: StatValues;
   typeOfChart: string;
   
+  
 }
-
-
-
 
 
 
@@ -62,19 +60,38 @@ export const ReusableChart = ({ stat, typeOfChart }: Props) => {
 
   const ChartComponent = chartMap[typeOfChart as keyof typeof chartMap] || Bar;
   const typeColors = typeOfChartColors[typeOfChartColor as keyof typeof typeOfChartColors] || colorBasicPositionsCharts;
-  // Dependiendo el grafico es necesario transformar los datos o no, ya que de linea si, pero de 
 
   const labels = stat.values.map((entry) => entry.player_name);
   const dataValues = stat.values.map((entry) => entry.value);
+  const backgroundColor = stat.values.map(entry => typeColors[entry.basic_position] || typeColors['other']); // ['#33FF57', '#3357FF', ...]
 
-  const isSingleDatasetChart = ['bar', 'line', 'radar'];
-  const isPieLikeChart = ['pie', 'doughnut'];
-  const typeFilterColorChart = []
 
-  const backgroudColors = stat.values.map((entry, index) => {
-    return typeColors[entry.basic_position] || typeColors["other"]
-  });
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      title: {
+        display: true,
+        text: stat.stat,
+      },
+      legend: {
+        display: true,
+        labels: {
+          generateLabels: () => {
+            const positionsUsed = new Set(stat.values.map(v => v.basic_position || 'other'));
 
+            return Array.from(positionsUsed).map(position => ({
+              text: position,
+              fillStyle: typeColors[position] || typeColors["other"],
+              strokeStyle: typeColors[position] || typeColors["other"],
+              lineWidth: 0,
+              hidden: false,
+              index: 0,
+            }));
+          },
+        },
+      },
+    },
+  };
 
 
   const chartData = {
@@ -83,7 +100,7 @@ export const ReusableChart = ({ stat, typeOfChart }: Props) => {
       {
         label: stat.stat,
         data: dataValues,
-        backgroundColor: backgroudColors,
+        backgroundColor,
       },
     ],
   };
@@ -91,15 +108,7 @@ export const ReusableChart = ({ stat, typeOfChart }: Props) => {
   return (
     <ChartComponent
       data={chartData}
-      options={{
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: stat.stat,
-          },
-        },
-      }}
+      options={chartOptions}
     />
   );
 };

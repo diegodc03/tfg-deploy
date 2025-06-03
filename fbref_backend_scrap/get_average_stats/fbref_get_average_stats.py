@@ -10,7 +10,7 @@ from constants import table_dic_to_insert
 from simple_functions.functions import fill_stats_dict, introduce_in_data
 from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import get_match_of_tournaments
 from functions_to_stract_of_dataBase.selects_of_positions import query_to_get_all_specific_positions, query_to_get_specific_position, query_to_select_all_positions_category
-from get_average_stats.fbref_get_average_stats_by_specific_position import check_if_avg_stats_of_league_exists, check_if_avg_stats_of_league_exists_by_basic_position, init_dicts_specific, loop_throgh_all_columns_avg, loop_throgh_all_columns_basic_positions, query_to_get_stats, query_to_get_stats_by_position, query_to_get_stats_by_specific_position
+from get_average_stats.fbref_get_average_stats_by_specific_position import check_if_avg_stats_of_league_exists, check_if_avg_stats_of_league_exists_by_basic_position, check_if_avg_stats_of_league_exists_by_specific_position, init_dicts_specific, loop_throgh_all_columns_avg, loop_throgh_all_columns_basic_positions, query_to_get_stats, query_to_get_stats_by_position, query_to_get_stats_by_specific_position
 from get_average_stats.spark_average_schema import get_average_spark_schema, get_average_spark_schema_by_positions_field_player, get_average_spark_schema_by_positions_gk
 from write_dataframe_to_mysql_file import write_dataframe_to_mysql
 
@@ -28,38 +28,36 @@ def get_average_of_5_leagues(spark, jdbc_url, db_properties):
     try:
         for row in league_df.collect():
             if row["tournament_id"] == 128:
+                continue
 
-                season_id = row["season_tournament_id"]
-                season_year = row["season_year"]
-                tournament_id = row["tournament_id"]
-                tournament_name = row["nombre_liga"]
-                tournament_name = tournament_name.replace(' ', '-')
-                tournament_fbref_id = row["tournament_fbref_id"]
-                type_of_competition = row["type_of_competition"]
+            season_id = row["season_tournament_id"]
+            season_year = row["season_year"]
+            tournament_id = row["tournament_id"]
+            tournament_name = row["nombre_liga"]
+            tournament_name = tournament_name.replace(' ', '-')
+            tournament_fbref_id = row["tournament_fbref_id"]
+            type_of_competition = row["type_of_competition"]
 
-                url = f'https://fbref.com/en/comps/{tournament_fbref_id}/{season_year}/schedule/{season_year}-{tournament_name}-Scores-and-Fixtures'
-                
-                df = get_average_of_competitions(spark, jdbc_url, db_properties, row["tournament_id"])
-                print(df.show())
-                if df.filter(col("Correcto") == "Error").count() > 0:   
-                    continue
-                elif df.filter(col("Correcto") == "Ya existe").count() > 0:
-                    break
-                
-                print("")
-                print("")
-                df_basic = get_stats_avg_devs_tip_for_competition_by_players_position(spark, jdbc_url, db_properties, row["tournament_id"])
-                if df_basic.isEmpty():
-                    continue
-                
-                print("")
-                print("")
-                specific_df = get_stats_avg_devs_tip_for_competition_by_players_specific_position(spark, jdbc_url, db_properties, row["tournament_id"])
-                if specific_df.isEmpty():
-                    continue
-                
-                print(url)
-                break
+            url = f'https://fbref.com/en/comps/{tournament_fbref_id}/{season_year}/schedule/{season_year}-{tournament_name}-Scores-and-Fixtures'
+            
+            df = get_average_of_competitions(spark, jdbc_url, db_properties, row["tournament_id"])
+            if df.isEmpty():
+                continue
+            
+            print("")
+            print("")
+            df_basic = get_stats_avg_devs_tip_for_competition_by_players_position(spark, jdbc_url, db_properties, row["tournament_id"])
+            if df_basic.isEmpty():
+                continue
+            
+            print("")
+            print("")
+            specific_df = get_stats_avg_devs_tip_for_competition_by_players_specific_position(spark, jdbc_url, db_properties, row["tournament_id"])
+            if specific_df.isEmpty():
+                continue
+            
+            print(url)
+            
         returning_value = pd.DataFrame([{"Resultado": "Correcto"}])
     except Exception as e:
         print(f"Error: {e}")
@@ -188,15 +186,25 @@ def get_stats_avg_devs_tip_for_competition_by_players_position(spark, jdbc_url, 
                                            
                 print("Table: ", table_name, "added to the dictionary")
         
-            if (len(dict_val_columns) == len(type_schema)) and (len(dict_val_desv_columns) == len(type_schema)) and (len(dict_val_columns_less) == len(type_schema)) and (len(dict_val_desv_columns_less) == len(type_schema)):                  
+                            
                     
-                if position.category_id != 1:
-                    introduce_in_data(data, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
-                    introduce_in_data(data, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less)         
-
-                else:
-                    introduce_in_data(gk_data, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
-                    introduce_in_data(gk_data, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less)
+            if position.category_id != 1:
+                print("Position is not goalkeeper, introducing in data")
+                introduce_in_data(data, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
+                introduce_in_data(data, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less)         
+                print("length of data: ", len(data))
+                print("length dict_val_columns: ", len(dict_val_columns))
+                print("length dict_val_columns_less: ", len(dict_val_columns_less))
+                print("length dict_val_desv_columns: ", len(dict_val_desv_columns))
+                print("length dict_val_desv_columns_less: ", len(dict_val_desv_columns_less))
+                print("length dict_val_mode_columns: ", len(dict_val_mode_columns))
+                print("length dict_val_mode_columns_less: ", len(dict_val_mode_columns_less))
+                
+            else:
+                introduce_in_data(gk_data, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
+                introduce_in_data(gk_data, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less)
+                print("Position is goalkeeper, introducing in gk_data")
+                
             
         spark_dfs = []
         if data:
@@ -208,6 +216,8 @@ def get_stats_avg_devs_tip_for_competition_by_players_position(spark, jdbc_url, 
             spark_dfs.append(df_gk_data)
             
         for df in spark_dfs:
+            print("Writing dataframe to MySQL...")
+            print(df.show())
             write_dataframe_to_mysql(df, jdbc_url, db_properties, "avg_player_stats_by_basic_positions")
 
                 
@@ -248,13 +258,17 @@ def get_stats_avg_devs_tip_for_competition_by_players_specific_position(spark, j
         data = []
         gk_data = []
         for position_row in spark_position_categories.collect():
-            
+            if position_row.specific_position_id == 0:
+                print("Position is 0, skipping...")
+                continue
             especific_position = position_row.specific_position_id
             print("Position: ", position_row.specific_position_id)
             
-            if check_if_avg_stats_of_league_exists(spark, jdbc_url, db_properties, league_id, especific_position):
+            if check_if_avg_stats_of_league_exists_by_specific_position(spark, jdbc_url, db_properties, league_id, especific_position):
                 print("Ya existen las estadísticas medias de la liga para la posición", especific_position)
                 continue
+            
+            
             
             # Cogemos las posiciones especificas de la posicion
             positions_list = query_to_get_positions_of_specific_positions(spark, jdbc_url, db_properties, especific_position)
@@ -288,17 +302,16 @@ def get_stats_avg_devs_tip_for_competition_by_players_specific_position(spark, j
                                                           
                 print("Table: ", table_name, "added to the dictionary")       
                 
-                if (len(dict_val_columns) == len(type_schema)) and (len(dict_val_desv_columns) == len(type_schema)) and (len(dict_val_columns_less) == len(type_schema)) and (len(dict_val_desv_columns_less) == len(type_schema)) and (len(dict_val_mode_columns) == len(type_schema)) and (len(dict_val_mode_columns_less) == len(type_schema)):                
-                    
-                    if position_row.specific_position_name != GOALKEEPER:
+                  
+                if position_row.specific_position_name != GOALKEEPER:
                         
-                        introduce_in_data(data, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
-                        introduce_in_data(data, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less)
+                    introduce_in_data(data, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
+                    introduce_in_data(data, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less)
                                         
-                    else:
+                else:
                         
-                        introduce_in_data(gk_data, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
-                        introduce_in_data(gk_data, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less)
+                    introduce_in_data(gk_data, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
+                    introduce_in_data(gk_data, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less)
 
 
         spark_dfs = []

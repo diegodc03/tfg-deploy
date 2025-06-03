@@ -82,8 +82,11 @@ class GetStatsMatchToChartBasicStatsView(APIView):
                         
                         print(f"Basic Position ID: {basic_position_id}")
                         # Tengo que coger en base a la posicion básica, todas las posiciones específicas
-                        specific_positions = PositionCategoryRelationBasicSpecific.objects.filter(category_id=int(basic_position_id))
-                        specific_positions_ids = [pos.specific_position_id for pos in specific_positions]
+                        specific_positions = PositionCategoryRelationBasicSpecific.objects.filter(category_id=int(basic_position_id)).values_list('position_id', flat=True)
+                        print(f"Specific Positions: {specific_positions}")
+                        specific_positions_ids = list(specific_positions)
+                        print(f"Specific Positions List: {specific_positions}")
+                        #specific_positions_ids = [pos for pos in specific_positions]
 
                         jugadores_filtrados = PositionMatchPlayerRelation.objects.filter(
                             match_id=football_match,

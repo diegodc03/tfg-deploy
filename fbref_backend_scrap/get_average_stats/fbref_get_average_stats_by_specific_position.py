@@ -313,6 +313,14 @@ def check_if_avg_stats_of_league_exists_by_basic_position(spark, jdbc_url, db_pr
     
     return True if spark_df.count() > 0 else False
 
+def check_if_avg_stats_of_league_exists_by_specific_position(spark, jdbc_url, db_properties, league_id, position):
+    query = f"SELECT apssp.id FROM avg_player_stats_by_specific_positions apssp WHERE league_id = {league_id} AND position_player = {position}"
+    print(f"Query: {query}")
+    spark_df = read_data_with_spark(spark, jdbc_url, db_properties, query)
+    
+    return True if spark_df.count() > 0 else False
+
+
 
 def check_if_avg_teams_stats_of_league_exists_by_basic_position(spark, jdbc_url, db_properties, league_id, position, team_id):
     query = f"SELECT ats.id FROM avg_teams_stats_by_basic_positions ats WHERE league_id = {league_id} AND position_player = {position} AND team_id = {team_id}"

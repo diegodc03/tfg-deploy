@@ -1,4 +1,4 @@
-import { Box, Button, Container, Grid, Typography } from "@mui/material";
+import { Box, Button, Container, Grid, Stack, Typography } from "@mui/material";
 
 import realMadridImg from '../images/real_madrid.jpg';
 import { useEffect, useState } from "react";
@@ -14,6 +14,9 @@ import { BasicPositionAPI } from "../model/BasicPositionAPI";
 import { GameModeTypeAPI } from "../model/GameModeTypeAPI";
 import GenericSelect from "../components/MultipleSelect";
 import { FootballField } from "../components/FootballField";
+import { StatsList } from "../components/charts/StatsList";
+import { ReusableChart } from "../components/charts/reusableChart";
+import { ChartOfNumbersOfScores } from "../components/charts/chartOfNumbers";
 
 
 
@@ -105,8 +108,23 @@ export default function ShowScores() {
         setPlayersScoresFiltered(filteredMatches);
     };
 
+    const labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+    const generateValuesStats = (players_scores_filtered) => {
 
+        const bins = new Array(11).fill(0);
+        
+        players_scores_filtered.forEach(element => {
+           const value = element.score;
 
+           if (typeof value === 'number' && value >= 0 && value <= 10) {
+               const index = Math.floor(value);
+               bins[index] += 1;
+           }
+        });
+
+        return bins;
+        
+    };
 
     return (
         <Box
@@ -201,6 +219,13 @@ export default function ShowScores() {
                 <EnhancedTable 
                     rows={players_scores_filtered}
                 />
+
+                <Typography>
+                    <strong>Gráficas interesantes </strong>
+                </Typography>
+                <Stack  sx={{marginTop: 6,  backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
+                    <ChartOfNumbersOfScores stat={generateValuesStats(players_scores_filtered)} typeOfChart={'bar'} labels={labels}/>
+                </Stack>
 
                 <Typography gutterBottom>
                     <strong>Campo de juego</strong>

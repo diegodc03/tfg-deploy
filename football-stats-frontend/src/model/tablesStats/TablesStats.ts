@@ -1,7 +1,7 @@
 
-export interface TablesStats {
+export interface TablesStats{
 
-    categoryName: number;
+    categoryName: string;
     categoryDescription: string;
 
 }
