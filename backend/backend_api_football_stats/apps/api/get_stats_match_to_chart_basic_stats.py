@@ -80,13 +80,9 @@ class GetStatsMatchToChartBasicStatsView(APIView):
                     # Filtros opcionales
                     if basic_position_id:
                         
-                        print(f"Basic Position ID: {basic_position_id}")
                         # Tengo que coger en base a la posicion básica, todas las posiciones específicas
                         specific_positions = PositionCategoryRelationBasicSpecific.objects.filter(category_id=int(basic_position_id)).values_list('position_id', flat=True)
-                        print(f"Specific Positions: {specific_positions}")
                         specific_positions_ids = list(specific_positions)
-                        print(f"Specific Positions List: {specific_positions}")
-                        #specific_positions_ids = [pos for pos in specific_positions]
 
                         jugadores_filtrados = PositionMatchPlayerRelation.objects.filter(
                             match_id=football_match,
@@ -118,13 +114,19 @@ class GetStatsMatchToChartBasicStatsView(APIView):
                     
                             data_por_columna = {col: [] for col in columns}
 
+                            # Array de ids ya añadidos para evitar duplicados
+                            ids_ya_aniadidos = set()
+                            
                             # Recorremos las estadísticas, van a ir pasando por cada columna
                             # y se van a ir guardando en un diccionario
                             for stat in player_statistics:
                                 jugador_nombre = stat.player_id.player_name if stat.player_id else "Desconocido"
                                 jugador_id = stat.player_id.player_id if stat.player_id else None
 
+                                ids_ya_aniadidos.add(jugador_id)
+                            
                                 for columna in columns:
+                                    
                                     valor = getattr(stat, columna, None)
                                     data_por_columna[columna].append({
                                         "player_id": jugador_id,

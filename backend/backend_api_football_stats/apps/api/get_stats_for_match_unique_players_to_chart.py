@@ -18,6 +18,57 @@ from ..constants.constants import stats_columns, stats_columns_player, model_map
 
 class GetStatsPlayersToChartView(APIView):
 
+    def getDataFromDatabases(self, type_table_stats, match_stats, response_data, response_status):
+        
+        
+        data_columns = {}      
+        final_data = []
+        # Obtener el modelo correspondiente a la tabla
+        
+        tables = stats_columns_player[type_table_stats]["tables"]
+        columns = stats_columns_player[type_table_stats]["columns"]
+        
+        # Yo aqui tengo un loop que va a recorrer cada tabla con sus columnas, lo que voy a hacer es ahora añadirlo a un diccionario
+        for table in tables:
+            # Obtenemos el modelo
+            model = model_map.get(table)
+            if not model:
+                response_data = {"error": "El modelo no está mapeado."}
+                response_status = status.HTTP_400_BAD_REQUEST
+            else:
+                estadistics = model.objects.filter(stat_id__in=match_stats)
+                
+                for stat in estadistics:
+                    player_name = stat.player_id.player_name if stat.player_id else "Desconocido"
+                    player_id = stat.player_id.player_id if stat.player_id else None
+                    data_columns[player_name] = []
+                    
+                    
+                    
+                    for column in columns:
+                        value = getattr(stat, column, None)
+                        if value is not None:
+                            data_columns[player_name].append({
+                                "player_id": player_id,
+                                "column": column,
+                                "value": value
+                            })
+                
+                # Transformar a formato de salida agrupado por columna
+                final_data = [
+                    {
+                        "jugador": player,
+                        "values": stats
+                    } for player, stats in data_columns.items()
+                ]
+
+                response_data = final_data
+                response_status = status.HTTP_200_OK
+
+        return response_data, response_status
+    
+
+
     def get(self, request):
     
         def is_valid_int(value):
@@ -25,13 +76,12 @@ class GetStatsPlayersToChartView(APIView):
         def is_valid_str(value):
             return isinstance(value, str) and value.strip() != ''
     
-        
         # match_id
         match_id = request.query_params.get('match_id', None)
         # basic_position
         basic_position_id = request.query_params.get('basic_position', None)
         # type_table_stats
-        type_table_stats = request.query_params.get('type_table_stats', 'passes_player_pct')
+        type_table_stats = request.query_params.get('type_table_stats', "passes_player_pct")
         
         response_data = None
         response_status = status.HTTP_400_BAD_REQUEST
@@ -42,7 +92,7 @@ class GetStatsPlayersToChartView(APIView):
         if not is_valid_int(match_id):
             errores['match_id'] = "El parámetro 'match_id' es obligatorio y debe ser un número."
         
-         # Validar basic_position_id si fue enviado
+        # Validar basic_position_id si fue enviado
         if basic_position_id and not is_valid_int(basic_position_id):
             errores['basic_position_id'] = "El parámetro 'basic_position_id' debe ser un número."
             
@@ -79,8 +129,8 @@ class GetStatsPlayersToChartView(APIView):
                         
                         print(f"Basic Position ID: {basic_position_id}")
                         # Tengo que coger en base a la posicion básica, todas las posiciones específicas
-                        specific_positions = PositionCategoryRelationBasicSpecific.objects.filter(category_id=int(basic_position_id))
-                        specific_positions_ids = [pos.specific_position_id for pos in specific_positions]
+                        specific_positions = PositionCategoryRelationBasicSpecific.objects.filter(category_id=int(basic_position_id)).values_list('position_id', flat=True)
+                        specific_positions_ids = list(specific_positions)
 
                         jugadores_filtrados = PositionMatchPlayerRelation.objects.filter(
                             match_id=football_match,
@@ -92,56 +142,18 @@ class GetStatsPlayersToChartView(APIView):
 
                     
                     if type_table_stats not in stats_columns_player:
-                        response_data = {"error": "El parámetro 'type_table_stats' no es reconocido."}
+
+                        response_data = {"error": "El tipo de tabla de estadísticas no es válido."}
                         response_status = status.HTTP_400_BAD_REQUEST
-                            
+                        
+                
                     else:
 
-                        data_columns = {}
-                                
-                        final_data = []
-                        # Obtener el modelo correspondiente a la tabla
-                        
-                        tables = stats_columns_player[type_table_stats]["tables"]
-                        columns = stats_columns_player[type_table_stats]["columns"]
-                        
-                        # Yo aqui tengo un loop que va a recorrer cada tabla con sus columnas, lo que voy a hacer es ahora añadirlo a un diccionario
-                        for table in tables:
-                            # Obtenemos el modelo
-                            model = model_map.get(table)
-                            if not model:
-                                response_data = {"error": "El modelo no está mapeado."}
-                                response_status = status.HTTP_400_BAD_REQUEST
-                            else:
-                                estadistics = model.objects.filter(stat_id__in=match_stats)
-                                
-                                for stat in estadistics:
-                                    player_name = stat.player_id.player_name if stat.player_id else "Desconocido"
-                                    player_id = stat.player_id.player_id if stat.player_id else None
-                                    data_columns[player_name] = []
-                                    
-                                    for column in columns:
-                                        value = getattr(stat, column, None)
-                                        if value is not None:
-                                            data_columns[player_name].append({
-                                                "player_id": player_id,
-                                                "column": column,
-                                                "value": value
-                                            })
-                                
-                                # Transformar a formato de salida agrupado por columna
-                                final_data = [
-                                    {
-                                        "jugador": player,
-                                        "values": stats
-                                    } for player, stats in data_columns.items()
-                                ]
-
-                                response_data = final_data
-                                response_status = status.HTTP_200_OK
+                        response_data, response_status = self.getDataFromDatabases(type_table_stats, match_stats, response_data, response_status)
 
         
         return Response(response_data, status=response_status)
 
         
         
+    

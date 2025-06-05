@@ -1,6 +1,8 @@
 # apps/api/urls/season_tournament_view_urls.py
 from django.urls import path
 
+from ..api.get_stats_score_of_filtered_players_view import GetStatsScoreFilteredPlayerView
+
 from ..api.get_stats_match_to_chart_basic_stats import GetStatsMatchToChartBasicStatsView
 
 from ..api.get_stats_teams_view import GetStatsTeamsUnitaryView
@@ -55,7 +57,17 @@ urlpatterns = [
     path('stats/getStatsOfMatch/', GetStatsOfPlayersMatchView.as_view(), name='get_stats_of_players_match'),  # Ruta para obtener las estadísticas de los jugadores en un partido
     path('stats/getTeamsStats/', GetStatsTeamsUnitaryView.as_view(), name='get_stats_of_teams_match'),  # Ruta para obtener las estadísticas de los equipos en un partido
     
+    
+    
+    # No implementado en front
+    # Es para un grafico de barras que muestra las estadísticas de un jugador en un partido
+    path('stats/get-stats-score-filtered-player/', GetStatsScoreFilteredPlayerView.as_view(), name='get_stats_score_of_filtered_players'),  # Ruta para obtener las estadísticas de los jugadores en un partido filtrado por jugador y partido
 
+
+
+    # Falta hacer los endpoints para devolver las puntuaciones de los equipos
+    # Falta hacer los endpoints para devolver las puntuaciones por liga
+    # Se hara un chart parecido como el de arriba, tiene que ser que se elija un equipo o liga y se compare con las difrentes ligas
 
 ]
 

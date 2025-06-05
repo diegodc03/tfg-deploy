@@ -182,7 +182,11 @@ class PlayerSerializer(serializers.ModelSerializer):
             model = Player
             fields = ['player_id', 'player_name', 'nacionality']  # Aquí puedes agregar otros campos que necesites
         
-    
+
+class PlayerNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Player
+        fields = ['player_name']  # Aquí puedes agregar otros campos que necesites
         
 ######### Match Statistics ###########
 
@@ -264,3 +268,17 @@ class BasicMatchStatsSerializer(serializers.Serializer):
 
         
 
+class StatsScoresFilteredPlayer(serializers.Serializer):
+    
+    
+    
+    class Meta:
+        model = MatchPlayerScore
+        fields = [
+            'match_player_score_id',
+            'match_player_id',
+            'specific_position_id',
+            'basic_position_id',
+            'score',
+            'game_mode_id'
+        ]

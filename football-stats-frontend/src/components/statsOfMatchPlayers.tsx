@@ -15,24 +15,30 @@ const generateColumns = (data: any[]): GridColDef[] => {
     field: key,
     headerName: key.charAt(0).toUpperCase() + key.slice(1),
     width: 150,
-    editable: key !== 'id', // Por ejemplo: no editar el id
+    editable: key !== 'id', // No editable el ID
   }));
 };
 
 
-
-
-
 export default function StatsOfMatchPlayers({data}: Props) {
 
-  const columns = React.useMemo(() => generateColumns(data), [data]);
+  const transformedData = data.map((row) => {
+    const { estatistic_id, stat_id, player_id, ...rest } = row;
+
+    return{
+      Jugador: player_id?.player_name || 'Desconocido',
+      ...rest
+    };
+  });
+
+  const columns = React.useMemo(() => generateColumns(transformedData), [transformedData]);
 
   return (
     <Box sx={{ height: 1000, width: '100%' }}>
       <DataGrid
-        rows={data}
+        rows={transformedData}
         columns={columns}
-        getRowId={(row) => row.estatistic_id}
+        getRowId={(row) => row.Jugador} // Usar el nombre del jugador como ID
         initialState={{
           pagination: {
             paginationModel: {

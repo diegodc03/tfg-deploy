@@ -12,6 +12,7 @@ import GenericSelectProps from '../../components/MultipleSelect';
 import { TablesStats } from '../../model/tablesStats/TablesStats';
 import StatsOfMatchPlayers from '../../components/statsOfMatchPlayers';
 import { StatsList } from '../../components/charts/StatsList';
+import { BasicPositionAPI } from '../../model/BasicPositionAPI';
 /**
  * 
  * Este componente se va a encargar de mostrar las tablas de las diferentes estadísticas de los jugadores en un partido
@@ -31,37 +32,62 @@ export default function ShowStatsOfPlayersOnMatch() {
     const {match_id} = useParams();
     const [isLoading, setIsLoading] = useState(true);
 
-    const [type_table_stats, setTypeTableStats] = useState<string>('stats_summary'); 
-    const [filterSetTableStats, setFilterSetTableStats] = useState<TablesStats[]>(); 
+
+
+    const [filtersArray, setFiltersArray] = useState<TablesStats[]>([]);
+    const [selectedFiltersTable, setSelectedFilterTable] = useState<string>('');
+
+
+    const [basicPositions, setBasicPositions] = useState<BasicPositionAPI[]>([]);
+    const [basicPositionElement, setBasicPositionElement] = useState<string>('');
 
     const [data, setData] = useState<any[]>([]); // Aquí se guardarán los datos de las estadísticas de los jugadores
+
+    const dictOfTables: string = "&type_table_stats=";
+    const typeOfBasicPosition: string = "&basic_position="; 
+    let baseurl: string = `http://localhost:8000/api/stats/getStatsOfMatch/?match_id=${match_id}`;
+  
 
     useEffect(() => {
         const fetchData = async () => {
             try {
 
-                const [playersStatsResponse, filterTablesResponse] = await Promise.all([
+                const [playersStatsResponse, filterTablesResponse, responseBasicPositions] = await Promise.all([
                     fetch(`http://localhost:8000/api/stats/getStatsOfMatch/?match_id=${match_id}`),
-                    fetch(`http://localhost:8000/api/filter/filtersMatchChart/`)
+                    fetch(`http://localhost:8000/api/filter/filtersMatchChart/`),
+                    fetch('http://localhost:8000/api/all-basic-positions/'),
+                    
                 ]);
 
                 if (!playersStatsResponse.ok || !filterTablesResponse.ok) {
                     throw new Error('Error fetching data');
                 }
 
-                const [playersStatsData, filterTablesData] = await Promise.all([
+                const [playersStatsData, filterTablesData, filtersBasicPositions] = await Promise.all([
                     playersStatsResponse.json(),
-                    filterTablesResponse.json()
+                    filterTablesResponse.json(),
+                    responseBasicPositions.json()
                 ]); 
 
+                 const filtersArrayTransform: TablesStats[] = Object.entries(filterTablesData).map(([key, value]) => ({
+                    categoryName: key,
+                    categoryDescription: String(value),
+              }));
 
-                setFilterSetTableStats(filterTablesData);
+
+                setFiltersArray(filtersArrayTransform);
+                setSelectedFilterTable(filtersArrayTransform[0]?.categoryName || ''); // Set default filter if available
+
                 setData(playersStatsData);
+
+                setBasicPositions(filtersBasicPositions);
 
                 setIsLoading(false);
 
+
                 console.log('Datos de las estadísticas de los jugadores:', playersStatsData);
-                console.log('Datos de los filtros de las tablas:', filterTablesData);
+                console.log('Datos de los filtros de las tablas:', filtersArrayTransform);
+                console.log('Datos de las posiciones básicas:', filtersBasicPositions);
 
             } catch (error) {
                 console.error('Error fetching player stats:', error);
@@ -71,9 +97,40 @@ export default function ShowStatsOfPlayersOnMatch() {
         fetchData();
     }, [match_id]);
 
-    const handleChangeTableStats = (value: string) => {
-        setTypeTableStats(value);
-    };
+
+
+    const handleChangeSelectedTableFilters = (value: string) => {
+        setSelectedFilterTable(value);
+    }
+
+    const handleChangeSelectedBasicPosicionsFilters = (value: string) => {
+        setBasicPositionElement(value);
+    }
+
+
+    const handleFilter = async () => {
+        let newURL: string = baseurl;
+        if (selectedFiltersTable !== "Todos") {
+            newURL += dictOfTables + selectedFiltersTable;
+        }
+
+        if (basicPositionElement !== "Todos") {
+            newURL += typeOfBasicPosition + basicPositionElement;
+        }
+
+        const response = await fetch(newURL);
+        if (!response.ok) {
+            throw new Error('Error fetching filtered stats');
+        }
+
+        setIsLoading(true);
+        const data = await response.json();
+        setData(data);
+        setIsLoading(false);
+    }
+
+
+
 
     return (
         <Box
@@ -98,33 +155,63 @@ export default function ShowStatsOfPlayersOnMatch() {
                 </Typography>
 
                 <Grid 
-                    container
-                    columnSpacing={{ xs: 1, sm: 2 }}
-                    rowSpacing={{ xs: 1, sm: 2, md: 3 }}
-                    spacing={{ xs: 1, sm: 2, md: 4 }}
-                    
-                    justifyContent="center"
-                    sx={{
-                        backgroundColor: '#f8f9fa',
-                        padding: 2,
-                        borderRadius: 2,
-                        marginTop: 1,
-                        marginBottom: 5,
-                    }}
+                        container
+                        columnSpacing={{ xs: 1, sm: 2 }}
+                        rowSpacing={{ xs: 1, sm: 2, md: 3 }}
+                        spacing={{ xs: 1, sm: 2, md: 4 }}
+                          
+                        justifyContent="center"
+                        sx={{
+                            backgroundColor: '#f8f9fa',
+                            padding: 2,
+                            borderRadius: 2,
+                            marginTop: 1,
+                            marginBottom: 5,
+                        }}
                 >
-
-
-                    
-
-                    {/** Aqui faltaría meter tipo de grafico que se quiere */}
-
-
-
-                    
-                    {/** Aqui faltaría meter tipo de jugador básico */}
-
-
-                </Grid>
+                          <Grid  size={{xs:12, md:5}}>
+                              <Typography>
+                                  <strong>Tablas a consultar</strong>
+                              </Typography>
+                              <div>
+                                  
+                                  <GenericSelectProps<TablesStats>
+                                      items={filtersArray}
+                                      value={selectedFiltersTable || ""}
+                                      onChange={handleChangeSelectedTableFilters}
+                                      getId={(item) => item.categoryName}
+                                      getLabel={(item) => item.categoryDescription}
+                                  />
+                              </div>
+                          </Grid>
+                
+                          <Grid  size={{xs:12, md:5}}>
+                              <Typography>
+                                  <strong>Tipos de posiciones</strong>
+                              </Typography>
+                              <div>  
+                                  <GenericSelectProps<BasicPositionAPI>
+                                    items={basicPositions}
+                                    value={basicPositionElement || ""}
+                                    onChange={handleChangeSelectedBasicPosicionsFilters}
+                                    getId={(item) => String(item.category_id)}
+                                    getLabel={(item) => item.category_name}
+                                />
+                              </div>
+                          </Grid>
+                
+                          <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
+                            <Button
+                                    variant="contained"
+                                    color="primary"
+                                    fullWidth
+                                    onClick={handleFilter}
+                                >
+                                Filtrar
+                            </Button>
+                          </Grid>
+                          
+                        </Grid>
                 
                 
                 <Typography gutterBottom>

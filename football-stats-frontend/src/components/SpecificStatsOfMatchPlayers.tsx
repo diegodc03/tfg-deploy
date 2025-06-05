@@ -15,15 +15,9 @@ const generateColumns = (data: any[]): GridColDef[] => {
     field: key,
     headerName: key.charAt(0).toUpperCase() + key.slice(1),
     width: 150,
-    editable: key !== 'id', // Por ejemplo: no editar el id
+    editable: key !== 'id',
   }));
 };
-
-
-
-
-
-
 
 
 

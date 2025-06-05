@@ -199,6 +199,12 @@ def get_stats_avg_devs_tip_for_competition_by_players_position(spark, jdbc_url, 
                 print("length dict_val_desv_columns_less: ", len(dict_val_desv_columns_less))
                 print("length dict_val_mode_columns: ", len(dict_val_mode_columns))
                 print("length dict_val_mode_columns_less: ", len(dict_val_mode_columns_less))
+                #print("schema: ", dict_val_columns.keys())
+                #print("schema less: ", dict_val_columns_less.keys())
+                #print("schema desv: ", dict_val_desv_columns.keys())
+                
+                
+                
                 
             else:
                 introduce_in_data(gk_data, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
@@ -208,6 +214,7 @@ def get_stats_avg_devs_tip_for_competition_by_players_position(spark, jdbc_url, 
             
         spark_dfs = []
         if data:
+            
             df_data = spark.createDataFrame(data, get_average_spark_schema_by_positions_field_player())
             spark_dfs.append(df_data)
 
@@ -301,17 +308,30 @@ def get_stats_avg_devs_tip_for_competition_by_players_specific_position(spark, j
                 fill_stats_dict(spark_df_less_70, expected_columns, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less, table_name)
                                                           
                 print("Table: ", table_name, "added to the dictionary")       
+                print("length dict_val_columns: ", len(dict_val_columns))
+                print("length dict_val_columns_less: ", len(dict_val_columns_less))
+                print("length dict_val_desv_columns: ", len(dict_val_desv_columns))
+                print("length dict_val_desv_columns_less: ", len(dict_val_desv_columns_less))
+                print("length dict_val_mode_columns: ", len(dict_val_mode_columns))
+                print("length dict_val_mode_columns_less: ", len(dict_val_mode_columns_less))
                 
                   
-                if position_row.specific_position_name != GOALKEEPER:
+            if position_row.specific_position_name != GOALKEEPER:
                         
-                    introduce_in_data(data, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
-                    introduce_in_data(data, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less)
-                                        
-                else:
-                        
-                    introduce_in_data(gk_data, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
-                    introduce_in_data(gk_data, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less)
+                introduce_in_data(data, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
+                introduce_in_data(data, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less)
+                print("length of data: ", len(data))
+                print("length dict_val_columns: ", len(dict_val_columns))
+                print("length dict_val_columns_less: ", len(dict_val_columns_less))
+                print("length dict_val_desv_columns: ", len(dict_val_desv_columns))
+                print("length dict_val_desv_columns_less: ", len(dict_val_desv_columns_less))
+                print("length dict_val_mode_columns: ", len(dict_val_mode_columns))
+                print("length dict_val_mode_columns_less: ", len(dict_val_mode_columns_less))
+                                    
+            else:
+                    
+                introduce_in_data(gk_data, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
+                introduce_in_data(gk_data, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less)
 
 
         spark_dfs = []

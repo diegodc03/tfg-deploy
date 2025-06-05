@@ -1,4 +1,4 @@
-import { Box, Container, Stack, Typography } from "@mui/material";
+import { Box, Container, Grid, Stack, Typography } from "@mui/material";
 import realMadridImg from "../images/real_madrid.jpg";
 import CardShow from "../components/Cards";
 import { useEffect, useState } from "react";
@@ -84,12 +84,51 @@ const ShowMatchStats = () => {
                 <Typography gutterBottom sx={{ marginTop: 6, fontWeight: 'bold', color: 'black' }}>
                     <strong>Estadísticas disponibles del partido</strong>
                 </Typography>
-                <Stack direction={"row"}  sx={{  backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 3 }} >
-                    <CardShow title={"Estadísticas de jugadores"} text={"Todas las estadísticas de los jugadores (pases, goles...) "} image={realMadridImg} navigateElement={`/match-players-stats/${match_id}`} />
-                    <CardShow title={"Comparacion de jugadores y Gráficas"} text={"Compara los jugadores del partido para poder ver cosas que nunca habias visto"} image={realMadridImg} navigateElement={`/stats-players-match/${match_id}`}  />
-                    <CardShow title={"Puntuaciones"} text={"Puntuaciones de los jugadores del partido segun su posicion y tambien la forma de juego"} image={realMadridImg} navigateElement={`/scores-of-players-match/${match_id}`}  />
-                    <CardShow title={"Graficos de jugadores"} text={"Graficos de los jugadores según la gráfica"} image={realMadridImg} navigateElement={`/stats-chart-of-match/${match_id}`}  />
-                </Stack>
+                <Grid
+                    container
+                    spacing={2}
+                    sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        borderRadius: 2,
+                        padding: 3
+                    }}
+                    >
+                    <Grid size={{ xs:6, md:3 }} >
+                        <CardShow
+                        title="Estadísticas de jugadores"
+                        text="Todas las estadísticas de los jugadores (pases, goles...)"
+                        image={realMadridImg}
+                        navigateElement={`/match-players-stats/${match_id}`}
+                        />
+                    </Grid>
+
+                    <Grid size={{ xs:6, md:3 }}>
+                        <CardShow
+                        title="Comparación de jugadores y Gráficas"
+                        text="Compara los jugadores del partido para ver cosas que nunca habías visto"
+                        image={realMadridImg}
+                        navigateElement={`/stats-players-match/${match_id}`}
+                        />
+                    </Grid>
+
+                    <Grid size={{ xs:6, md:3 }}>
+                        <CardShow
+                        title="Puntuaciones"
+                        text="Puntuaciones de los jugadores del partido según su posición y forma de juego"
+                        image={realMadridImg}
+                        navigateElement={`/scores-of-players-match/${match_id}`}
+                        />
+                    </Grid>
+
+                    <Grid size={{ xs:6, md:3 }}>
+                        <CardShow
+                        title="Gráficos de jugadores"
+                        text="Gráficos de los jugadores según la gráfica"
+                        image={realMadridImg}
+                        navigateElement={`/stats-chart-of-match/${match_id}`}
+                        />
+                    </Grid>
+                    </Grid>
 
                 <Typography gutterBottom sx={{ marginTop: 6, fontWeight: 'bold', color: 'black' }}>
                     <strong>Estadísticas del partido totales</strong>

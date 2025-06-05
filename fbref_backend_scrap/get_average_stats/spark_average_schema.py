@@ -130,7 +130,6 @@ def get_average_spark_schema_by_positions_gk():
 
     schema = StructType([
         StructField('league_id', IntegerType(), True),
-        StructField('team_id', IntegerType(), True),
         StructField('position_player', IntegerType(), True),
         StructField('type_of_stat', StringType(), True),
         StructField('starter_status', StringType(), True),
@@ -260,7 +259,6 @@ def get_average_spark_schema_by_positions_field_player():
 
     schema = StructType([
         StructField('league_id', IntegerType(), True),
-        StructField('team_id', IntegerType(), True),
         StructField('position_player', IntegerType(), True),
         StructField('type_of_stat', StringType(), True),
         StructField('starter_status', StringType(), True),

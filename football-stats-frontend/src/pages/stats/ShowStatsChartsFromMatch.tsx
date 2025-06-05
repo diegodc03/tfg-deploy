@@ -9,6 +9,7 @@ import GenericSelectProps from '../../components/MultipleSelect';
 import { TablesStats } from '../../model/tablesStats/TablesStats';
 import SpecificStatsOfMatchPlayers from '../../components/SpecificStatsOfMatchPlayers';
 import { StatsList } from '../../components/charts/StatsList';
+import { BasicPositionAPI } from '../../model/BasicPositionAPI';
 /**
  * 
  * Este componente se va a encargar de mostrar las tablas de las diferentes estadísticas de los jugadores en un partido
@@ -28,49 +29,93 @@ export default function ShowStatsFromMatch() {
     const {match_id} = useParams();
     const [isLoading, setIsLoading] = useState(true);
 
-    const [type_table_stats, setTypeTableStats] = useState<string>('stats_summary'); 
-    const [filterSetTableStats, setFilterSetTableStats] = useState<TablesStats[]>(); 
+    const [filtersArray, setFiltersArray] = useState<TablesStats[]>([]);
+    const [selectedFiltersTable, setSelectedFilterTable] = useState<string>('');
+    
+    const [basicPositions, setBasicPositions] = useState<BasicPositionAPI[]>([]);
+    const [basicPositionElement, setBasicPositionElement] = useState<string>('');
+     
+    const [stats, setStats] = useState<any[]>([]); // Aquí se guardarán los datos de las estadísticas de los jugadores
 
-    const [data, setData] = useState<any[]>([]); // Aquí se guardarán los datos de las estadísticas de los jugadores
+    const dictOfTables: string = "&type_table_stats=";
+    const typeOfBasicPosition: string = "&basic_position="; // This can be dynamic based on user selection or other logic
+
+    let baseurl: string = `http://localhost:8000/api/chart/statsPlayersMatchToChart/?match_id=${match_id}`;
 
     useEffect(() => {
         const fetchData = async () => {
             try {
 
-                const [playersStatsResponse, filterTablesResponse] = await Promise.all([
+                const [responseStats, responseFilters, responseBasicPositions] = await Promise.all([
                     fetch(`http://localhost:8000/api/chart/statsPlayersMatchToChart/?match_id=${match_id}`),
-                    fetch(`http://localhost:8000/api/filter/filtersUnitaryPlayerMatchChart/`)
+                    fetch(`http://localhost:8000/api/filter/filtersUnitaryPlayerMatchChart/`),
+                    fetch('http://localhost:8000/api/all-basic-positions/'),
                 ]);
 
-                if (!playersStatsResponse.ok || !filterTablesResponse.ok) {
+                if (!responseStats.ok || !responseFilters.ok || !responseBasicPositions.ok) {
                     throw new Error('Error fetching data');
                 }
 
-                const [playersStatsData, filterTablesData] = await Promise.all([
-                    playersStatsResponse.json(),
-                    filterTablesResponse.json()
-                ]); 
+                const [statsData, filtersData, filtersBasicPositions] = await Promise.all([
+                    responseStats.json(),
+                    responseFilters.json(),
+                    responseBasicPositions.json()
+                ]);
 
 
-                setFilterSetTableStats(filterTablesData);
-                setData(playersStatsData);
+                const filtersArrayTransform: TablesStats[] = Object.entries(filtersData).map(([key, value]) => ({
+                    categoryName: key,
+                    categoryDescription: String(value),
+                }));
 
-                setIsLoading(false);
+                setStats(statsData);
+                setFiltersArray(filtersArrayTransform);
+                setBasicPositions(filtersBasicPositions);
+                setSelectedFilterTable(filtersArrayTransform[0]?.categoryName || ''); // Set default filter if available
+                setIsLoading(false); 
 
-                console.log('Datos de las estadísticas de los jugadores:', playersStatsData);
-                console.log('Datos de los filtros de las tablas:', filterTablesData);
+
+                console.log('Datos de las estadísticas de los jugadores:', statsData);
+                console.log('Datos de los filtros de las tablas:', filtersArrayTransform);
 
             } catch (error) {
                 console.error('Error fetching player stats:', error);
             }
-        
     }
         fetchData();
     }, [match_id]);
 
-    const handleChangeTableStats = (value: string) => {
-        setTypeTableStats(value);
-    };
+    
+    const handleChangeSelectedTableFilters = (value: string) => {
+        setSelectedFilterTable(value);
+    }
+
+    const handleChangeSelectedBasicPosicionsFilters = (value: string) => {
+        setBasicPositionElement(value);
+    }
+
+    const handleFilter = async () => {
+        let newURL: string = baseurl;
+        if (selectedFiltersTable !== "Todos") {
+            newURL += dictOfTables + selectedFiltersTable;
+        }
+
+    
+        if (basicPositionElement !== "Todos") {
+            newURL += typeOfBasicPosition + basicPositionElement;
+        }
+
+        const response = await fetch(newURL);
+        if (!response.ok) {
+            throw new Error('Error fetching filtered stats');
+        }
+
+        setIsLoading(true);
+        const data = await response.json();
+        setStats(data);
+        setIsLoading(false);
+    }
+
 
     return (
         <Box
@@ -109,19 +154,49 @@ export default function ShowStatsFromMatch() {
                         marginBottom: 5,
                     }}
                 >
-
-
-                    
-
-                    {/** Aqui faltaría meter tipo de grafico que se quiere */}
-
-
-
-                    
-                    {/** Aqui faltaría meter tipo de jugador básico */}
-
-
-                </Grid>
+                    <Grid  size={{xs:12, md:5}}>
+                        <Typography>
+                            <strong>Tablas a consultar</strong>
+                        </Typography>
+                        <div>
+                            
+                            <GenericSelectProps<TablesStats>
+                                items={filtersArray}
+                                value={selectedFiltersTable || ""}
+                                onChange={handleChangeSelectedTableFilters}
+                                getId={(item) => item.categoryName}
+                                getLabel={(item) => item.categoryDescription}
+                            />
+                        </div>
+                    </Grid>
+        
+                    <Grid  size={{xs:12, md:5}}>
+                        <Typography>
+                            <strong>Tipos de posiciones</strong>
+                        </Typography>
+                        <div>  
+                            <GenericSelectProps<BasicPositionAPI>
+                            items={basicPositions}
+                            value={basicPositionElement || ""}
+                            onChange={handleChangeSelectedBasicPosicionsFilters}
+                            getId={(item) => String(item.category_id)}
+                            getLabel={(item) => item.category_name}
+                        />
+                        </div>
+                    </Grid>
+                
+                        <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
+                            <Button
+                                    variant="contained"
+                                    color="primary"
+                                    fullWidth
+                                    onClick={handleFilter}
+                                >
+                                Filtrar
+                            </Button>
+                          </Grid>
+                          
+                        </Grid>
                 
                 
                 <Typography gutterBottom>
@@ -131,7 +206,7 @@ export default function ShowStatsFromMatch() {
                     Tabla de estadísticas de los jugadores
                 </Typography>
                 <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: 4, backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: 3, borderRadius: 2 }} >
-                    <SpecificStatsOfMatchPlayers data={data} />
+                    <SpecificStatsOfMatchPlayers data={stats} />
                 </Grid>
                 
 

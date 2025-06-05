@@ -8,10 +8,7 @@
 */
 
 import { useState, useEffect, useRef } from 'react';
-import Chart, { ChartTypeRegistry } from 'chart.js/auto';
-import axios from 'axios';
-import { ChartType, StatEntry } from '../../model/statsTypes/stats';
-import { ReusableChart } from '../../components/charts/reusableChart';
+
 import { StatsList } from '../../components/charts/StatsList';
 import { useParams } from 'react-router-dom';
 import { TablesStats } from '../../model/tablesStats/TablesStats';
@@ -28,6 +25,7 @@ export const ShowStatsChartFromMatch = () => {
   const { match_id } = useParams();
 
   const [stats, setStats] = useState<Stats>([]);
+
   const [filtersArray, setFiltersArray] = useState<TablesStats[]>([]);
   const [selectedFiltersTable, setSelectedFilterTable] = useState<string>('');
 
@@ -54,7 +52,7 @@ export const ShowStatsChartFromMatch = () => {
           fetch('http://localhost:8000/api/all-basic-positions/'),
         ]);
 
-        if (!responseStats.ok || !responseFilters.ok) {
+        if (!responseStats.ok || !responseFilters.ok || !responseBasicPositions.ok) {
           throw new Error('Error fetching data');
         }
 
@@ -130,68 +128,68 @@ export const ShowStatsChartFromMatch = () => {
           alignItems: 'center',
           
       }}>
-
-      <Grid 
-        container
-        columnSpacing={{ xs: 1, sm: 2 }}
-        rowSpacing={{ xs: 1, sm: 2, md: 3 }}
-        spacing={{ xs: 1, sm: 2, md: 4 }}
-        
-        justifyContent="center"
-        sx={{
-            backgroundColor: '#f8f9fa',
-            padding: 2,
-            borderRadius: 2,
-            marginTop: 1,
-            marginBottom: 5,
-        }}
-      >
-        <Grid  size={{xs:12, md:5}}>
-            <Typography>
-                <strong>Tablas a consultar</strong>
-            </Typography>
-            <div>
-                
-                <GenericSelectProps<TablesStats>
-                    items={filtersArray}
-                    value={selectedFiltersTable || ""}
-                    onChange={handleChangeSelectedTableFilters}
-                    getId={(item) => item.categoryName}
-                    getLabel={(item) => item.categoryDescription}
-                />
-            </div>
-        </Grid>
-
-        <Grid  size={{xs:12, md:5}}>
-            <Typography>
-                <strong>Tipos de posiciones</strong>
-            </Typography>
-            <div>  
-                <GenericSelectProps<BasicPositionAPI>
-                  items={basicPositions}
-                  value={basicPositionElement || ""}
-                  onChange={handleChangeSelectedBasicPosicionsFilters}
-                  getId={(item) => String(item.category_id)}
-                  getLabel={(item) => item.category_name}
-              />
-            </div>
-        </Grid>
-
-        <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
-          <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  onClick={handleFilter}
-              >
-              Filtrar
-          </Button>
-        </Grid>
-        
-      </Grid>
-        
-
       <Container>
+        <Grid 
+          container
+          columnSpacing={{ xs: 1, sm: 2 }}
+          rowSpacing={{ xs: 1, sm: 2, md: 3 }}
+          spacing={{ xs: 1, sm: 2, md: 4 }}
+          
+          justifyContent="center"
+          sx={{
+              backgroundColor: '#f8f9fa',
+              padding: 2,
+              borderRadius: 2,
+              marginTop: 1,
+              marginBottom: 5,
+          }}
+        >
+          <Grid  size={{xs:12, md:5}}>
+              <Typography>
+                  <strong>Tablas a consultar</strong>
+              </Typography>
+              <div>
+                  
+                  <GenericSelectProps<TablesStats>
+                      items={filtersArray}
+                      value={selectedFiltersTable || ""}
+                      onChange={handleChangeSelectedTableFilters}
+                      getId={(item) => item.categoryName}
+                      getLabel={(item) => item.categoryDescription}
+                  />
+              </div>
+          </Grid>
+
+          <Grid  size={{xs:12, md:5}}>
+              <Typography>
+                  <strong>Tipos de posiciones</strong>
+              </Typography>
+              <div>  
+                  <GenericSelectProps<BasicPositionAPI>
+                    items={basicPositions}
+                    value={basicPositionElement || ""}
+                    onChange={handleChangeSelectedBasicPosicionsFilters}
+                    getId={(item) => String(item.category_id)}
+                    getLabel={(item) => item.category_name}
+                />
+              </div>
+          </Grid>
+
+          <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
+            <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={handleFilter}
+                >
+                Filtrar
+            </Button>
+          </Grid>
+          
+        </Grid>
+        
+
+      
         <Stack  sx={{marginTop: 6,  backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
           <StatsList name={columna} stats={stats} typeOfChart={'bar'}  />
         </Stack>

@@ -1,22 +1,18 @@
 
 from rest_framework import serializers
 
-from ..serializers_dto.serializers import PlayerSerializer
-
+from ..models.tables_stats.stats_defensiveactions_summary import StatsDefenseSummary
+from ..models.tables_stats.stats_gk_summary import StatsGoalkeeperSummary
+from ..models.tables_stats.stats_miscellaneous_summary import StatsMiscellaneousSummary
+from ..models.tables_stats.stats_passing_summary import StatsPassingSummary
+from ..models.tables_stats.stats_passtypes_summary import StatsPassTypesSummary
+from ..models.tables_stats.stats_possesion_summary import StatsPossessionSummary
 from ..models.tables_stats.stats_summary import StatsSummary
 
-from ..models.leagues import Leagues
-from ..models.season import Season
-from ..models.tournament import Tournament
-from ..models.team import Team
-from ..models.football_match import FootballMatch
-from ..models.general_comparator_match_stats import GeneralComparatorMatchStats
-from ..models.match_players_score import MatchPlayerScore
-from ..models.game_modes import GameMode
-from ..models.basic_position_category import BasicPositionCategory
-from ..models.specifics_positions_by_category import SpecificsPositionsByCategory
-from ..models.match_statistics import MatchStatistics
-from ..models.player import Player
+from ..serializers_dto.serializers import PlayerNameSerializer, PlayerSerializer
+
+
+
 
 class StatsSummarySerializer(serializers.ModelSerializer):
     
@@ -59,7 +55,7 @@ class StatsDefensiveActionsSerializer(serializers.ModelSerializer):
     player_id = PlayerSerializer()
     
     class Meta:
-        model = StatsSummary
+        model = StatsDefenseSummary
         fields = [
             'estatistic_id',
             'stat_id',
@@ -90,7 +86,7 @@ class StatsGKSerializer(serializers.ModelSerializer):
     player_id = PlayerSerializer()
     
     class Meta:
-        model = StatsSummary
+        model = StatsGoalkeeperSummary
         fields = [
             'estatistic_id',
             'stat_id',
@@ -126,7 +122,7 @@ class StatsMiscellaneousSerializer(serializers.ModelSerializer):
     player_id = PlayerSerializer()
     
     class Meta:
-        model = StatsSummary
+        model = StatsMiscellaneousSummary
         fields = [
             'estatistic_id',
             'stat_id',
@@ -155,7 +151,7 @@ class StatsPassingSerializer(serializers.ModelSerializer):
     player_id = PlayerSerializer()
     
     class Meta:
-        model = StatsSummary
+        model = StatsPassingSummary
         fields = [
             'estatistic_id',
             'stat_id',
@@ -188,7 +184,7 @@ class StatsPassTypesSerializer(serializers.ModelSerializer):
     player_id = PlayerSerializer()
 
     class Meta:
-        model = StatsSummary
+        model = StatsPassTypesSummary
         fields = [
             'estatistic_id',
             'stat_id',
@@ -216,7 +212,7 @@ class StatsPossessionSerializer(serializers.ModelSerializer):
     player_id = PlayerSerializer()
 
     class Meta:
-        model = StatsSummary
+        model = StatsPossessionSummary
         fields = [
             'estatistic_id',
             'stat_id',

@@ -10,6 +10,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from ..models.position_category_relation_basic_specific import PositionCategoryRelationBasicSpecific
+from ..models.position_player_match_relation import PositionMatchPlayerRelation
+
 from ..models import FootballMatch
 from ..models import MatchStatistics
 
@@ -35,7 +38,7 @@ class GetStatsOfPlayersMatchView(APIView):
         # match_id
         match_id = request.query_params.get('match_id', None)
         # basic_position
-        #basic_position_id = request.query_params.get('basic_position', 'stats_summary')
+        basic_position_id = request.query_params.get('basic_position', None)
         # type_table_stats
         type_table_stats = request.query_params.get('type_table_stats', "stats_summary")
         
@@ -53,6 +56,9 @@ class GetStatsOfPlayersMatchView(APIView):
                 errores['type_table_stats'] = "El parámetro 'type_table_stats' debe ser un string válido."
             elif type_table_stats != "all" and type_table_stats not in model_map_serializer:
                 errores['type_table_stats'] = "El parámetro 'type_table_stats' no es reconocido."
+               
+        if basic_position_id and not is_valid_int(basic_position_id):
+            errores['basic_position_id'] = "El parámetro 'basic_position_id' debe ser un número."
                 
         if errores:
             response_status = status.HTTP_400_BAD_REQUEST
@@ -74,9 +80,7 @@ class GetStatsOfPlayersMatchView(APIView):
                 team_id_local = football_match.Home
                 team_id_visitor = football_match.Away
                 
-                
-
-
+            
 
                 match_stats_ids = MatchStatistics.objects.filter(match_id=int(match_id))
                 if not match_stats_ids.exists():
@@ -84,6 +88,21 @@ class GetStatsOfPlayersMatchView(APIView):
                     response_status = status.HTTP_204_NO_CONTENT
                     
                 else: 
+                    
+                    if basic_position_id:
+                        
+                        print(f"Basic Position ID: {basic_position_id}")
+                        # Tengo que coger en base a la posicion básica, todas las posiciones específicas
+                        specific_positions = PositionCategoryRelationBasicSpecific.objects.filter(category_id=int(basic_position_id)).values_list('position_id', flat=True)
+                        specific_positions_ids = list(specific_positions)
+                        
+                        jugadores_filtrados = PositionMatchPlayerRelation.objects.filter(
+                            match_id=football_match,
+                            position_id__in=specific_positions_ids
+                        ).values_list('player_id', flat=True)
+
+                        match_stats_ids = match_stats_ids.filter(player_id__in=jugadores_filtrados)
+                    
                     
                     if type_table_stats is not None :
                         # Si se especifica un tipo de tabla, devolver solo esa tabla
@@ -94,14 +113,6 @@ class GetStatsOfPlayersMatchView(APIView):
                         #response_data = {type_table_stats: stats_data}
                         response_data = serializer_class(stats_data, many=True).data
                         
-                    else:
-                        # Si no se especifica el tipo de tabla, devolver todas las tablas
-                        stats_data = {}
-                        for table_name, model in model_map_serializer.items():
-                            model_class, serializer_class = model  
-                            stats = model_class.objects.filter(stat_id__in=match_stats_ids)
-                            stats_data[table_name] = serializer_class(stats, many=True).data
-
                     response_status = status.HTTP_200_OK
                 
         return Response(response_data, status=response_status)
