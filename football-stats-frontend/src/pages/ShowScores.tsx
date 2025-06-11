@@ -8,20 +8,22 @@ import GenericSelectProps from "../components/MultipleSelect";
 import { Season } from "../model/SeaonAPI";
 import { ScoreAPI } from "../model/ScoreAPI";
 import EnhancedTable from "../components/TablePlayersScore";
-import { MatchAPI } from "../model/MatchAPI";
+
 import { SpecificPositionAPI } from "../model/SpecificPositionAPI";
 import { BasicPositionAPI } from "../model/BasicPositionAPI";
 import { GameModeTypeAPI } from "../model/GameModeTypeAPI";
-import GenericSelect from "../components/MultipleSelect";
+
 import { FootballField } from "../components/FootballField";
-import { StatsList } from "../components/charts/StatsList";
-import { ReusableChart } from "../components/charts/reusableChart";
+
 import { ChartOfNumbersOfScores } from "../components/charts/chartOfNumbers";
+import { PlayersIdName } from "../model/PlayersIdName";
+import { MatchPlayerScore } from "../model/ShowMatchPlayerScore";
 
 
 
 export default function ShowScores() {
 
+  
     const { match_id } = useParams();
 
   
@@ -38,8 +40,19 @@ export default function ShowScores() {
     const [basicPositionElement, setBasicPositionElement] = useState<string>('');
     const [specificPositionElement, setSpecificPositionElement] = useState<string>('');
     
-    
+    const [playersFilter, setPlayersFilter] = useState<PlayersIdName[]>([]);
+    const [selectedPlayerId, setSelectedPlayerId] = useState<string>();
 
+
+    const [playerScores, setPlayerScores] = useState<MatchPlayerScore[]>([]);
+
+
+    const navigate = useNavigate();
+
+    
+    const baseUrlPlayerScore: string = "http://localhost:8000/api/stats/get-stats-score-filtered-player/"
+    const match_id_url: string = `?match_id=${match_id}`;
+    const player_id_url: string = `&player_id=${selectedPlayerId}`;
 
     function handleChangeGameType(value: string): void {
         setGameTypeElement(value);
@@ -53,32 +66,39 @@ export default function ShowScores() {
         setSpecificPositionElement(value);
     }
 
+    function handleChangePlayer(value: string): void {
+        setSelectedPlayerId(value);
+    }
+
 
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [gameTypesResponse, basicPositionsResponse, specificPositionsResponse, players_scores] = await Promise.all([
+                const [gameTypesResponse, basicPositionsResponse, specificPositionsResponse, players_scores, playersFilter] = await Promise.all([
                     fetch('http://localhost:8000/api/all-game-modes/'),
                     fetch('http://localhost:8000/api/all-basic-positions/'),
                     fetch('http://localhost:8000/api/all-specifics-positions/'),
-                    fetch(`http://localhost:8000/api/scores-of-players-match/?match_id=${match_id}`)
+                    fetch(`http://localhost:8000/api/scores-of-players-match/?match_id=${match_id}`),
+                    fetch(`http://localhost:8000/api/players-by-match/?match_id=${match_id}`)
                 ]);
-                if (!gameTypesResponse.ok || !basicPositionsResponse.ok || !specificPositionsResponse.ok || !players_scores.ok) {
+                if (!gameTypesResponse.ok || !basicPositionsResponse.ok || !specificPositionsResponse.ok || !players_scores.ok || !playersFilter.ok) {
                     throw new Error('Error fetching data');
                 }
                 const gameTypesData = await gameTypesResponse.json();
                 const basicPositionsData = await basicPositionsResponse.json();
                 const specificPositionsData = await specificPositionsResponse.json();
                 const players_scoresData = await players_scores.json();
+                const playersFilterData = await playersFilter.json();
 
                 setGameTypes(gameTypesData);
                 setBasicPositions(basicPositionsData);
                 setSpecificPositions(specificPositionsData);
                 setPlayersScores(players_scoresData);
                 setPlayersScoresFiltered(players_scoresData); // Initialize filteredMatches with all matches
+                setPlayersFilter(playersFilterData);
 
-                console.log(gameTypesData, basicPositionsData, specificPositionsData, players_scoresData);
+                console.log('Datos de los jugadores:', players_scoresData);
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -108,6 +128,25 @@ export default function ShowScores() {
         setPlayersScoresFiltered(filteredMatches);
     };
 
+
+   
+
+    const handleChangePlayerElection = async () => {
+
+        let url = baseUrlPlayerScore + match_id_url + player_id_url;
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Error fetching filtered stats');
+        }
+        
+        const data = await response.json();
+        
+        setPlayerScores(data);
+        console.log('Datos de las puntuaciones del jugador:', data);
+    }
+    
+    let players_labels: string[] = [];
     const labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
     const generateValuesStats = (players_scores_filtered) => {
 
@@ -122,9 +161,43 @@ export default function ShowScores() {
            }
         });
 
-        return bins;
-        
+        let values:number[] = [];
+        for (let i = 0; i < bins.length; i++) {
+            values.push(bins[i]);
+        }
+
+        return values;
     };
+
+
+    // Yo aqui paso un elemtnto
+    const generateScoreValuesChart = (players_scores_filtered: MatchPlayerScore[]) => {
+        
+
+        players_labels = [];
+        let values: number[] = [];
+        
+        for (let i = 0; i < players_scores_filtered.length; i++) {
+            const score = players_scores_filtered[i].score;
+            if (typeof score !== 'number' || score < 0 || score > 10) {
+                console.error(`Invalid score at index ${i}: ${score}`);
+                continue; 
+            }
+            else {
+
+                console.log(`Valid score at index ${i}: ${score}`);
+                values.push(score);
+                players_labels.push(players_scores_filtered[i].game_mode_id.game_mode_name);
+            }
+        }
+
+        console.log('Labels de los jugadores:', players_labels);
+        console.log('Valores de las puntuaciones:', values);
+        return values;
+    }
+
+
+
 
     return (
         <Box
@@ -204,16 +277,16 @@ export default function ShowScores() {
                         </div>
                     </Grid>
                     <Grid size={{xs:12, sm:6, md:3}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        sx={{ width: '100%' }}
-                        onClick={() => filterScores()}
-                    >
-                    Filtros
-                    </Button>
-                </Grid>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                            sx={{ width: '100%' }}
+                            onClick={() => filterScores()}
+                        >
+                            Filtros
+                        </Button>
+                    </Grid>
                 </Grid> 
 
                 <EnhancedTable 
@@ -227,16 +300,56 @@ export default function ShowScores() {
                     <ChartOfNumbersOfScores stat={generateValuesStats(players_scores_filtered)} typeOfChart={'bar'} labels={labels}/>
                 </Stack>
 
-                <Typography gutterBottom>
-                    <strong>Campo de juego</strong>
-                </Typography>
+                <Grid
+                    container
+                    spacing={2}
+                    sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        borderRadius: 2,
+                        padding: 3,
+                        marginTop: 4
+                    }}
+                >
+                    <Grid size={{ xs: 12, md: 3 }}>
+                        <Grid  size={{xs:12, md:12}}>
+                            <Typography>
+                                Filtro de jugadores a elegir
+                            </Typography>
+                            <div>
+                                <GenericSelectProps<PlayersIdName>
+                                    items={playersFilter}
+                                    value={String(selectedPlayerId) || ""}
+                                    onChange={handleChangePlayer}
+                                    getId={(item) => String(item.player_id)}
+                                    getLabel={(item) => item.name}
+                                />
+                            </div>
+                        </Grid>
+                        <Grid size={{xs:12, sm:6, md:6}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                                sx={{ width: '100%' }}
+                                onClick={() => handleChangePlayerElection()}
+                            >
+                                Filtros
+                            </Button>
+                        </Grid>
+                        
+                    </Grid>
 
-                <FootballField 
-                    players={players_scores_filtered}
-                />
-                    
-                    
+                    <Grid size={{ xs: 12, md: 9 }}>
+                        <Typography>
+                            Aquí se pueden añadir más gráficas si se desea. La intención es hacer un menú para elegir jugadores. El jugador se le van a mostrar las puntuaciones según el tipo de juego que pide el entrenador.
+                        </Typography>
+                        <Stack sx={{ marginTop: 6, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
+                            <ChartOfNumbersOfScores stat={generateScoreValuesChart(playerScores)} typeOfChart={'bar'} labels={players_labels}/>
+                        </Stack>
 
+
+                    </Grid>
+                </Grid>
             </Container>
         </Box> 
                 

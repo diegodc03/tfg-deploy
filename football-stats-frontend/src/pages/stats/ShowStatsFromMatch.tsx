@@ -185,11 +185,7 @@ export const ShowStatsChartFromMatch = () => {
                 Filtrar
             </Button>
           </Grid>
-          
         </Grid>
-        
-
-      
         <Stack  sx={{marginTop: 6,  backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
           <StatsList name={columna} stats={stats} typeOfChart={'bar'}  />
         </Stack>

@@ -37,7 +37,7 @@ const chartMap = {
 };
 
 interface Props {
-  stat: dictNumbers[];
+  stat: number[];
   typeOfChart: string;
   labels: string[]; 
   

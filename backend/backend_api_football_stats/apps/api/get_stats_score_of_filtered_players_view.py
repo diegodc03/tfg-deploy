@@ -16,7 +16,6 @@ from ..models import MatchStatistics
 # Endpoint que va a llevar a cabo el envio de todas las tablas del partido
 # Tendra una opción de solo enviar una tabla o todas las tablas
 
-# GET /api/get-stats-score-filtered-player/?match_id=1&player_id=1
 
 
 class GetStatsScoreFilteredPlayerView(APIView):

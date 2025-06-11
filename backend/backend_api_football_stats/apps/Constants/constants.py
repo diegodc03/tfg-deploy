@@ -90,6 +90,32 @@ stats_columns_player = {
 }
 
 
+
+stats_columns_team = {
+    "passes_team_pct": {
+        "passes", "passes_pct", "passes_pct_short", "passes_pct_medium", "passes_pct_long"
+    },
+    "passes_team_completed": {
+        "passes_completed", "passes_completed_short", "passes_completed_medium", "passes_completed_long"
+    },
+    "passes_team": {
+        "passes", "passes_completed", "passes_completed_short", "passes_short", "passes_completed_medium", "passes_medium", "passes_completed_long", "passes_long"
+    },
+    "tackles_team": {
+        "tackles", "tackles_won", "tackles_def_3rd", "tackles_mid_3rd", "tackles_att_3rd"
+    },
+    "aerials_team": {
+        "aerials_won", "aerials_lost", "aerials_won_pct"
+    },
+    "types_passes_team": {
+        "passes_live", "passes_dead", "passes_free_kicks", "through_balls", "passes_switches", "crosses", "throw_ins"
+    },
+    "shots_team": {
+        "shots", "shots_on_target", "xg", "xg_assists", "assisted_shots"
+    }
+}
+
+
 # Para las comparaciones de los equipos de futbol se va a hacer con lo de arriba, pero se van a mostrar todas las estadísticas, ya que no pasa como en un partido que 
 # muchas pueden ser 0
 # para un equipo tambien se van a mostrar las unitarias de equipo, que puede ser interesante

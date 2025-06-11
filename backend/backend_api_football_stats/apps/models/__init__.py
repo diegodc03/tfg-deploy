@@ -12,7 +12,7 @@ from .specifics_positions_by_category import SpecificsPositionsByCategory
 from .config_estadísticas import ESTADISTICAS_INTERESANTES
 from .match_statistics import MatchStatistics
 from .team_player import TeamPlayer
-
+from .player import Player
 
 from .tables_stats.stats_defensiveactions_summary import StatsDefenseSummary
 from .tables_stats.stats_gk_summary import StatsGoalkeeperSummary
@@ -34,3 +34,7 @@ from .position_player_match_relation import PositionMatchPlayerRelation
 
 from .avg_teams_by_basic_positions import AvgTeamsStatsByBasicPositions
 from .avg_teams_stats import AvgTeamsStats
+
+from .avg_tournament_stats_by_basic_positions import AvgTournamentStatsByBasicPositions
+from .avg_tournaments_stats import AvgTournamentStats
+from .avg_tournament_stats_by_specific_positions import AvgTournamentStatsBySpecificPositions

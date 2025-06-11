@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from ..serializers_dto.avg_teams_stats_serializers import AngAvgTeamsStatsByBasicPositionsSerializer
+
 from ..models import FootballMatch
 from ..models import MatchStatistics
 
@@ -22,6 +24,7 @@ class GetStatsTeamsUnitaryView(APIView):
         
         league_id = request.query_params.get('league_id', None)
         team_id = request.query_params.get('team_id', None)
+        type_of_stats = request.query_params.get('type_of_stats', None)
         
         response_data = None
         response_status = status.HTTP_400_BAD_REQUEST
@@ -46,7 +49,10 @@ class GetStatsTeamsUnitaryView(APIView):
                 if not avg_teams_stats:
                     response_data = {"error": "No se encontraron estadísticas para este equipo."}
                 else:
-                    response_data = avg_teams_stats.to_dict()
+                    
+                    response = AngAvgTeamsStatsByBasicPositionsSerializer(avg_teams_stats, many=False)
+                    
+                    response_data = response.data
                     response_status = status.HTTP_200_OK
                     
         return Response(response_data, status=response_status)

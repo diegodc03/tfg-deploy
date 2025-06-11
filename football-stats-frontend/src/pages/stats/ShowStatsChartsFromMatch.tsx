@@ -207,6 +207,7 @@ export default function ShowStatsFromMatch() {
                 </Typography>
                 <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: 4, backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: 3, borderRadius: 2 }} >
                     <SpecificStatsOfMatchPlayers data={stats} />
+                    
                 </Grid>
                 
 
