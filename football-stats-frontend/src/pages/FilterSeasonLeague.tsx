@@ -119,8 +119,7 @@ const FilterSeasonLeague = () => {
                 
             }}>
                 
-            <LoadingIndicator isLoading={isLoading} />
-
+        
             <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
 
                 <Typography>
@@ -190,6 +189,7 @@ const FilterSeasonLeague = () => {
                 </Typography>
                 
                 <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: 4, backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: 3, borderRadius: 2 }} >
+                    <LoadingIndicator isLoading={isLoading} />
                     {
                     filteredResults.map((item, index) => (
                         <Grid size={{ xs: 6, sm: 6, md: 3 }} key={index} onClick={() => handleChangeLeagueView(item.tournament_id)} >

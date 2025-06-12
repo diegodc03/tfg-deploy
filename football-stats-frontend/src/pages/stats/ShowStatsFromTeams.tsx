@@ -7,7 +7,7 @@
 
 
 
-import { Box, Button, Container, Grid, Typography } from '@mui/material';
+import { Box, Button, Container, Grid, Stack, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import LoadingIndicator from '../../components/LoaqdingIndicator';
@@ -16,6 +16,11 @@ import GenericSelectProps from '../../components/MultipleSelect';
 import { TablesStats } from '../../model/tablesStats/TablesStats';
 import StatsOfMatchPlayers from '../../components/statsOfMatchPlayers';
 import { StatsList } from '../../components/charts/StatsList';
+import { API_ENDPOINTS} from '../../model/constants/UrlConstants';
+import { ChartAPI } from '../../model/ChartsAPI/ChartAPI';
+import { StatAPI } from '../../model/StatsAPI/StatsAPI';
+import { ChartOfNumbersOfScores } from '../../components/charts/chartOfNumbers';
+import StatsTables from '../../components/StatsTables';
 /**
  * 
  * Este componente se va a encargar de mostrar las tablas de las diferentes estadísticas de los jugadores en un partido
@@ -35,49 +40,132 @@ export default function ShowStatsFromTeams() {
     const {league_id} = useParams();
     const [isLoading, setIsLoading] = useState(true);
 
-    const [type_table_stats, setTypeTableStats] = useState<string>('stats_summary'); 
-    const [filterSetTableStats, setFilterSetTableStats] = useState<TablesStats[]>(); 
 
-    const [data, setData] = useState<any[]>([]); // Aquí se guardarán los datos de las estadísticas de los jugadores
+    const [chartData, setChartData] = useState<ChartAPI[]>([]);
+    const [data, setData] = useState<StatAPI[]>([]); 
+
+    const [filtersArray, setFiltersArray] = useState<TablesStats[]>([]);
+    const [filterColumnsTable, setFilterColumnsTable] = useState<string[]>([]);
+
+    const [selectedFiltersTable, setSelectedFiltersTable] = useState<string | null>(null);
+    const [selectedTypePlayer, setSelectedTypePlayer] = useState<string | null>(null);
+    
+    const [selectColumn, setSelectedColumn] = useState<string | null>(null);
+
+    const typePlayersFilter: TablesStats[] = [
+        { categoryName: "substitute", categoryDescription: "Suplentes" },
+        { categoryName: "starter", categoryDescription: "Titulares" },
+    ]
+
+    
+
 
     useEffect(() => {
         const fetchData = async () => {
             try {
 
-                const [playersStatsResponse, filterTablesResponse] = await Promise.all([
-                    fetch(`http://localhost:8000/api/stats/getStatsOfMatch/?league_id=${league_id}`),
-                    fetch(`http://localhost:8000/api/filter/filtersMatchChart/`)
+                const [playersStatsResponse, filterTablesResponse, chartResponse, columns_tables] = await Promise.all([
+                    fetch(API_ENDPOINTS.TEAM_STATS),
+                    fetch(API_ENDPOINTS.FILTER_STATS_MODIFIED),
+                    fetch(API_ENDPOINTS.TEAM_CHART ),
+                    fetch(API_ENDPOINTS.FILTER_COLUMNS),
                 ]);
 
-                if (!playersStatsResponse.ok || !filterTablesResponse.ok) {
+                if (!playersStatsResponse.ok || !filterTablesResponse.ok || !chartResponse.ok || !columns_tables.ok) {
                     throw new Error('Error fetching data');
                 }
 
-                const [playersStatsData, filterTablesData] = await Promise.all([
+                const [playersStatsData, filterTablesData, chartData, filter_columns_table] = await Promise.all([
                     playersStatsResponse.json(),
-                    filterTablesResponse.json()
-                ]); 
-
-
-                setFilterSetTableStats(filterTablesData);
+                    filterTablesResponse.json(),
+                    chartResponse.json(),
+                    columns_tables.json(),
+                ]);
+                
+                const filtersArrayTransform: TablesStats[] = Object.entries(filterTablesData).map(([key, value]) => ({
+                    categoryName: key,
+                    categoryDescription: String(value),
+                }));
+                                
+                setFiltersArray(filtersArrayTransform)
                 setData(playersStatsData);
-
-                setIsLoading(false);
-
-                console.log('Datos de las estadísticas de los jugadores:', playersStatsData);
-                console.log('Datos de los filtros de las tablas:', filterTablesData);
-
+                setChartData(chartData);
+                setFilterColumnsTable(filter_columns_table);
+                
             } catch (error) {
                 console.error('Error fetching player stats:', error);
+            } finally {
+                setIsLoading(false);
             }
         
     }
         fetchData();
     }, [league_id]);
 
-    const handleChangeTableStats = (value: string) => {
-        setTypeTableStats(value);
+    const { labels: chartLabels, scores: chartScores } = React.useMemo(() => {
+            const labels = chartData.map(player => `${player.league_year} - ${player.starter_status}`);
+            const scores = chartData.map(player => player.value);
+            return { labels, scores };
+        }, [chartData]);
+
+    const handleChangeSelectedTableFilters = (value: string) => {
+        setSelectedFiltersTable(value);
     };
+
+    const handleChangeSelectedTypePlayer = (value: string) => {
+        setSelectedTypePlayer(value);
+    }
+    
+    const handleFilter = async () => {
+        let newURL: string = API_ENDPOINTS.TEAM_STATS;
+        if (selectedFiltersTable && selectedFiltersTable !== "Todos") {
+            newURL += `?type_of_stats=${selectedFiltersTable}`;
+        }
+
+        try {
+            const response = await fetch(newURL);
+            if (!response.ok) {
+                throw new Error('Error fetching filtered data');
+            }
+            const filteredData = await response.json();
+
+            if (selectedTypePlayer && selectedTypePlayer !== "Todos") {
+                const typeFilteredData = filteredData.filter(player => player.starter_status === selectedTypePlayer);
+                setData(typeFilteredData);
+            } else {
+                setData(filteredData);
+            }
+        } catch (error) {
+            console.error('Error fetching filtered data:', error);
+        }
+    }
+    
+    
+    const handleChangeColumn = (value: string) => {
+        setSelectedColumn(value);
+    }
+
+
+    const handleChangeColumnElection = async () => {
+        if (selectColumn) {
+            
+            let newURL: string = API_ENDPOINTS.TEAM_CHART + `?type_of_stats=${selectColumn}`;
+            
+            try {
+                const response = await fetch(newURL);
+                if (!response.ok) {
+                    throw new Error('Error fetching filtered data');
+                }
+                const filteredData = await response.json();                
+                setChartData(filteredData);
+            
+            } catch (error) {
+            console.error('Error fetching filtered data:', error);
+            }
+        }
+    }
+
+
 
     return (
         <Box
@@ -118,16 +206,45 @@ export default function ShowStatsFromTeams() {
                 >
 
 
-                    
+                    <Grid  size={{xs:12, md:5}}>
+                        <Typography>
+                            <strong>Tablas a consultar</strong>
+                        </Typography>
+                        <div>    
+                            <GenericSelectProps<TablesStats>
+                                items={filtersArray}
+                                value={selectedFiltersTable || ""}
+                                onChange={handleChangeSelectedTableFilters}
+                                getId={(item) => item.categoryName}
+                                getLabel={(item) => item.categoryDescription}
+                            />
+                        </div>
+                    </Grid>
 
-                    {/** Aqui faltaría meter tipo de grafico que se quiere */}
-
-
-
-                    
-                    {/** Aqui faltaría meter tipo de jugador básico */}
-
-
+                    <Grid  size={{xs:12, md:5}}>
+                        <Typography>
+                            <strong>Rendimiento del Jugador suplente y titular</strong>
+                        </Typography>
+                        <div>
+                            <GenericSelectProps<TablesStats>
+                                items={typePlayersFilter}
+                                value={selectedTypePlayer || ""}
+                                onChange={handleChangeSelectedTypePlayer}
+                                getId={(item) => item.categoryName}
+                                getLabel={(item) => item.categoryDescription}
+                            />
+                        </div>
+                    </Grid>
+                    <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
+                        <Button
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                                onClick={handleFilter}
+                            >
+                            Filtrar
+                        </Button>
+                    </Grid>
                 </Grid>
                 
                 
@@ -138,15 +255,62 @@ export default function ShowStatsFromTeams() {
                     Tabla de estadísticas los equipos segun la temporada
                 </Typography>
                 <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: 4, backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: 3, borderRadius: 2 }} >
-                    <StatsOfMatchPlayers data={data} />
+                    <StatsTables data={data} />
                 </Grid>
+
+                <Grid
+                    container
+                    spacing={2}
+                    sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        borderRadius: 2,
+                        padding: 3,
+                        marginTop: 4
+                    }}
+                >
+                    
+                        <Grid size={{ xs: 12, md: 3 }}>
+                            <Grid  size={{xs:12, md:12}}>
+                                <Typography>
+                                    Filtro de Posición a elegir
+                                </Typography>
+                                <div>
+                                    <GenericSelectProps<string[]>
+                                        items={filterColumnsTable}
+                                        value={String(selectColumn) || ""}
+                                        onChange={handleChangeColumn}
+                                        getId={(item) => String(item)}
+                                        getLabel={(item) => String(item)}
+                                    />
+                                </div>
+                            </Grid>
+                            <Grid size={{xs:12, sm:6, md:6}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    fullWidth
+                                    sx={{ width: '100%' }}
+                                    onClick={() => handleChangeColumnElection()}
+                                >
+                                    Filtros
+                                </Button>
+                            </Grid>
+                            
+                        </Grid>
+
+                        <Grid size={{ xs: 12, md: 9 }}>
+                            <Typography variant="body1">
+                                    Tabla de estadísticas los equipos segun la temporada
+                                </Typography>
+                            <Stack sx={{ marginTop: 6, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
+                                <ChartOfNumbersOfScores stat={chartScores} typeOfChart={'bar'} labels={chartLabels}/>
+                            </Stack>
+                        </Grid>
+                    </Grid>
+                            
+               
                 
-
             </Container>
-
-            
-        </Box>
-            
-        
+        </Box>  
     );
 }

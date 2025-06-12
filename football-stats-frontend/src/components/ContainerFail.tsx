@@ -26,7 +26,6 @@ const CardShow: React.FC<CardShowProps> = ({ title, text, image, navigateElement
         if (navigateElement) {
             console.log("navegando a: ", navigateElement);
             navigate(`${navigateElement}`);
-            
         }
 
     };

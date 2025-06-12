@@ -128,6 +128,22 @@ const ShowMatchStats = () => {
                         navigateElement={`/stats-chart-of-match/${match_id}`}
                         />
                     </Grid>
+                    <Grid size={{ xs:6, md:3 }}>
+                        <CardShow
+                        title="Gráficos de la liga"
+                        text="Gráficos de comparacion con la liga "
+                        image={realMadridImg}
+                        navigateElement={`/leagues-comparison`}
+                        />
+                    </Grid>
+                    <Grid size={{ xs:6, md:3 }}>
+                        <CardShow
+                        title="Gráficos de comparación de equipos"
+                        text="Comparación de equipos de la liga como unitarios por temporada"
+                        image={realMadridImg}
+                        navigateElement={`/show-stats-comparison-from-teams/`}
+                        />
+                    </Grid>
                     </Grid>
 
                 <Typography gutterBottom sx={{ marginTop: 6, fontWeight: 'bold', color: 'black' }}>

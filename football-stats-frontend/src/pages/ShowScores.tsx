@@ -85,6 +85,7 @@ export default function ShowScores() {
                 if (!gameTypesResponse.ok || !basicPositionsResponse.ok || !specificPositionsResponse.ok || !players_scores.ok || !playersFilter.ok) {
                     throw new Error('Error fetching data');
                 }
+                
                 const gameTypesData = await gameTypesResponse.json();
                 const basicPositionsData = await basicPositionsResponse.json();
                 const specificPositionsData = await specificPositionsResponse.json();

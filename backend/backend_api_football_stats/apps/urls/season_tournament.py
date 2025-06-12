@@ -1,6 +1,12 @@
 # apps/api/urls/season_tournament_view_urls.py
 from django.urls import path
 
+from ..api.filter_chart_labels.get_only_tables_filters import FiltersColumnOfTableView
+
+from ..api.get_chart_unitary_stat_league import GetUnitaryStatTournamentComparisonOfLeaguesView
+
+from ..api.get_chart_unitary_stat_team import GetUnitaryStatTeamsComparisonOfLeaguesView
+
 from ..api.get_all_season_league_comparison import GetStatsLeaguesComparison
 
 from ..api.get_teams_stats_comparison_of_leagues_view import GetStatsTeamsComparisonOfLeaguesView
@@ -54,6 +60,8 @@ urlpatterns = [
 
     path('filter/filtersMatchChart/', FiltersMatchChartView.as_view(), name='filters_match_chart'),  # Ruta para obtener los filtros de los partidos
     path('filter/filtersUnitaryPlayerMatchChart/', FiltersUnitaryPlayerMatchChartView.as_view(), name='filters_unitary_player_match_chart'),  # Ruta para obtener los filtros de los partidos
+    path('filter/filterColumnsOfTable/', FiltersColumnOfTableView.as_view(), name='filter_columns_of_table'),  # Ruta para obtener los filtros de las columnas de la tabla
+    
     
     path('chart/statsPlayersMatchToChart/', GetStatsPlayersToChartView.as_view(), name='get_stats_players_to_chart'),  # Ruta para obtener los filtros de los partidos
     path('chart/statsToChart/', GetStatsMatchToChartView.as_view(), name='get_stats_of_match_chart'),  # Ruta para obtener las estadísticas de los jugadores en un partido
@@ -66,10 +74,14 @@ urlpatterns = [
     path('stats/get-stats-score-filtered-player/', GetStatsScoreFilteredPlayerView.as_view(), name='get_stats_score_of_filtered_players'),  # Ruta para obtener las estadísticas de los jugadores en un partido filtrado por jugador y partido
     path('players-by-match/', PlayersView.as_view(), name='get_stats_of_players_match'),  # Ruta para obtener las estadísticas de los jugadores en un partido
     
+    
+    
     path('stats/teams/get-stats-by-teams-of-match/', GetStatsTeamsComparisonOfLeaguesView.as_view(), name='get_stats_by_teams_of_match'),  # Ruta para obtener las estadísticas de los equipos en un partido
-
+    path('chart/teams/get-unitary-stat-by-teams-of-match/', GetUnitaryStatTeamsComparisonOfLeaguesView.as_view(), name='get_stats_by_teams_of_match_chart'),  # Ruta para obtener las estadísticas de los equipos en un partido
+    
+    
     path('stats/tournaments/get-stats-by-leagues/', GetStatsLeaguesComparison.as_view(), name='get_stats_by_leagues'),  # Ruta para obtener las estadísticas de los equipos en un partido
-
+    path('chart/tournaments/get-unitary-stat-by-leagues/', GetUnitaryStatTournamentComparisonOfLeaguesView.as_view(), name='get_unitary_stat_by_leagues'),  # Ruta para obtener las estadísticas de los equipos en un partido
     # Falta hacer los endpoints para devolver las puntuaciones de los equipos
     # Falta hacer los endpoints para devolver las puntuaciones por liga
     # Se hara un chart parecido como el de arriba, tiene que ser que se elija un equipo o liga y se compare con las difrentes ligas

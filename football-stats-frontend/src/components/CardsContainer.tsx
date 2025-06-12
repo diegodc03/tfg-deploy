@@ -3,17 +3,17 @@ import { Container, Grid, CssBaseline, Typography, Box } from '@mui/material';
 import statsImage from '../images/stats.png';
 import CardShow from './Cards';
 import React from 'react';
+import About from '../pages/About';
+import TfgDocs from '../pages/TfgDocs';
 
 export default function CardsContainer() {
 
     const items = [
-        { image: statsImage, title: 'Estadísticas', text: 'Revisa estadísticas detalladas' },
-        { image: statsImage, title: 'Puntuación Partidos', text: 'Resultados y análisis de partidos' },
-        { image: statsImage, title: 'Documentación TFG', text: 'Accede a la documentación de tu TFG' },
-        { image: statsImage, title: 'Sobre Nosotros', text: 'Conoce quiénes somos' },
-      ];
-
-
+        { image: statsImage, title: 'Estadísticas', text: 'Revisa estadísticas detalladas', navigateElement: "about"},
+        { image: statsImage, title: 'Puntuación Partidos', text: 'Resultados y análisis de partidos',  navigateElement: "tfg-docs" },
+        { image: statsImage, title: 'Documentación TFG', text: 'Accede a la documentación de tu TFG', navigateElement: "tfg-docs"},
+        { image: statsImage, title: 'Sobre Nosotros', text: 'Conoce quiénes somos', navigateElement: "about" },
+    ];
 
     return (
         <>
@@ -34,7 +34,7 @@ export default function CardsContainer() {
 
                 {items.map((item) => (
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                        <CardShow title={item.title} text={item.text} image={item.image} />
+                        <CardShow title={item.title} text={item.text} image={item.image} navigateElement={item.navigateElement} />
                     </Grid>
                 ))}
             </Grid>

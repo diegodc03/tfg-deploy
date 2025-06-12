@@ -12,8 +12,10 @@ import ShowStatsOfPlayersTables from './pages/stats/ShowStatsOfPlayersTables.tsx
 
 import { ShowStatsChartFromMatch } from './pages/stats/ShowStatsFromMatch.tsx'
 import ShowStatsFromMatch from './pages/stats/ShowStatsChartsFromMatch.tsx'
-
-
+import About from './pages/About.tsx'
+import TfgDocs from './pages/TfgDocs.tsx'
+import ShowStatsComparisonFromLeague from './pages/stats/ShowStatsComparisonFromLeague.tsx'
+import ShowStatsFromTeams from './pages/stats/ShowStatsFromTeams.tsx'
 
 const router = createHashRouter([
   {
@@ -28,10 +30,14 @@ const router = createHashRouter([
       { path: 'match-players-stats/:match_id', element: <ShowStatsOfPlayersTables /> },
       { path: 'stats-players-match/:match_id', element: <ShowStatsFromMatch /> },
       { path: 'stats-chart-of-match/:match_id', element: <ShowStatsChartFromMatch /> },
+      { path: 'about', element: <About /> },
+      { path: 'tfg-docs', element: <TfgDocs /> },
+      { path: 'leagues-comparison', element: <ShowStatsComparisonFromLeague />},
+      { path: 'show-stats-comparison-from-teams', element: <ShowStatsFromTeams /> },
     ],
   },
   {
-    path: '/about',
+    path: '/about1',
     element: <h1>About</h1>,
   }
 ])

@@ -228,7 +228,7 @@ export default function FilterMatch() {
             </Typography>
 
             <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: 4, backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: 3, borderRadius: 2 }}>
-                            
+                    <LoadingIndicator isLoading={isLoading} />      
                     {filteredMatches.map((match) => (
                         <Grid size={{xs:12, sm:6, md:3}} key={match.match_id} onClick={() => handleClickMatch(match)}>
                             <CardShow title={match.Home.team_name + "-" + match.Away.team_name} text={"Resultado: " +match.Score + "    Wk :"+ match.Wk} image={realMadridImg} />

@@ -37,7 +37,7 @@ export default function Header() {
     return (
       <>
       <AppBar position="static" sx={{ backgroundColor: '#f8f9fa', color: 'black',  position: 'fixed', top: 0, width: '100%', height: '64px', zIndex: 1000 }}>
-        <Container maxWidth="xl">
+        <Container maxWidth="lg">
           <Toolbar >
             <IconButton
               size="large"
@@ -76,14 +76,14 @@ export default function Header() {
               </Button>
               
               <Button variant="contained" color="inherit" sx={{ fontWeight: 'bold' }}>
-                <Link to="filter-match" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  Buscar Partidos
+                <Link to="tfg-docs" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  Documentación TFG
                 </Link>
               </Button>
               
               <Button variant="contained" color="inherit" sx={{ fontWeight: 'bold' }}>
-                <Link to="show-match" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  Mostrar Partido prueba
+                <Link to="about" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  Sobre Nosotros
                 </Link>
               </Button>
 

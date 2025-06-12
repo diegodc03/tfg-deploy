@@ -20,10 +20,10 @@ const HomePage = () => {
                 }}>
                 <Container maxWidth="xl" sx={{ marginTop:20 }}>
                     <Box sx={{ mt: '15vh', textAlign: 'center' }}>
-                    <h1 style={{ fontWeight: 'bold' }}>Player And Teams FootBall Stats</h1>
-                    <p style={{ fontWeight: 'bold' }}>
-                        Your Clubpage to check the stats of your favorite players and teams
-                    </p>
+                        <h1 style={{ fontWeight: 'bold' }}>Player And Teams FootBall Stats</h1>
+                        <p style={{ fontWeight: 'bold' }}>
+                            Your Clubpage to check the stats of your favorite players and teams
+                        </p>
                     </Box>
                     <CardsContainer />
                 </Container>

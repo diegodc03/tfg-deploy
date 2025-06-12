@@ -92,25 +92,25 @@ stats_columns_player = {
 
 
 stats_columns_team = {
-    "passes_team_pct": {
+    "passes_player_pct": {
         "passes", "passes_pct", "passes_pct_short", "passes_pct_medium", "passes_pct_long"
     },
-    "passes_team_completed": {
+    "passes_player_completed": {
         "passes_completed", "passes_completed_short", "passes_completed_medium", "passes_completed_long"
     },
-    "passes_team": {
+    "passes_player": {
         "passes", "passes_completed", "passes_completed_short", "passes_short", "passes_completed_medium", "passes_medium", "passes_completed_long", "passes_long"
     },
-    "tackles_team": {
+    "tackles_player": {
         "tackles", "tackles_won", "tackles_def_3rd", "tackles_mid_3rd", "tackles_att_3rd"
     },
-    "aerials_team": {
+    "aerials_player": {
         "aerials_won", "aerials_lost", "aerials_won_pct"
     },
-    "types_passes_team": {
+    "types_passes_player": {
         "passes_live", "passes_dead", "passes_free_kicks", "through_balls", "passes_switches", "crosses", "throw_ins"
     },
-    "shots_team": {
+    "shots_player": {
         "shots", "shots_on_target", "xg", "xg_assists", "assisted_shots"
     }
 }
