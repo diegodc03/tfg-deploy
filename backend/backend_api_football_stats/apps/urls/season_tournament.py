@@ -1,25 +1,16 @@
 # apps/api/urls/season_tournament_view_urls.py
 from django.urls import path
 
+from ..api.filter_chart_labels.get_teams_of_league_view import GetTeamsOfLeagueView
 from ..api.filter_chart_labels.get_only_tables_filters import FiltersColumnOfTableView
-
 from ..api.get_chart_unitary_stat_league import GetUnitaryStatTournamentComparisonOfLeaguesView
-
 from ..api.get_chart_unitary_stat_team import GetUnitaryStatTeamsComparisonOfLeaguesView
-
 from ..api.get_all_season_league_comparison import GetStatsLeaguesComparison
-
 from ..api.get_teams_stats_comparison_of_leagues_view import GetStatsTeamsComparisonOfLeaguesView
-
 from ..api.players_view import PlayersView
-
 from ..api.get_stats_score_of_filtered_players_view import GetStatsScoreFilteredPlayerView
-
 from ..api.get_stats_match_to_chart_basic_stats import GetStatsMatchToChartBasicStatsView
-
 from ..api.get_stats_teams_view import GetStatsTeamsUnitaryView
-
-
 from ..api.basic_visualize_of_match import BasicVisualizeOfMatchView
 from ..api.basic_stats_of_match_comparator_view import BasicStatsOfMatchComparatorView
 from ..api.season_tournament_view import SeasonTournamentView
@@ -61,7 +52,7 @@ urlpatterns = [
     path('filter/filtersMatchChart/', FiltersMatchChartView.as_view(), name='filters_match_chart'),  # Ruta para obtener los filtros de los partidos
     path('filter/filtersUnitaryPlayerMatchChart/', FiltersUnitaryPlayerMatchChartView.as_view(), name='filters_unitary_player_match_chart'),  # Ruta para obtener los filtros de los partidos
     path('filter/filterColumnsOfTable/', FiltersColumnOfTableView.as_view(), name='filter_columns_of_table'),  # Ruta para obtener los filtros de las columnas de la tabla
-    
+    path('filter/filterTeamsOfLeagues/', GetTeamsOfLeagueView.as_view(), name='filter_teams_of_leagues'),  # Ruta para obtener los equipos de las ligas
     
     path('chart/statsPlayersMatchToChart/', GetStatsPlayersToChartView.as_view(), name='get_stats_players_to_chart'),  # Ruta para obtener los filtros de los partidos
     path('chart/statsToChart/', GetStatsMatchToChartView.as_view(), name='get_stats_of_match_chart'),  # Ruta para obtener las estadísticas de los jugadores en un partido

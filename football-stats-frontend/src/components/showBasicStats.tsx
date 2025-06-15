@@ -5,6 +5,8 @@ import { Line } from 'react-chartjs-2';
 import LinearStatBar from './LinearDetermine';
 import Tipography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
+import { Divider, Paper, Stack, Typography } from '@mui/material';
+import { API_ENDPOINTS } from '../model/constants/UrlConstants';
 
 interface MatchIdProp {
     matchId: number;
@@ -22,13 +24,13 @@ const ShowBasicStats = ({ matchId }: MatchIdProp) => {
     useEffect(() => {
         
         const  fetchBasicStats = async () => {
-            try {
-                const response = await fetch(`http://localhost:8000/api/get-basic-stats-of-match-comparator/?match_id=${matchId}`);
+            try {  
+                const response = await fetch(API_ENDPOINTS.PRINCIPAL_MATCH_STATS_COMPARATOR + `${matchId}`);
+                
                 if (!response.ok) {
                     throw new Error('Error fetching basic stats');
                 }
                 const data: BasicMatchStats = await response.json();
-                        // Filtrar las estadísticas dependiendo de type_stat_pct
                 const basicStats: StatValue[] = [];
                 const basicStatsPct: StatValue[] = [];
                 
@@ -58,41 +60,71 @@ const ShowBasicStats = ({ matchId }: MatchIdProp) => {
             }
         }
         fetchBasicStats();
-
     }, [setBasicStats]);
 
 
     return (
-
         <>
-          
-            <h3>Estadísticas Generales</h3>
+            <Typography variant="h6"  sx={{  marginBottom: 2, fontWeight: 'bold' }}>
+                    Estadísticas Generales
+                </Typography> 
             <Grid container spacing={1}>
                 {basicStats.map((stat, index) => (    
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                        <div key={index} style={{ marginBottom: '16px', display:"flex", flexDirection: 'column',alignItems: 'center', }} >
-                                <p>{stat.local} - {stat.label} - {stat.visitor}</p>
+                        <div key={index} style={{ marginBottom: '16px', display:"flex", flexDirection: 'column',alignItems: 'center' }} >
+                            <Paper
+                                elevation={4}
+                                sx={{
+                                    padding: 2,
+                                    borderRadius: 2,
+                                    bgcolor: 'background.default',
+                                    border: '1px solid #ccc',
+                                }}
+                                >
+                                <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
+                                    <Paper elevation={3} style={{ padding: '8px', width: '100%', textAlign: 'center', minWidth: '40px', fontWeight: 'bold'  }}>
+                                        {stat.local}
+                                    </Paper>
+                                    <Paper elevation={10} style={{ padding: '10px', width: '100%', textAlign: 'center', minWidth: '120px', fontWeight: 'bold' }}>
+                                        {stat.label}
+                                    </Paper>
+                                    <Paper elevation={3} style={{ padding: '8px', width: '100%', textAlign: 'center', minWidth: '40px', fontWeight: 'bold' }}>
+                                        {stat.visitor}
+                                    </Paper>
+                                </Stack>
+                            </Paper>
                         </div>
                     </Grid>
 
                 ))}
+            
             </Grid>
-
-                <h3>Estadísticas de Porcentaje</h3>
+                <Typography variant="h6"  sx={{ marginTop: 5, marginBottom: 2, fontWeight: 'bold' }}>
+                    Estadísticas de Porcentaje
+                </Typography>   
                 {basicStatsPct.map((stat, index) => (
                 <div key={index} style={{ marginBottom: '16px' }}>
-                
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <div style={{ marginRight: '8px', flex: 1 }}>
-                            <Tipography variant="body2" color="textSecondary">
+                            <Tipography variant="body2" fontWeight={1000}> 
                                 {stat.local} 
                             </Tipography>
                             <LinearStatBar value={stat.local} />
                         </div>
-                        <p>{stat.label}</p>
+                        <Paper elevation={10} 
+                                style={{ padding: '10px', textAlign: 'center', minWidth: '150px' }} 
+                                sx={{
+                                    padding: 2,
+                                    borderRadius: 2,
+                                    bgcolor: 'background.default',
+                                    border: '1px solid #ccc',
+                                    fontWeight: 'bold'
+                                }} >
+                            {stat.label}
+                        </Paper>
 
                         <div style={{ marginLeft: '8px', flex: 1, direction: 'rtl' }}>
-                            <Tipography variant="body2" color="textSecondary">
+                            <Tipography variant="body2" fontWeight={1000}>
                                 {stat.visitor} 
                             </Tipography>
                             <LinearStatBar value={stat.visitor} reverse/>
@@ -100,8 +132,7 @@ const ShowBasicStats = ({ matchId }: MatchIdProp) => {
                     </div>
                 </div>
             
-                ))}
-            
+                ))} 
         </>
     );
 }

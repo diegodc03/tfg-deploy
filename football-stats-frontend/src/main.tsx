@@ -30,10 +30,10 @@ const router = createHashRouter([
       { path: 'match-players-stats/:match_id', element: <ShowStatsOfPlayersTables /> },
       { path: 'stats-players-match/:match_id', element: <ShowStatsFromMatch /> },
       { path: 'stats-chart-of-match/:match_id', element: <ShowStatsChartFromMatch /> },
-      { path: 'about', element: <About /> },
-      { path: 'tfg-docs', element: <TfgDocs /> },
+      { path: 'contacto', element: <About /> },
+      { path: 'documentacion-tfg', element: <TfgDocs /> },
       { path: 'leagues-comparison', element: <ShowStatsComparisonFromLeague />},
-      { path: 'show-stats-comparison-from-teams', element: <ShowStatsFromTeams /> },
+      { path: 'show-stats-comparison-from-teams/:league_id', element: <ShowStatsFromTeams /> },
     ],
   },
   {

@@ -14,6 +14,10 @@ import {Season} from '../model/SeaonAPI';
 
 import {Tournament} from '../model/TournamentAPI';
 import LoadingIndicator from '../components/LoaqdingIndicator';
+import LeagueSelect from '../components/filters/LeagueFilters';
+import CardShowOptions from '../components/CardShowOptions';
+import SeasonSelect from '../components/filters/SeasonFilters';
+import { API_ENDPOINTS } from '../model/constants/UrlConstants';
 
 
 
@@ -40,9 +44,9 @@ const FilterSeasonLeague = () => {
         const fetchData = async () => {
             try {
                 const [seasonsResponse, leaguesResponse, tournamentsResponse] = await Promise.all([
-                    fetch('http://localhost:8000/api/all-seasons/'),
-                    fetch('http://localhost:8000/api/all-leagues/'),
-                    fetch('http://localhost:8000/api/season-tournaments/')
+                    fetch(API_ENDPOINTS.ALL_SEASONS),
+                    fetch(API_ENDPOINTS.ALL_LEAGUES),
+                    fetch(API_ENDPOINTS.ALL_SEASON_TOURNAMENTS)
                 ]);  
                    
                 
@@ -133,6 +137,7 @@ const FilterSeasonLeague = () => {
                     spacing={{ xs: 1, sm: 2, md: 4 }}
                     
                     justifyContent="center"
+
                     sx={{
                         backgroundColor: '#f8f9fa',
                         padding: 2,
@@ -142,34 +147,19 @@ const FilterSeasonLeague = () => {
                     }}
                 >
                     <Grid  size={{xs:12, md:5}}>
-                        <Typography>
-                            <strong>Liga</strong>
-                        </Typography>
-                        <div>
-                            
-                            <GenericSelectProps<LeagueAPI>
-                                items={leagues}
-                                value={leagueElement || ""}
-                                onChange={handleChangeLeague}
-                                getId={(item) => item.name}
-                                getLabel={(item) => item.name}
-                            />
-                        </div>
+                        <LeagueSelect
+                            leagues={leagues}
+                            value={leagueElement || ''}
+                            onChange={handleChangeLeague}
+                        />
                     </Grid>
                     
                     <Grid  size={{xs:12, md:5}}>
-                        <Typography>
-                            <strong>Temporada</strong>
-                        </Typography>
-                        <div>
-                            <GenericSelectProps<Season>
-                                items={seasons}
-                                value={seasonElement || ''}
-                                onChange={handleChangeSeason}
-                                getId={(item) => String(item.season_id)}
-                                getLabel={(item) => item.season_year}
-                            />
-                        </div>
+                        <SeasonSelect
+                            seasons={seasons}
+                            value={seasonElement || ''}
+                            onChange={handleChangeSeason}
+                        />
                     </Grid>
 
                     <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
@@ -188,12 +178,26 @@ const FilterSeasonLeague = () => {
                     <strong>Listado de resultados </strong>
                 </Typography>
                 
-                <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: 4, backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: 3, borderRadius: 2 }} >
+                <Grid
+                    container 
+                    spacing={2} 
+                    justifyContent="center" 
+                    alignItems="center" 
+                    sx={{ 
+                        marginTop: 4, 
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)', 
+                        padding: 3, 
+                        borderRadius: 2 
+                    }} 
+                >
                     <LoadingIndicator isLoading={isLoading} />
                     {
                     filteredResults.map((item, index) => (
-                        <Grid size={{ xs: 6, sm: 6, md: 3 }} key={index} onClick={() => handleChangeLeagueView(item.tournament_id)} >
-                            <CardShow title={item.nombre_liga} text={item.season_tournament.season_year} image={realMadridImg} /> 
+                        <Grid size={{ xs: 6, sm: 6, md: 3 }} sx={{ display: 'flex', justifyContent: 'center' }}  key={index} onClick={() => handleChangeLeagueView(item.tournament_id)} >
+                            <CardShowOptions 
+                                title={item.nombre_liga} 
+                                season={item.season_tournament.season_year} 
+                            /> 
                         </Grid>   
                                         ))
                     }

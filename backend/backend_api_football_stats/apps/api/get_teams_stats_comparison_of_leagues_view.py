@@ -51,8 +51,6 @@ class GetStatsTeamsComparisonOfLeaguesView(APIView):
                 
                 teams_list = list(teams)
                 
-                teams_response = {}
-                
                 teams_ids = []
                 for team in teams_list:
                         teams_ids.append(team.team_id)

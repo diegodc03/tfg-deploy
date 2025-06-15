@@ -1,13 +1,6 @@
 
 
-
-
-
-
 import { Grid, Box, Container, Typography, Button } from '@mui/material';
-import CardShow from '../components/Cards';
-
-
 import realMadridImg from "../images/real_madrid.jpg";
 import {useEffect, useState} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -15,8 +8,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { MatchAPI } from '../model/MatchAPI';
 import GenericSelect from '../components/MultipleSelect';
 import LoadingIndicator from '../components/LoaqdingIndicator';
-
-
+import CardShowOptions from '../components/CardShowOptions';
+import { API_ENDPOINTS } from '../model/constants/UrlConstants';
+import FiltersElements from '../components/filters/filter';
 
 
 
@@ -41,8 +35,7 @@ export default function FilterMatch() {
     useEffect(() => {
         const fetchPartidos = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/all-matches/?league_id=${leagueId}`);
-
+                const response = await fetch(API_ENDPOINTS.ALL_MATCHES_BY_LEAGUE_ID + `${leagueId}`);
                 if (!response.ok) {
                     throw new Error('Error fetching partidos');
                 }
@@ -50,10 +43,10 @@ export default function FilterMatch() {
     
                 setMatches(data);
                 
-                setFilteredMatches(data); // Initialize filteredMatches with all matches    
+                setFilteredMatches(data);
                 setIsLoading(false);
             } catch (error) {
-                console.error('Error fetching partidos:', error);
+                console.error('Error fetching matches:', error);
             }
         }
         fetchPartidos();
@@ -65,7 +58,6 @@ export default function FilterMatch() {
             setWeeks(getAllUniqueWeeks(matches));
             setTeams(getAllUniqueTeams(matches));
             setResults(getAllUniqueResults(matches));
-
         }
     }, [matches]);  // This effect runs when 'matches' is updated
 
@@ -175,22 +167,22 @@ export default function FilterMatch() {
                 
                 <Grid  size={{xs:12, sm:6, md:3}}>
                     <Typography gutterBottom>
-                        <strong>Jornada</strong>
+                        <strong>Jornadas</strong>
                     </Typography>
-                    <GenericSelect
-                            items={weeks}
-                            value={selectedWeek || ""}
-                            onChange={handleChangeWeeks}
-                    />  
+                    <FiltersElements
+                        itemsToSelect={weeks}
+                        selectedValue={selectedWeek || ""}
+                        onChange={handleChangeWeeks}
+                    />
                 </Grid>
         
                 <Grid  size={{xs:12, sm:6, md:3}}>
                     <Typography gutterBottom>
                         <strong>Equipos</strong>
                     </Typography>
-                    <GenericSelect
-                            items={teams}
-                            value={selectedTeam || ""}
+                    <FiltersElements
+                            itemsToSelect={teams}
+                            selectedValue={selectedTeam || ""}
                             onChange={handleChangeTeams}
                     />
                 </Grid>
@@ -199,11 +191,10 @@ export default function FilterMatch() {
                     <Typography gutterBottom>
                         <strong>Resultado</strong>
                     </Typography>
-                    
-                    <GenericSelect 
-                            items={results}
-                            value={selectedResult || ""}
-                            onChange={handleChangeResult}
+                    <FiltersElements 
+                        itemsToSelect={results}
+                        selectedValue={selectedResult || ""}
+                        onChange={handleChangeResult}
                     />
                     
                     
@@ -230,8 +221,12 @@ export default function FilterMatch() {
             <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: 4, backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: 3, borderRadius: 2 }}>
                     <LoadingIndicator isLoading={isLoading} />      
                     {filteredMatches.map((match) => (
-                        <Grid size={{xs:12, sm:6, md:3}} key={match.match_id} onClick={() => handleClickMatch(match)}>
-                            <CardShow title={match.Home.team_name + "-" + match.Away.team_name} text={"Resultado: " +match.Score + "    Wk :"+ match.Wk} image={realMadridImg} />
+                        <Grid size={{xs:12, sm:6, md:3}}  sx={{ display: 'flex', justifyContent: 'center' }} key={match.match_id} onClick={() => handleClickMatch(match)}>
+                            <CardShowOptions 
+                                title={match.Home.team_name + "-" + match.Away.team_name} 
+                                result={match.Score}
+                                week={match.Wk.toString()}
+                            />
                         </Grid>
                     ))}
             </Grid>

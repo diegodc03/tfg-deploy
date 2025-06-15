@@ -5,16 +5,16 @@ import CardShow from './Cards';
 import React from 'react';
 import About from '../pages/About';
 import TfgDocs from '../pages/TfgDocs';
+import { serviceItems } from '../model/constants/menuItems';
+
+import { useNavigate } from 'react-router-dom';
 
 export default function CardsContainer() {
 
-    const items = [
-        { image: statsImage, title: 'Estadísticas', text: 'Revisa estadísticas detalladas', navigateElement: "about"},
-        { image: statsImage, title: 'Puntuación Partidos', text: 'Resultados y análisis de partidos',  navigateElement: "tfg-docs" },
-        { image: statsImage, title: 'Documentación TFG', text: 'Accede a la documentación de tu TFG', navigateElement: "tfg-docs"},
-        { image: statsImage, title: 'Sobre Nosotros', text: 'Conoce quiénes somos', navigateElement: "about" },
-    ];
-
+    const navigate = useNavigate();
+    const handleNavigate = (path: string) => {
+        navigate(path);
+    };
     return (
         <>
         <CssBaseline />
@@ -32,8 +32,8 @@ export default function CardsContainer() {
                     </Typography>
                 </Box>
 
-                {items.map((item) => (
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                {serviceItems.map((item) => (
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <CardShow title={item.title} text={item.text} image={item.image} navigateElement={item.navigateElement} />
                     </Grid>
                 ))}

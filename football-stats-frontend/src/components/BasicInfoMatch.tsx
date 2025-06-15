@@ -2,7 +2,7 @@
 
 
 
-import { Grid, Typography } from '@mui/material';
+import { Grid, Paper, Typography } from '@mui/material';
 
 
 
@@ -19,45 +19,43 @@ interface BasicInfoMatchProps {
 const BasicInfoMatch = ({ stats }: BasicInfoMatchProps) => {
 
     return (
-        <>
-            
-        <Grid 
-            container 
-            justifyContent="center" 
-            alignItems="center" 
-            sx={{
-                backgroundColor: 'rgba(255, 255, 255, 0.9)', 
-                paddingTop: 3, 
-                borderRadius: 2 
-            }}
-        >
-
-            <Grid 
-                container 
-                spacing={2} 
-                justifyContent={"left"} 
-                sx={{ 
-                    marginLeft: 2 
-                    }}
+    <Paper
+      elevation={4}
+      sx={{
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        borderRadius: 3,
+        padding: 3,
+        margin: 2,
+        
+      }}
+    >
+      <Grid container spacing={2}>
+        {stats.map((item, index) => (
+          <Grid size={{ xs:12, sm:6, md:4 }} key={index}>
+            <Paper
+              elevation={2}
+              sx={{
+                padding: 2,
+                borderRadius: 2,
+                height: '100%',
+                backgroundColor: 'grey.100',
+              }}
             >
-                {stats.map((item, index) => (
-                    <Grid size = {{ xs:6, sm:6, md:4}} key={index} >    
-                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-                            {item.label}:
-                        </Typography>
-                        <Typography variant="body1" gutterBottom sx={{ marginBottom: 1 }}>
-                            {item.value}
-                        </Typography> 
-                    </Grid>   
-                ))};
-
-            </Grid>                
-        </Grid>
-        
-        
-        </>
-
-    );
+              <Typography
+                variant="subtitle2"
+                sx={{ fontWeight: 'bold', color: 'text.secondary', mb: 1 }}
+              >
+                {item.label}
+              </Typography>
+              <Typography variant="body1" color="text.primary" sx={{ fontWeight: 'bold' }}>
+                {item.value}
+              </Typography>
+            </Paper>
+          </Grid>
+        ))}
+      </Grid>
+    </Paper>
+  );
 
 
 }

@@ -111,7 +111,7 @@ stats_columns_team = {
         "passes_live", "passes_dead", "passes_free_kicks", "through_balls", "passes_switches", "crosses", "throw_ins"
     },
     "shots_player": {
-        "shots", "shots_on_target", "xg", "xg_assists", "assisted_shots"
+        "shots", "shots_on_target", "xg", "xg_assist", "assisted_shots"
     }
 }
 

@@ -47,8 +47,16 @@ export default function ShowStatsFromTeams() {
     const [filtersArray, setFiltersArray] = useState<TablesStats[]>([]);
     const [filterColumnsTable, setFilterColumnsTable] = useState<string[]>([]);
 
+    const [teamsArray, setTeamsArray] = useState<TablesStats[]>([]);
+    const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+    const navigate = useNavigate();
+
     const [selectedFiltersTable, setSelectedFiltersTable] = useState<string | null>(null);
     const [selectedTypePlayer, setSelectedTypePlayer] = useState<string | null>(null);
+
+    let [beforeSelectedTablesFilter, setBeforeSelectedTablesFilter] = useState<string | null>(null);
+    let [beforeSelectedTeamFilter, setBeforeSelectedTeamFilter] = useState<string | null>(null);
+    let [beforeSelectedTypePlayerFilter, setBeforeSelectedTypePlayerFilter] = useState<string | null>(null);
     
     const [selectColumn, setSelectedColumn] = useState<string | null>(null);
 
@@ -57,36 +65,48 @@ export default function ShowStatsFromTeams() {
         { categoryName: "starter", categoryDescription: "Titulares" },
     ]
 
-    
-
 
     useEffect(() => {
         const fetchData = async () => {
             try {
 
-                const [playersStatsResponse, filterTablesResponse, chartResponse, columns_tables] = await Promise.all([
+                const [playersStatsResponse, filterTablesResponse, chartResponse, columns_tables, filterTeamsResponse] = await Promise.all([
                     fetch(API_ENDPOINTS.TEAM_STATS),
                     fetch(API_ENDPOINTS.FILTER_STATS_MODIFIED),
                     fetch(API_ENDPOINTS.TEAM_CHART ),
                     fetch(API_ENDPOINTS.FILTER_COLUMNS),
+                    fetch(API_ENDPOINTS.FILTER_TEAMS + `?league_id=${league_id}`),
+
                 ]);
 
-                if (!playersStatsResponse.ok || !filterTablesResponse.ok || !chartResponse.ok || !columns_tables.ok) {
+                console.log(API_ENDPOINTS.FILTER_TEAMS + `?league_id=${league_id}`);
+
+                if (!playersStatsResponse.ok || !filterTablesResponse.ok || !chartResponse.ok || !columns_tables.ok || !filterTeamsResponse.ok) {
                     throw new Error('Error fetching data');
                 }
 
-                const [playersStatsData, filterTablesData, chartData, filter_columns_table] = await Promise.all([
+                const [playersStatsData, filterTablesData, chartData, filter_columns_table, filterTeamsData] = await Promise.all([
                     playersStatsResponse.json(),
                     filterTablesResponse.json(),
                     chartResponse.json(),
                     columns_tables.json(),
+                    filterTeamsResponse.json(),
                 ]);
+
                 
                 const filtersArrayTransform: TablesStats[] = Object.entries(filterTablesData).map(([key, value]) => ({
                     categoryName: key,
                     categoryDescription: String(value),
                 }));
-                                
+
+                const filterTeamsDataTransform: TablesStats[] = Object.entries(filterTeamsData).map(([key, value]) => ({
+                    categoryName: key,
+                    categoryDescription: String(value),
+                }));
+                
+                console.log(playersStatsData);
+
+                setTeamsArray(filterTeamsDataTransform);
                 setFiltersArray(filtersArrayTransform)
                 setData(playersStatsData);
                 setChartData(chartData);
@@ -99,6 +119,7 @@ export default function ShowStatsFromTeams() {
             }
         
     }
+        console.log('League ID:', league_id);
         fetchData();
     }, [league_id]);
 
@@ -115,13 +136,30 @@ export default function ShowStatsFromTeams() {
     const handleChangeSelectedTypePlayer = (value: string) => {
         setSelectedTypePlayer(value);
     }
+
+    const handleChangeFilterTeam = (value: string) => {
+        setSelectedTeam(value);
+    }
     
     const handleFilter = async () => {
         let newURL: string = API_ENDPOINTS.TEAM_STATS;
-        if (selectedFiltersTable && selectedFiltersTable !== "Todos") {
+
+        if ((selectedFiltersTable != beforeSelectedTablesFilter || beforeSelectedTypePlayerFilter != selectedTypePlayer) && selectedFiltersTable !== null) {
+            console.log('Selected Filters Table:', selectedFiltersTable);
+            beforeSelectedTablesFilter = selectedFiltersTable;
             newURL += `?type_of_stats=${selectedFiltersTable}`;
         }
 
+        if ((selectedTeam != beforeSelectedTeamFilter || beforeSelectedTypePlayerFilter != selectedTypePlayer) &&  selectedTeam !== null) {
+            beforeSelectedTeamFilter = selectedTeam;   
+            if (newURL.includes('?')) {
+                newURL += `&team_name=${selectedTeam}`;
+            } else {
+                newURL += `?team_name=${selectedTeam}`;
+            }
+        }
+
+    
         try {
             const response = await fetch(newURL);
             if (!response.ok) {
@@ -135,21 +173,55 @@ export default function ShowStatsFromTeams() {
             } else {
                 setData(filteredData);
             }
+
+            handleChangeChart(selectedTeam, selectedFiltersTable);
+
         } catch (error) {
             console.error('Error fetching filtered data:', error);
         }
     }
     
-    
+    const handleChangeChart = async (teamName: string, selectedFiltersTable: string | null) => {
+        
+        if (selectedFiltersTable){
+
+            const chartColumns = await fetch(API_ENDPOINTS.FILTER_COLUMNS + `?table=${selectedFiltersTable}`);
+            
+            if (!chartColumns.ok) {
+                throw new Error('Error fetching filter columns');
+            }
+
+            const filterColumnsData = await chartColumns.json();
+            setFilterColumnsTable(filterColumnsData);
+
+            const firstStat = String(filterColumnsData[0] ?? "");
+
+            console.log('First Stat:', firstStat);
+            let newURL: string = API_ENDPOINTS.TEAM_CHART + `?team_name=${teamName}&type_of_stats=${firstStat}`;
+            try {
+                const chartResponse = await fetch(newURL);
+                if (!chartResponse.ok) {
+                    throw new Error('Error fetching filtered data');
+                }
+                const filteredChartData = await chartResponse.json();
+                setChartData(filteredChartData);
+            } catch (error) {
+                console.error('Error fetching filtered data:', error);
+            }
+
+        }
+        
+        
+    }
+
     const handleChangeColumn = (value: string) => {
         setSelectedColumn(value);
     }
 
-
     const handleChangeColumnElection = async () => {
         if (selectColumn) {
             
-            let newURL: string = API_ENDPOINTS.TEAM_CHART + `?type_of_stats=${selectColumn}`;
+            let newURL: string = API_ENDPOINTS.TEAM_CHART + `?type_of_stats=${selectColumn}&team_name=${selectedTeam}`;
             
             try {
                 const response = await fetch(newURL);
@@ -206,7 +278,7 @@ export default function ShowStatsFromTeams() {
                 >
 
 
-                    <Grid  size={{xs:12, md:5}}>
+                    <Grid  size={{xs:12, md:3}}>
                         <Typography>
                             <strong>Tablas a consultar</strong>
                         </Typography>
@@ -221,9 +293,9 @@ export default function ShowStatsFromTeams() {
                         </div>
                     </Grid>
 
-                    <Grid  size={{xs:12, md:5}}>
+                    <Grid  size={{xs:12, md:4}}>
                         <Typography>
-                            <strong>Rendimiento del Jugador suplente y titular</strong>
+                            <strong>Rendimiento: Suplente o Titular</strong>
                         </Typography>
                         <div>
                             <GenericSelectProps<TablesStats>
@@ -235,7 +307,23 @@ export default function ShowStatsFromTeams() {
                             />
                         </div>
                     </Grid>
-                    <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
+
+                    <Grid  size={{xs:12, md:4}}>
+                        <Typography>
+                            <strong>Equipo a consultar de la liga</strong>
+                        </Typography>
+                        <div>    
+                            <GenericSelectProps<TablesStats>
+                                items={teamsArray}
+                                value={selectedTeam || ""}
+                                onChange={handleChangeFilterTeam}
+                                getId={(item) => item.categoryDescription}
+                                getLabel={(item) => item.categoryDescription}
+                            />
+                        </div>
+                    </Grid>
+
+                    <Grid size={{xs:12,md:1}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
                         <Button
                                 variant="contained"
                                 color="primary"

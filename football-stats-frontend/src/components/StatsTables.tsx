@@ -45,7 +45,6 @@ export default function StatsTables({data}: Props) {
             };
         }
         
-        console.log(stats);
         return stats;
     }, [data]);
 

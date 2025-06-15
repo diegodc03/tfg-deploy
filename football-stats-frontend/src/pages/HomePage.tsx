@@ -1,4 +1,4 @@
-import { Container, Box } from "@mui/material";
+import { Container, Box, Typography } from "@mui/material";
 
 import realMadridImg from "../images/real_madrid.jpg";
 import CardsContainer from "../components/CardsContainer";
@@ -18,12 +18,14 @@ const HomePage = () => {
                     alignItems: 'center',
                     
                 }}>
-                <Container maxWidth="xl" sx={{ marginTop:20 }}>
+                <Container maxWidth="xl" >
                     <Box sx={{ mt: '15vh', textAlign: 'center' }}>
-                        <h1 style={{ fontWeight: 'bold' }}>Player And Teams FootBall Stats</h1>
-                        <p style={{ fontWeight: 'bold' }}>
-                            Your Clubpage to check the stats of your favorite players and teams
-                        </p>
+                        <Typography variant="h3" gutterBottom sx={{ fontWeight: 'bold' }}>
+                            Player And Teams FootBall Stats
+                        </Typography>
+                        <Typography sx={{ fontWeight: 'bold' }} variant="h6" gutterBottom>
+                            Tu página para analizar estadísticas de jugadores y equipos de fútbol
+                        </Typography>
                     </Box>
                     <CardsContainer />
                 </Container>

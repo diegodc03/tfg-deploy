@@ -337,7 +337,6 @@ export default function ShowScores() {
                                 Filtros
                             </Button>
                         </Grid>
-                        
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 9 }}>
@@ -347,8 +346,6 @@ export default function ShowScores() {
                         <Stack sx={{ marginTop: 6, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
                             <ChartOfNumbersOfScores stat={generateScoreValuesChart(playerScores)} typeOfChart={'bar'} labels={players_labels}/>
                         </Stack>
-
-
                     </Grid>
                 </Grid>
             </Container>

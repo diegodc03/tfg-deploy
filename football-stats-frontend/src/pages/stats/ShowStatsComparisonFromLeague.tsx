@@ -115,11 +115,9 @@ export default function ShowStatsComparisonFromLeague() {
         let newURLStats: string = API_ENDPOINTS.LEAGUES_STATS;
         let newURLChart: string = API_ENDPOINTS.LEAGUE_CHART;
 
-
         if (selectedFiltersTable && selectedFiltersTable !== "Todos") {
             newURLStats += `?type_of_stats=${selectedFiltersTable}`;
         }
-
 
         try {
             const response = await fetch(newURLStats);

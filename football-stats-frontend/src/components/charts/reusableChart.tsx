@@ -90,6 +90,17 @@ export const ReusableChart = ({ stat, typeOfChart }: Props) => {
           },
         },
       },
+      datalabels: {
+      display: true,
+      color: 'black',
+      font: {
+        weight: 'bold',
+        size: 12,
+      },
+      formatter: (value) => value,  // Muestra el valor directamente
+      anchor: 'end',
+      align: 'top',
+    },
     },
   };
 

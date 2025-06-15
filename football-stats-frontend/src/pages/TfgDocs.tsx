@@ -54,16 +54,22 @@ const TfgDocs = () => {
         >
             <Container maxWidth="xl" sx={{ marginTop: 10, marginBottom: 5 }}>
                 <Box sx={{ textAlign: "center", mb: 5 }}>
-                    <Typography variant="h4" fontWeight="bold">
+                    <Typography variant="h5" fontWeight="bold">
                         Índice de Anexos del TFG
                     </Typography>
-                    <Typography variant="subtitle1">
+                    <Typography variant="h6" fontWeight="bold">
+                        Esta página es un proyecto de TFG de la Universidad de Salamancan del grado en Ingeniería Informática
+                    </Typography>
+                    <Typography variant="h6" fontWeight="bold">
+                        Está realizado por: Diego de Castro Merillas
+                    </Typography>
+                    <Typography variant="subtitle1" fontWeight="bold" mt={2}>
                         Descarga cada documento en formato PDF desde los enlaces disponibles
                     </Typography>
                 </Box>
                 <Grid container spacing={4}>
                     {annexes.map((annex, index) => (
-                        <Grid size = {{ xs:12, sm:6, lg:6 }} key={index}>
+                        <Grid size = {{ xs:12, sm:6, lg:4 }} key={index}>
                             <Card elevation={4} sx={{ borderRadius: "20px", p: 2 }}>
                                 <CardContent>
                                     <Typography variant="h6" fontWeight="bold" gutterBottom>
