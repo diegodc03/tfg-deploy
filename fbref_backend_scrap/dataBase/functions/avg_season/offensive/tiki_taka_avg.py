@@ -93,61 +93,31 @@ def get_avg_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_defen
             apssp.starter_status,
             apssp.type_of_stat,
             
-            -- PASES
-            passes_completed,
-            passes,
-            passes_pct,
-            progressive_passes,
-            passes_total_distance,
-            passes_progressive_distance,
-            passes_completed_short,
-            passes_short,
-            passes_pct_short,
-            passes_completed_medium,
-            passes_medium,
-            passes_pct_medium,
-            passes_completed_long,
-            passes_long,
-            passes_pct_long,
-            passes_into_final_third,
-            passes_into_penalty_area,
-            crosses_into_penalty_area,
-
-            -- TOQUES
-            touches,
-            touches_def_3rd,
-            touches_mid_3rd,
-            touches_att_3rd,
-            touches_live_ball,
-
-            -- CARRIES
-            carries,
-            carries_distance,
-            carries_progressive_distance,
-            progressive_carries,
-            carries_into_final_third,
-            carries_into_penalty_area,
-
-            -- REGATES
-            take_ons,
-            take_ons_won,
-            take_ons_won_pct,
-
-            -- ERRORES Y PÉRDIDAS
-            miscontrols,
-            dispossessed,
-
-            -- RECEPCIÓN DE PASES
-            passes_received,
-            progressive_passes_received,
-
-            -- DEFENSIVA
-            interceptions,
-            tackles,
-            tackles_won,
-            tackles_interceptions,
-            errors,
+            passes_completed
+            passes_pct
+            passes_completed_short
+            passes_pct_short
+            passes_completed_medium
+            passes_pct_medium
+            progressive_passes
+            passes_into_final_third
+            touches
+            touches_def_3rd
+            touches_mid_3rd
+            touches_live_ball
+            carries
+            carries_progressive_distance
+            progressive_carries
+            passes_received
+            interceptions
+            tackles
+            tackles_won
+            tackles_interceptions
             ball_recoveries
+            dispossessed
+            miscontrols
+            take_ons
+            take_ons_won
             
             
         FROM
@@ -170,70 +140,32 @@ def get_avg_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_ofens
             apssp.type_of_stat,
             
             
-            passes_completed,
-            passes,
-            passes_pct,
-            progressive_passes,
-            passes_total_distance,
-            passes_progressive_distance,
-            passes_completed_short,
-            passes_short,
-            passes_pct_short,
-            passes_completed_medium,
-            passes_medium,
-            passes_pct_medium,
-            passes_completed_long,
-            passes_long,
-            passes_pct_long,
-            passes_into_final_third,
-            passes_into_penalty_area,
-            crosses_into_penalty_area,
-
-            -- RECEPCIÓN DE PASES
-            progressive_passes_received,
-            passes_received,
-
-            -- CREACIÓN DE OCASIONES
-            xg_assist,
-            assisted_shots,
-            sca,
-            gca,
-
-            -- TOQUES
-            touches,
-            touches_live_ball,
-            touches_mid_3rd,
-            touches_att_3rd,
-
-            -- CARRIES
-            carries,
-            carries_distance,
-            carries_progressive_distance,
-            progressive_carries,
-            carries_into_final_third,
-            carries_into_penalty_area,
-
-            -- REGATES Y POSESIÓN
-            take_ons,
-            take_ons_won,
-            take_ons_won_pct,
-            miscontrols,
-            dispossessed,
-
-            -- DISCIPLINA
-            fouls,
-            fouled,
-
-            -- DEFENSA
-            interceptions,
-            tackles,
-            tackles_won,
-            ball_recoveries,
-
-            -- JUEGO AÉREO
-            aerials_won,
-            aerials_lost,
-            aerials_won_pct
+            passes_completed
+            passes_pct
+            progressive_passes
+            passes_completed_short
+            passes_pct_short
+            passes_completed_medium
+            passes_pct_medium
+            passes_into_final_third
+            passes_into_penalty_area
+            crosses_into_penalty_area
+            xg_assist
+            assisted_shots
+            sca
+            gca
+            progressive_carries
+            carries_into_final_third
+            carries_into_penalty_area
+            passes_received
+            progressive_passes_received
+            touches_att_3rd
+            touches_att_pen_area
+            take_ons
+            take_ons_won
+            take_ons_won_pct
+            ball_recoveries
+            tackles_att_3rd
             
             
         FROM
@@ -257,74 +189,32 @@ def get_avg_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_creat
             apssp.type_of_stat,
             
            
-            -- PASES
-            passes_completed,
-            passes,
-            passes_pct,
-            progressive_passes,
-            passes_total_distance,
-            passes_progressive_distance,
-            passes_completed_short,
-            passes_short,
-            passes_pct_short,
-            passes_completed_medium,
-            passes_medium,
-            passes_pct_medium,
-            passes_completed_long,
-            passes_long,
-            passes_pct_long,
-            passes_into_final_third,
-            passes_into_penalty_area,
-            crosses_into_penalty_area,
-
-            -- CREACIÓN DE OCASIONES
-            xg_assist,
-            assisted_shots,
-            sca,
-            gca,
-
-
-            -- CARRIES
-            carries,
-            carries_distance,
-            carries_progressive_distance,
-            progressive_carries,
-            carries_into_final_third,
-            carries_into_penalty_area,
-
-            -- TOQUES
-            touches,
-            touches_mid_3rd,
-            touches_att_3rd,
-            touches_att_pen_area,
-            touches_live_ball,
-
-            -- REGATES
-            take_ons,
-            take_ons_won,
-            take_ons_won_pct,
-            take_ons_tackled,
-            take_ons_tackled_pct,
-
-            -- RECUPERACIÓN Y DEFENSA
-            ball_recoveries,
-            tackles,
-            tackles_won,
-            tackles_def_3rd,
-            tackles_mid_3rd,
-            tackles_att_3rd,
-            interceptions,
-            tackles_interceptions,
-            fouls,
-            fouled,
-
-            -- PÉRDIDAS DE BALÓN
-            miscontrols,
-            dispossessed,
-
-            -- RECEPCIÓN DE PASES
-            progressive_passes_received,
+            passes_completed
+            passes_pct
+            progressive_passes
+            passes_completed_short
+            passes_pct_short
+            passes_completed_medium
+            passes_pct_medium
+            passes_into_final_third
+            passes_into_penalty_area
+            crosses_into_penalty_area
+            progressive_passes_received
             passes_received
+            xg_assist
+            assisted_shots
+            sca
+            gca
+            touches
+            touches_mid_3rd
+            touches_att_3rd
+            progressive_carries
+            carries_into_final_third
+            take_ons
+            take_ons_won
+            take_ons_won_pct
+            interceptions
+            ball_recoveries
             
             
         FROM
@@ -347,69 +237,26 @@ def get_avg_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_later
             apssp.starter_status,
             apssp.type_of_stat,
             
-   
-            
-             -- PASES
-            passes_completed,
-            passes,
-            passes_pct,
-            passes_total_distance,
-            passes_progressive_distance,
-            passes_completed_short,
-            passes_short,
-            passes_pct_short,
-            passes_completed_medium,
-            passes_medium,
-            passes_pct_medium,
-            passes_completed_long,
-            passes_long,
-            passes_pct_long,
-            passes_into_final_third,
-            passes_into_penalty_area,
-            crosses_into_penalty_area,
-            progressive_passes,
-
-            -- REGATES Y POSESIÓN
-            take_ons,
-            take_ons_won,
-            take_ons_won_pct,
-            carries,
-            carries_distance,
-            carries_progressive_distance,
-            progressive_carries,
-            carries_into_final_third,
-            carries_into_penalty_area,
-            miscontrols,
-            dispossessed,
-
-            -- RECEPCIÓN DE PASES
-            progressive_passes_received,
-            passes_received,
-
-            -- CREACIÓN DE OCASIONES
-            xg_assist,
-            assisted_shots,
-            sca,
-            gca,
-
-            -- TOQUES
-            touches,
-            touches_def_3rd,
-            touches_mid_3rd,
-            touches_att_3rd,
-            touches_att_pen_area,
-            touches_live_ball,
-
-            -- DEFENSA
-            tackles,
-            tackles_won,
-            tackles_mid_3rd,
-            tackles_att_3rd,
-            interceptions,
-            tackles_interceptions,
-            ball_recoveries,
-            fouls,
-            fouled
+            passes_completed
+            passes_pct
+            passes_progressive_distance
+            passes_completed_short
+            passes_pct_short
+            passes_completed_medium
+            passes_pct_medium
+            passes_into_final_third
+            progressive_passes
+            crosses_into_penalty_area
+            take_ons
+            take_ons_won
+            progressive_carries
+            carries_into_final_third
+            passes_received
+            progressive_passes_received
+            xg_assist
+            assisted_shots
+            sca
+            gca
             
             
             
@@ -437,34 +284,28 @@ def get_avg_stats_to_offensive_player_and_tiki_taka_type_of_delantero_centro(sea
             apssp.type_of_stat,
             
             
-            shots,
-            shots_on_target,
-            xg,
-            npxg,
-            xg_assist,
-            sca,
-            gca,
-            passes_completed,
-            passes_pct,
-            progressive_passes,
-            passes_into_final_third,
-            passes_into_penalty_area,
-            crosses_into_penalty_area,
-            assisted_shots,
-            passes_received,
-            progressive_passes_received,
-            passes_completed_short,
-            passes_short,
-            passes_pct_short,
-            passes_completed_medium,
-            passes_medium,
-            passes_pct_medium,
-            take_ons,
-            take_ons_won,
-            take_ons_tackled,
-            take_ons_tackled_pct,
-            aerials_won,
-            aerials_lost
+            goals,
+            assists,
+            shots_on_target
+            xg
+            npxg
+            xg_assist
+            sca
+            gca
+            passes_completed
+            passes_pct
+            progressive_passes
+            passes_into_final_third
+            passes_into_penalty_area
+            assisted_shots
+            passes_completed_short
+            passes_pct_short
+            passes_completed_medium
+            passes_pct_medium
+            passes_received
+            progressive_passes_received
+            aerials_won
+            take_ons_won
         FROM
             avg_player_stats_by_specific_positions apssp
             WHERE apssp.league_id = {season} 
@@ -483,31 +324,29 @@ def get_avg_stats_to_offensive_player_and_tiki_taka_type_of_delantero_extremo(se
             apssp.position_player,
             apssp.starter_status,
             apssp.type_of_stat,
-            shots,
-            shots_on_target,
-            xg,
-            npxg,
-            xg_assist,
-            passes_completed,
-            passes_pct,
-            progressive_passes,
-            carries,
-            progressive_carries,
-            take_ons,
-            take_ons_won,
-            passes_into_final_third,
-            passes_into_penalty_area,
-            crosses_into_penalty_area,
-            assisted_shots,
-            passes_received,
-            progressive_passes_received,
-            passes_completed_short,
-            passes_short,
-            passes_pct_short,
-            take_ons_tackled,
-            take_ons_tackled_pct,
-            aerials_won,
-            aerials_lost
+            goals,
+            assists,
+            Shots,
+            shots_on_target
+            xg
+            npxg
+            xg_assist
+            passes_completed
+            passes_pct
+            progressive_passes
+            passes_into_final_third
+            passes_into_penalty_area
+            crosses_into_penalty_area
+            assisted_shots
+            passes_completed_short
+            passes_pct_short
+            carries
+            progressive_carries
+            take_ons
+            take_ons_won
+            passes_received
+            progressive_passes_received
+            take_ons_tackled_pct
         FROM
             avg_player_stats_by_specific_positions apssp
             WHERE apssp.league_id = {season} 
