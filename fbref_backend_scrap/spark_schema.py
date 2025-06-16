@@ -396,6 +396,9 @@ def get_type_position_schema():
     ])
     return schema
 
+def get_basic_positions_schema():
+    print("esquema")
+
 def get_position_player_schema():
     schema = StructType([
         StructField("position_id", IntegerType(), True),
