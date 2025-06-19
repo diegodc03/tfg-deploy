@@ -3,6 +3,9 @@
 
 
 
+import sys
+import pandas as pd
+from pyspark.sql.functions import col
 from pyspark.sql.functions import lit
 
 from functions_to_stract_of_dataBase.querys_score_match import get_number_of_scores_by_type_of_game_mode_and_basic_position_id
@@ -15,7 +18,7 @@ from get_all_stats_to_score_players.basic_stats_for_positions import get_stats_b
 from get_all_stats_to_score_players.create_unique_score_of_players import score_players_by_zone_of_field, score_players_by_type_of_play
 
 from functions_to_stract_of_dataBase.selects_of_positions import get_id_of_specific_and_game_id_when_not_exists
-from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import get_rows_of_match_statistics
+from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import get_all_matchs_ids_of_league_id, get_match_of_tournaments, get_rows_of_match_statistics, get_teams_in_competition
 
 ### PUNTUACIÓN DE LOS JUGADORES EN BASE UNICAMENTE A SUS ESTADÍSTICAS COMPARADAS CON ESE PARTIDO ###
 ############################################################################################################
@@ -25,6 +28,50 @@ from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_a
 # para conseguir eso, en pct sera facil, por que es 0 un 0 y un 10, 100, mientras que para los que no son valores, se cogera el menor y el mayor valor, poniendo a 0 el menor y a 10 el mayor
 # Por último, con el min y el max, se hará una regla de tres para conseguir la puntuación de cada jugador
 
+
+
+
+
+
+
+
+
+def get_score_of_5_leagues(spark, jdbc_url, db_properties):
+    
+    print('Getting score of 5 leagues...')
+    spark_data = get_match_of_tournaments(spark, jdbc_url, db_properties)
+    returning_value = spark.createDataFrame([], StructType([]))
+    league_df = spark_data.filter(col('nombre_liga') == "La Liga")
+
+    try:
+        for row in league_df.collect():
+            
+            tournament_id = row["tournament_id"]
+            tournament_name = row["nombre_liga"]
+            tournament_name = tournament_name.replace(' ', '-')
+            
+            if tournament_id == 130 or tournament_id == 127:
+                print("Skipping tournament with ID 130")
+                continue
+            
+            print(f"Processing tournament: {tournament_name} with ID: {tournament_id}")
+            
+            match_ids = get_all_matchs_ids_of_league_id(spark, jdbc_url, db_properties, tournament_id)
+            
+            for match_id in match_ids.collect():
+                print(f"Processing match ID: {match_id['match_id']} for tournament: {tournament_name}")
+
+                returning_value = get_stats_score(spark, jdbc_url, db_properties, match_id['match_id'], tournament_id)
+                if returning_value.isEmpty():
+                    print('No data to collect')
+                    continue
+     
+    except Exception as e:
+        print(f"Error: {e}")
+        returning_value = spark.createDataFrame([], StructType([]))
+    
+    return returning_value
+ 
 
 
 ############################################################################################################
@@ -47,10 +94,8 @@ def get_stats_score(spark, jdbc_url, db_properties, match_id, league_id):
 
     dict_stats_basic_position = get_stats_by_position(spark, jdbc_url, db_properties, match_id, league_id)
 
-    # Seleccionar stats por tipo de juego
     dict_stats_type_play_of_form = get_stats_by_type_of_play_form(spark, jdbc_url, db_properties, match_id, league_id)
     
-
     # Puntuacion que se da por ganar o perder el partido y si es local o visitante
     spark_df_visitant_win_lose = score_by_local_visitant_and_win_lose(spark, jdbc_url, db_properties, match_id, league_id)
     if spark_df_visitant_win_lose.isEmpty():

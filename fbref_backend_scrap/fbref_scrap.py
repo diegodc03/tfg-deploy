@@ -2,36 +2,46 @@ from bs4 import BeautifulSoup as soup
 import requests
 import time
 
-import sys
-from urllib.error import HTTPError
+
+
+
 from pyspark.sql.types import StructType
 
 import pandas as pd
 from pyspark.sql.types import IntegerType
 from pyspark.sql.functions import col, to_date
 
-import signal
-import sys
 
-from constants import required_football_match_columns
-from get_average_stats.score_teams_in_tournament import get_teams_average_of_5_leagues
-from get_average_stats.fbref_get_average_stats import get_average_of_5_leagues
+from constants import required_football_match_columns, football_match_league_columns, football_match_cup_columns
 from fbref_get_general_match_data import get_general_match_data
 from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import get_match_id_by_teams_and_tournament, get_match_of_tournaments
-from show_scores_of_match.show_scores import show_scores_of_match
 from spark_schema import get_football_match_schema, get_match_stats_gen_schema
-from spark_configuration import create_spark_session, jdbc_url, db_properties
+from spark_configuration import create_spark_session
 from fbref_functions_stats_introduce import get_all_data_of_player
 from write_dataframe_to_mysql_file import write_dataframe_to_mysql
 from clean_dataframe_file import clean_dataframe
 from fbref_delete_football_match import delete_football_match
-from add_different_tables_to_db import add_type_shots_to_database, add_body_part_to_database, add_outcome_to_database, add_type_of_position_on_field_to_database
 from fbref_get_teams_of_each_comp import get_teams_of_competition
-from get_all_stats_to_score_players.get_stats import get_stats_score
+import signal
+import sys
 
 
 # Variable global para almacenar el último partido insertado
 last_match_id = -1
+
+
+
+
+# Manejar Ctrl+C
+def signal_handler(sig, frame):
+    print("\n Interrupción detectada (Ctrl+C). Saliendo...")
+    sys.exit(0)
+
+
+# Registrar la señal
+signal.signal(signal.SIGINT, signal_handler)
+
+
 
 
 
@@ -89,14 +99,13 @@ def get_fixture_data(url, league, league_id, season, season_id, type_of_competit
     try:
         print('Getting fixture data...')
 
-        # Simulación de scraping
         tables = pd.read_html(url)
         type_of_competition = 'league'
 
         if type_of_competition == 'league':
-            fixtures = tables[0][['Wk', 'Day', 'Date', 'Home', 'Away', 'Score', 'Attendance', 'Venue', 'Referee']]
+            fixtures = tables[0][football_match_league_columns]
         elif type_of_competition == 'cup':
-            fixtures = tables[0][['Round', 'Day', 'Date', 'Home', 'Away', 'Score', 'Attendance', 'Venue', 'Referee']]
+            fixtures = tables[0][football_match_cup_columns]
             fixtures.loc[:, 'Round'] = fixtures['Round'].astype(str)
             fixtures.rename(columns={'Round': 'Wk'}, inplace=True)
 
@@ -113,15 +122,10 @@ def get_fixture_data(url, league, league_id, season, season_id, type_of_competit
             returning_value = pd.DataFrame()
         
         else:
-        
-            print(len(match_links), len(fixtures))
                 
-            # Esto tengo que mejorarlo
             if len(match_links) != len(fixtures):
                 match_links = match_links[:len(fixtures)]
                 fixtures = fixtures[:len(match_links)]
-
-            print(len(match_links), len(fixtures))
                 
             fixtures = get_only_new_match_filter(fixtures, match_links, league_id, spark, jdbc_url, db_properties)
             if fixtures.empty:
@@ -135,18 +139,11 @@ def get_fixture_data(url, league, league_id, season, season_id, type_of_competit
                 #Se hace un bucle para asociar a cada partido el link del report de este, ya que este link hay mas informacion de los jugadores
                 for index, row in fixtures.iterrows(): 
                     print(f"Procesando partido {row['Home']} vs {row['Away']}")
-                    print(row)
 
                     local = row['Home']
                     visitor = row['Away']
-                    
-                    #Change type to integer
-                    row['Home'] = int(row['Home'])
-                    row['Away'] = int(row['Away'])
-                    
-                    print(f"Local: {local}, Visitante: {visitor}")
 
-                    match_id = add_info_general_match_to_database(row, league, league_id, season_id, spark, jdbc_url, db_properties)
+                    match_id = add_info_general_match_to_database(row, league_id, spark, jdbc_url, db_properties)
                     if match_id < 0:
                         if match_id == -1:
                             print(f"Error al añadir el partido {local} vs {visitor} a la base de datos")
@@ -190,7 +187,6 @@ def get_fixture_data(url, league, league_id, season, season_id, type_of_competit
                         returning_value = pd.DataFrame({"Mensaje": ["No se han encontrado partidos nuevos"]})
                         last_match_id = -1
 
-
     except KeyboardInterrupt:
         signal_handler(None, None)
 
@@ -198,15 +194,63 @@ def get_fixture_data(url, league, league_id, season, season_id, type_of_competit
         print(f"Error al obtener los datos de los partidos: {e}")
         returning_value = pd.DataFrame()
 
-    
     return returning_value, match_not_inserted
 
 
 
 
-def get_not_match_form():
-    # Esta funcion lo que hace es buscar el número de partidos que no tienen informe si no, tienen cronica, que es antes de que se jueguen los partidos
-    print("Cronica de partidos")
+            
+def get_only_new_match_filter(df_partidos, match_links, league_id, spark, jdbc_url, db_properties):
+    # Obtener el máximo de jornada almacenada en la BD
+    print("Obteniendo los partidos que no están en la base de datos de la temporada: ", league_id)
+    success = pd.DataFrame()
+    try:
+
+        # Agregar la columna match_links a df_partidos antes de hacer el merge
+        df_partidos["match_link"] = match_links
+
+        team_df = spark.read.jdbc(
+            url=jdbc_url, 
+            table="team", 
+            properties=db_properties
+        ).select("team_id", "team_name").filter(f"tournament_team_id = {league_id}").toPandas()
+
+        team_dict = dict(zip(team_df["team_name"], team_df["team_id"]))
+
+        df_partidos["Home"] = df_partidos["Home"].map(team_dict)
+        df_partidos["Away"] = df_partidos["Away"].map(team_dict)
+
+        print("Partidos después de mapear los equipos:")
+        print(df_partidos)
+        
+        # Eliminar partidos donde no se haya encontrado el ID
+        df_partidos = df_partidos.dropna(subset=["Home", "Away"])
+
+        stored_matches_df = spark.read.jdbc(
+            url=jdbc_url, 
+            table="football_match", 
+            properties=db_properties
+        ).select("Home", "Away").filter(f"season = {league_id}").toPandas()
+
+    
+        if stored_matches_df.empty:
+            print("Se van a añadir todos los partidos, ya que no hay registros previos.")
+            success = df_partidos
+        else:
+            # Unir por Home y Away para encontrar partidos ya existentes
+            df_filtered = df_partidos.merge(stored_matches_df, on=['Home', 'Away'], how='left', indicator=True)
+
+            # Filtrar solo los partidos que no están en la base de datos
+            df_nuevos_partidos = df_filtered[df_filtered['_merge'] == 'left_only'].drop(columns=['_merge'])
+            success = df_nuevos_partidos
+            print(f"Se han encontrado {len(df_nuevos_partidos)} partidos nuevos para añadir.")
+
+    except Exception as e:
+        print(f"Error al filtrar los partidos nuevos: {e}")
+        success = pd.DataFrame()
+
+    return success
+
 
 
 ######################################################################################
@@ -217,7 +261,7 @@ def get_not_match_form():
 # league:         Nombre de la liga
 #
 ######################################################################################
-def add_info_general_match_to_database(row, league, league_id, season_id, spark, jdbc_url, db_properties):
+def add_info_general_match_to_database(row, league_id, spark, jdbc_url, db_properties):
     print("Inserting football_match_info")
     
     returning_value = -1
@@ -382,10 +426,6 @@ def player_data(league, league_id, season, season_id, match_id, link_element, lo
 
 
 
-
-
-
-
 # Function to get the leagues from the database
 def get_5_leagues(spark, jdbc_url, db_properties):
     
@@ -393,11 +433,8 @@ def get_5_leagues(spark, jdbc_url, db_properties):
 
         spark_data = get_match_of_tournaments(spark, jdbc_url, db_properties)
         
-        # Filtar solo La Liga
         league_df = spark_data.filter(col('nombre_liga') == "La Liga")
         print(league_df.show())
-        
-        max_fails_allowed = 2
 
         for row in league_df.collect():
             
@@ -453,164 +490,6 @@ def get_5_leagues(spark, jdbc_url, db_properties):
 
             
 
-            
-def get_only_new_match_filter(df_partidos, match_links, league_id, spark, jdbc_url, db_properties):
-    # Obtener el máximo de jornada almacenada en la BD
-    print("Obteniendo los partidos que no están en la base de datos de la temporada: ", league_id)
-    success = pd.DataFrame()
-    try:
-
-        # Agregar la columna match_links a df_partidos antes de hacer el merge
-        df_partidos["match_link"] = match_links
-
-        team_df = spark.read.jdbc(
-            url=jdbc_url, 
-            table="team",  # Suponiendo que la tabla de equipos se llama "teams"
-            properties=db_properties
-        ).select("team_id", "team_name").filter(f"tournament_team_id = {league_id}").toPandas()
-
-        team_dict = dict(zip(team_df["team_name"], team_df["team_id"]))
-
-        df_partidos["Home"] = df_partidos["Home"].map(team_dict)
-        df_partidos["Away"] = df_partidos["Away"].map(team_dict)
-
-        print("Partidos después de mapear los equipos:")
-        print(df_partidos)
-        
-        # Eliminar partidos donde no se haya encontrado el ID
-        df_partidos = df_partidos.dropna(subset=["Home", "Away"])
-
-        stored_matches_df = spark.read.jdbc(
-            url=jdbc_url, 
-            table="football_match", 
-            properties=db_properties
-        ).select("Home", "Away").filter(f"season = {league_id}").toPandas()
-
-    
-        if stored_matches_df.empty:
-            print("Se van a añadir todos los partidos, ya que no hay registros previos.")
-            success = df_partidos
-        else:
-            # Unir por Home y Away para encontrar partidos ya existentes
-            df_filtered = df_partidos.merge(stored_matches_df, on=['Home', 'Away'], how='left', indicator=True)
-
-            # Filtrar solo los partidos que no están en la base de datos
-            df_nuevos_partidos = df_filtered[df_filtered['_merge'] == 'left_only'].drop(columns=['_merge'])
-            success = df_nuevos_partidos
-            print(f"Se han encontrado {len(df_nuevos_partidos)} partidos nuevos para añadir.")
-
-    except Exception as e:
-        print(f"Error al filtrar los partidos nuevos: {e}")
-        success = pd.DataFrame()
-
-    return success
-
-
-
-
-
-
-# Manejar Ctrl+C
-def signal_handler(sig, frame):
-    print("\n Interrupción detectada (Ctrl+C). Saliendo...")
-    sys.exit(0)
-
-
-# Registrar la señal
-signal.signal(signal.SIGINT, signal_handler)
-
-
-def main():
-
-    spark = create_spark_session()
-    print('Starting...') 
-    print('Welcome to the FBref data collection tool!')
-    print("")
-    print("")
-
-    while True:
-
-        print("1. Quieres introducir tipos de pases, tipos de tiros, partes del cuerpo?")
-        print("2. Quieres introducir a los jugadores?")
-        print("3. Quieres introducir los datos de media de los equipos?")
-        print("4. Quieres puntuar los partidos de los jugadores?")
-        print("5. Quieres ver los partidos de una liga?")
-        print("6. Quieres hacer la puntuacion media de la liga por equipos?")
-        print("7. Quieres salir?")
-        election = input("Que quieres hacer?")
-
-        if election == '1':
-            #insert_league_competition_on_database(spark, jdbc_url, db_properties)
-
-            if not add_type_shots_to_database(spark, jdbc_url, db_properties).isEmpty():
-                print("Datos introducidos correctamente")
-            
-            if not add_body_part_to_database(spark, jdbc_url, db_properties).isEmpty():
-                print("Datos introducidos correctamente")
-
-            if not add_outcome_to_database(spark, jdbc_url, db_properties).isEmpty():
-                print("Datos introducidos correctamente")
-
-            if not add_type_of_position_on_field_to_database(spark, jdbc_url, db_properties).isEmpty():
-                print("Datos introducidos correctamente")    
-            break
-        
-            
-        
-            
-
-        elif election == '2':
-            returning_value = get_5_leagues(spark, jdbc_url, db_properties)
-            if returning_value.empty:
-                print('No data to collect')
-                sys.exit()
-            break
-        
-        elif election == '3':
-            returning_value = get_average_of_5_leagues(spark, jdbc_url, db_properties)
-            if returning_value.isEmpty():
-                print('Error al obtener los datos de la liga')
-                sys.exit()
-            break
-        
-        elif election == '4':
-            returning_value = get_stats_score(spark, jdbc_url, db_properties, 850, 128)
-            if returning_value.isEmpty():
-                print('No data to collect')
-                sys.exit()
-            break
-
-        elif election == '5':
-            show_scores_of_match(spark, jdbc_url, db_properties, 800, 128)
-        
-        elif election == '6':
-            get_teams_average_of_5_leagues(spark, jdbc_url, db_properties)
-        
-        elif election == '7':
-            break
-
-
-    # checks if user wants to collect more data
-    print('Data collected!')
-    while True:
-        answer = input('Do you want to collect more data? (yes/no): ')
-        if answer == 'yes':
-            main()
-        if answer == 'no':
-            sys.exit()
-        else:
-            print('Answer not valid')
-            continue
-
-
-
-
-if __name__ == '__main__':
-    try:
-        main()
-    except HTTPError:
-        print('The website refused access, try again later')
-        time.sleep(5)
 
 
 

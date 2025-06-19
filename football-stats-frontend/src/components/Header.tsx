@@ -71,7 +71,15 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-start',
 }));
 
-export default function Header() {
+
+type HeaderProps = {
+  backGcolor?: string;
+  backGButtons?: string;
+  textColor?: string; 
+};
+
+export default function Header(HeaderProps: HeaderProps) {
+  const { backGcolor, backGButtons, textColor } = HeaderProps;
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -89,23 +97,30 @@ export default function Header() {
   const isLongScreen = useMediaQuery(theme.breakpoints.down('lg'));
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex'}}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      
+      <AppBar 
+        position="fixed" 
+        open={open} 
+        sx={{ backgroundColor: backGcolor, color: textColor }}
+      >
         <Toolbar>
           <IconButton
               size="large"
               edge="start"
-              color="inherit"
+              sx={{ color: textColor }}
               aria-label="menu"
-              
             >
+
               <SportsSoccerIcon />
+            
             </IconButton>
+            
             <Typography
               variant="h6"
               component="div"
-              sx={{ flexGrow: 1, display: { xs: 'flex', fontWeight: 'bold'  } }}
+              sx={{ flexGrow: 1, display: { xs: 'flex', fontWeight: 'bold', color: textColor  } }}
             >
               {isSmallScreen ? 'Football Stats' : 'Player And Teams FootBall Stats'}
             </Typography>
@@ -119,10 +134,12 @@ export default function Header() {
             >
                 {menuItems.map((item) => (
                   <List >
-                    <Button variant="contained" sx={{ fontWeight: 'bold' }}>
-                    <ListItemButton onClick={() => navigate(item.path)}>
+                    <Button 
+                      variant="contained" 
+                      sx={{ fontWeight: 'bold', backgroundColor: backGButtons, color: textColor, '&:hover': { backgroundColor: backGButtons }}}
+                      onClick={() => navigate(item.path)}  
+                    >
                       {item.label}
-                    </ListItemButton>
                   </Button>
                   </List>
                 ))}
@@ -136,7 +153,7 @@ export default function Header() {
               aria-label="open drawer"
               edge="end"
               onClick={handleDrawerOpen}
-              sx={[open && { display: 'none' }]}
+              sx={{ color: textColor, ...(open && { display: 'none' }) }}
             >
               <MenuIcon />
 
@@ -168,8 +185,11 @@ export default function Header() {
           {menuItems.map((item) => (
             <ListItem key={item.label} disablePadding>
               <ListItemButton onClick={() => navigate(item.path)}>
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.label} />
+                <ListItemIcon sx={{ color: backGcolor }}>{item.icon}</ListItemIcon>
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{ style: { color: backGcolor } }}
+                />
               </ListItemButton>
             </ListItem>
           ))}

@@ -1,12 +1,10 @@
 
 
-import { Grid, Box, Container, Typography, Button } from '@mui/material';
-import realMadridImg from "../images/real_madrid.jpg";
+import { Grid, Container, Typography, Button } from '@mui/material';
 import {useEffect, useState} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { MatchAPI } from '../model/MatchAPI';
-import GenericSelect from '../components/MultipleSelect';
 import LoadingIndicator from '../components/LoaqdingIndicator';
 import CardShowOptions from '../components/CardShowOptions';
 import { API_ENDPOINTS } from '../model/constants/UrlConstants';
@@ -128,22 +126,10 @@ export default function FilterMatch() {
     };
 
     return (
-        <Box
-            sx={{
-            backgroundImage: `url(${realMadridImg})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundAttachment: 'fixed',
-            backgroundSize: 'cover',
-            minHeight: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            }}
-        >
 
-            <LoadingIndicator isLoading={isLoading} />
 
-            <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
+        <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
+                <LoadingIndicator isLoading={isLoading} />
             <Typography  gutterBottom>
                 <strong>Filtrar por Jornada, Equipos y Resultado</strong>
             </Typography>
@@ -231,13 +217,7 @@ export default function FilterMatch() {
                     ))}
             </Grid>
             
-
-
-
-
-
-
-            </Container>
-        </Box>
+        </Container>
+     
         );
 }

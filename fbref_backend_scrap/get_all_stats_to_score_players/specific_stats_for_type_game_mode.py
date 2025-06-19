@@ -70,8 +70,6 @@ def get_stats_by_type_of_play_form(spark, jdbc_url, db_properties, match_id, lea
                     
                 query_match = match_func(match_id, league_id, specific_position_id)
                 query_avg = avg_func(league_id, specific_position_id)
-                         
-       
                   
                 match_players_by_specific_position_df = read_data_with_spark(spark, jdbc_url, db_properties, query_match)
                 avg_by_specific_position_df = read_data_with_spark(spark, jdbc_url, db_properties, query_avg)

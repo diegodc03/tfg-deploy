@@ -2,7 +2,7 @@
 
 
 def get_stats_to_offensive_player_and_tiki_taka_type_of_defense_laterales(match_id, season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego ofensivo y defensa laterales")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego ofensivo tiki taka y defensa laterales")
     query = f"""
         SELECT 
             ms.estadistica_id,
@@ -64,7 +64,7 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_defense_laterales(match_
     return query
 
 def get_stats_to_offensive_player_and_tiki_taka_type_of_defense_central_defenders(match_id, season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego ofensivo y defensa centrales")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego ofensivo tiki taka y defensa centrales")
 
     query = f"""
         SELECT 
@@ -108,11 +108,9 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_defense_central_defender
             spts.crosses
         FROM 
             match_statistics ms
-        LEFT JOIN stats_summary ss ON ms.player_id = ss.player_id AND ms.estadistica_id = ss.stat_id
         LEFT JOIN stats_passing_summary sps ON ms.player_id = sps.player_id AND ms.estadistica_id = sps.stat_id
         LEFT JOIN stats_passTypes_summary spts ON ms.player_id = spts.player_id AND ms.estadistica_id = spts.stat_id
         LEFT JOIN stats_defensiveactions_summary sda ON ms.player_id = sda.player_id AND ms.estadistica_id = sda.stat_id
-        LEFT JOIN stats_possession_summary spn ON ms.player_id = spn.player_id AND ms.estadistica_id = spn.stat_id
         LEFT JOIN stats_miscellaneous_summary smm ON ms.player_id = smm.player_id AND ms.estadistica_id = smm.stat_id
         LEFT JOIN position_player pp ON ms.player_id = pp.player_id AND pp.match_id = ms.match_id
         LEFT JOIN football_match fm ON ms.match_id = fm.match_id
@@ -134,7 +132,7 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_defense_central_defender
 
 
 def get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_defensivo(match_id, season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo y defensa mediocentros defensivos")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego ofensivo tiki taka y defensa mediocentros defensivos")
 
     query = f"""
 
@@ -152,68 +150,37 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_defensivo
             END AS team_role,  -- Indica si es del equipo local o visitante
             ms.minutes,
             
-            -- PASES
             sps.passes_completed,
-            sps.passes,
             sps.passes_pct,
-            sps.progressive_passes,
-            sps.passes_total_distance,
-            sps.passes_progressive_distance,
             sps.passes_completed_short,
-            sps.passes_short,
             sps.passes_pct_short,
             sps.passes_completed_medium,
-            sps.passes_medium,
             sps.passes_pct_medium,
-            sps.passes_completed_long,
-            sps.passes_long,
-            sps.passes_pct_long,
+            sps.progressive_passes,
             sps.passes_into_final_third,
-            sps.passes_into_penalty_area,
-            sps.crosses_into_penalty_area,
-
-            -- TOQUES
             psn.touches,
             psn.touches_def_3rd,
             psn.touches_mid_3rd,
-            psn.touches_att_3rd,
             psn.touches_live_ball,
-
-            -- CARRIES
             psn.carries,
-            psn.carries_distance,
             psn.carries_progressive_distance,
             psn.progressive_carries,
-            psn.carries_into_final_third,
-            psn.carries_into_penalty_area,
-
-            -- REGATES
-            ss.take_ons,
-            ss.take_ons_won,
-            psn.take_ons_won_pct,
-
-            -- ERRORES Y PÉRDIDAS
-            psn.miscontrols,
-            psn.dispossessed,
-
-            -- RECEPCIÓN DE PASES
             psn.passes_received,
-            psn.progressive_passes_received,
-
-            -- DEFENSIVA
             sda.interceptions,
             sda.tackles,
             sda.tackles_won,
             sda.tackles_interceptions,
-            sda.errors,
-            sms.ball_recoveries
+            sms.ball_recoveries,
+            psn.dispossessed,
+            psn.miscontrols,
+            ss.take_ons,
+            ss.take_ons_won
             
             
         FROM match_statistics ms
         LEFT JOIN stats_summary ss ON ms.player_id = ss.player_id AND ms.estadistica_id = ss.stat_id
         LEFT JOIN stats_defensiveactions_summary sda ON ms.player_id = sda.player_id AND ms.estadistica_id = sda.stat_id
         LEFT JOIN stats_possession_summary psn ON ms.player_id = psn.player_id AND ms.estadistica_id = psn.stat_id
-        LEFT JOIN stats_passTypes_summary spts ON ms.player_id = spts.player_id AND ms.estadistica_id = spts.stat_id
         LEFT JOIN stats_passing_summary sps ON ms.player_id = sps.player_id AND ms.estadistica_id = sps.stat_id
         LEFT JOIN stats_miscellaneous_summary sms ON ms.player_id = sms.player_id AND ms.estadistica_id = sms.stat_id
         LEFT JOIN position_player pp ON ms.player_id = pp.player_id AND pp.match_id = ms.match_id
@@ -230,7 +197,7 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_defensivo
 
     
 def get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_ofensivo(match_id, season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo y defensa mediocentros defensivos")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego ofensivo tiki taka y mediocentros ofensivos")
 
     query = f"""
 
@@ -250,77 +217,38 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_ofensivo(
             
             
             
-           sps.passes_completed,
-            sps.passes,
+            sps.passes_completed,
             sps.passes_pct,
             sps.progressive_passes,
-            sps.passes_total_distance,
-            sps.passes_progressive_distance,
             sps.passes_completed_short,
-            sps.passes_short,
             sps.passes_pct_short,
             sps.passes_completed_medium,
-            sps.passes_medium,
             sps.passes_pct_medium,
-            sps.passes_completed_long,
-            sps.passes_long,
-            sps.passes_pct_long,
             sps.passes_into_final_third,
             sps.passes_into_penalty_area,
             sps.crosses_into_penalty_area,
-
-            -- RECEPCIÓN DE PASES
-            psn.progressive_passes_received,
-            psn.passes_received,
-
-            -- CREACIÓN DE OCASIONES
             ss.xg_assist,
             sps.assisted_shots,
             ss.sca,
             ss.gca,
-
-            -- TOQUES
-            psn.touches,
-            psn.touches_live_ball,
-            psn.touches_mid_3rd,
-            psn.touches_att_3rd,
-
-            -- CARRIES
-            psn.carries,
-            psn.carries_distance,
-            psn.carries_progressive_distance,
             psn.progressive_carries,
             psn.carries_into_final_third,
             psn.carries_into_penalty_area,
-
-            -- REGATES Y POSESIÓN
+            psn.passes_received,
+            psn.progressive_passes_received,
+            psn.touches_att_3rd,
+            psn.touches_att_pen_area,
             ss.take_ons,
             ss.take_ons_won,
             psn.take_ons_won_pct,
-            psn.miscontrols,
-            psn.dispossessed,
-
-            -- DISCIPLINA
-            sms.fouls,
-            sms.fouled,
-
-            -- DEFENSA
-            sda.interceptions,
-            sda.tackles,
-            sda.tackles_won,
             sms.ball_recoveries,
-
-            -- JUEGO AÉREO
-            sms.aerials_won,
-            sms.aerials_lost,
-            sms.aerials_won_pct
+            sda.tackles_att_3rd
             
             
         FROM match_statistics ms
         LEFT JOIN stats_summary ss ON ms.player_id = ss.player_id AND ms.estadistica_id = ss.stat_id
         LEFT JOIN stats_defensiveactions_summary sda ON ms.player_id = sda.player_id AND ms.estadistica_id = sda.stat_id
         LEFT JOIN stats_possession_summary psn ON ms.player_id = psn.player_id AND ms.estadistica_id = psn.stat_id
-        LEFT JOIN stats_passTypes_summary spts ON ms.player_id = spts.player_id AND ms.estadistica_id = spts.stat_id
         LEFT JOIN stats_passing_summary sps ON ms.player_id = sps.player_id AND ms.estadistica_id = sps.stat_id
         LEFT JOIN stats_miscellaneous_summary sms ON ms.player_id = sms.player_id AND ms.estadistica_id = sms.stat_id
         LEFT JOIN position_player pp ON ms.player_id = pp.player_id AND pp.match_id = ms.match_id
@@ -337,7 +265,7 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_ofensivo(
 
 
 def get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_creativo(match_id, season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo y defensa mediocentros defensivos")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego ofensivo tiki taka y mediocentros creativos")
 
     query = f"""
 
@@ -356,81 +284,38 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_creativo(
             ms.minutes,
             
            
-            -- PASES
             sps.passes_completed,
-            sps.passes,
             sps.passes_pct,
             sps.progressive_passes,
-            sps.passes_total_distance,
-            sps.passes_progressive_distance,
             sps.passes_completed_short,
-            sps.passes_short,
             sps.passes_pct_short,
             sps.passes_completed_medium,
-            sps.passes_medium,
             sps.passes_pct_medium,
-            sps.passes_completed_long,
-            sps.passes_long,
-            sps.passes_pct_long,
             sps.passes_into_final_third,
             sps.passes_into_penalty_area,
             sps.crosses_into_penalty_area,
-
-            -- CREACIÓN DE OCASIONES
+            psn.progressive_passes_received,
+            psn.passes_received,
             ss.xg_assist,
             sps.assisted_shots,
             ss.sca,
             ss.gca,
-
-
-            -- CARRIES
-            psn.carries,
-            psn.carries_distance,
-            psn.carries_progressive_distance,
-            psn.progressive_carries,
-            psn.carries_into_final_third,
-            psn.carries_into_penalty_area,
-
-            -- TOQUES
             psn.touches,
             psn.touches_mid_3rd,
             psn.touches_att_3rd,
-            psn.touches_att_pen_area,
-            psn.touches_live_ball,
-
-            -- REGATES
+            psn.progressive_carries,
+            psn.carries_into_final_third,
             ss.take_ons,
             ss.take_ons_won,
             psn.take_ons_won_pct,
-            psn.take_ons_tackled,
-            psn.take_ons_tackled_pct,
-
-            -- RECUPERACIÓN Y DEFENSA
-            sms.ball_recoveries,
-            sda.tackles,
-            sda.tackles_won,
-            sda.tackles_def_3rd,
-            sda.tackles_mid_3rd,
-            sda.tackles_att_3rd,
             sda.interceptions,
-            sda.tackles_interceptions,
-            sms.fouls,
-            sms.fouled,
-
-            -- PÉRDIDAS DE BALÓN
-            psn.miscontrols,
-            psn.dispossessed,
-
-            -- RECEPCIÓN DE PASES
-            psn.progressive_passes_received,
-            psn.passes_received
+            sms.ball_recoveries
             
             
         FROM match_statistics ms
         LEFT JOIN stats_summary ss ON ms.player_id = ss.player_id AND ms.estadistica_id = ss.stat_id
         LEFT JOIN stats_defensiveactions_summary sda ON ms.player_id = sda.player_id AND ms.estadistica_id = sda.stat_id
         LEFT JOIN stats_possession_summary psn ON ms.player_id = psn.player_id AND ms.estadistica_id = psn.stat_id
-        LEFT JOIN stats_passTypes_summary spts ON ms.player_id = spts.player_id AND ms.estadistica_id = spts.stat_id
         LEFT JOIN stats_passing_summary sps ON ms.player_id = sps.player_id AND ms.estadistica_id = sps.stat_id
         LEFT JOIN stats_miscellaneous_summary sms ON ms.player_id = sms.player_id AND ms.estadistica_id = sms.stat_id
         LEFT JOIN position_player pp ON ms.player_id = pp.player_id AND pp.match_id = ms.match_id
@@ -447,7 +332,7 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_creativo(
     
     
 def get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_lateral(match_id, season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo y defensa mediocentros defensivos")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por ofensivo tiki taka y mediocentros lateral")
 
     query = f"""
 
@@ -465,77 +350,33 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_lateral(m
             END AS team_role,  -- Indica si es del equipo local o visitante
             ms.minutes,
             
-             -- PASES
             sps.passes_completed,
-            sps.passes,
             sps.passes_pct,
-            sps.passes_total_distance,
             sps.passes_progressive_distance,
             sps.passes_completed_short,
-            sps.passes_short,
             sps.passes_pct_short,
             sps.passes_completed_medium,
-            sps.passes_medium,
             sps.passes_pct_medium,
-            sps.passes_completed_long,
-            sps.passes_long,
-            sps.passes_pct_long,
             sps.passes_into_final_third,
-            sps.passes_into_penalty_area,
-            sps.crosses_into_penalty_area,
             sps.progressive_passes,
-
-            -- REGATES Y POSESIÓN
+            sps.crosses_into_penalty_area,
             psn.take_ons,
             psn.take_ons_won,
-            psn.take_ons_won_pct,
-            psn.carries,
-            psn.carries_distance,
-            psn.carries_progressive_distance,
             psn.progressive_carries,
             psn.carries_into_final_third,
-            psn.carries_into_penalty_area,
-            psn.miscontrols,
-            psn.dispossessed,
-
-            -- RECEPCIÓN DE PASES
-            psn.progressive_passes_received,
             psn.passes_received,
-
-            -- CREACIÓN DE OCASIONES
+            psn.progressive_passes_received,
             ss.xg_assist,
             sps.assisted_shots,
             ss.sca,
-            ss.gca,
-
-            -- TOQUES
-            psn.touches,
-            psn.touches_def_3rd,
-            psn.touches_mid_3rd,
-            psn.touches_att_3rd,
-            psn.touches_att_pen_area,
-            psn.touches_live_ball,
-
-            -- DEFENSA
-            sda.tackles,
-            sda.tackles_won,
-            sda.tackles_mid_3rd,
-            sda.tackles_att_3rd,
-            sda.interceptions,
-            sda.tackles_interceptions,
-            sms.ball_recoveries,
-            sms.fouls,
-            sms.fouled
+            ss.gca
             
             
             
         FROM match_statistics ms
         LEFT JOIN stats_summary ss ON ms.player_id = ss.player_id AND ms.estadistica_id = ss.stat_id
-        LEFT JOIN stats_defensiveactions_summary sda ON ms.player_id = sda.player_id AND ms.estadistica_id = sda.stat_id
         LEFT JOIN stats_possession_summary psn ON ms.player_id = psn.player_id AND ms.estadistica_id = psn.stat_id
-        LEFT JOIN stats_passTypes_summary spts ON ms.player_id = spts.player_id AND ms.estadistica_id = spts.stat_id
         LEFT JOIN stats_passing_summary sps ON ms.player_id = sps.player_id AND ms.estadistica_id = sps.stat_id
-        LEFT JOIN stats_miscellaneous_summary sms ON ms.player_id = sms.player_id AND ms.estadistica_id = sms.stat_id
         LEFT JOIN position_player pp ON ms.player_id = pp.player_id AND pp.match_id = ms.match_id
         LEFT JOIN position_on_the_field pof ON pp.position_id = pof.position_id
         LEFT JOIN football_match fm ON ms.match_id = fm.match_id
@@ -554,7 +395,7 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_centrocampista_lateral(m
 # FORWARDS
 
 def get_stats_to_offensive_player_and_tiki_taka_type_of_delantero_centro(match_id, season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo y defensa mediocentros defensivos")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por ofensivo tiki taka y delantero centro")
 
     query = f"""
         SELECT
@@ -574,7 +415,6 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_delantero_centro(match_i
             
             ms.goals,
             ms.assists,
-            ss.shots,
             ss.shots_on_target,
             ss.xg,
             ss.npxg,
@@ -586,22 +426,16 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_delantero_centro(match_i
             sps.progressive_passes,
             sps.passes_into_final_third,
             sps.passes_into_penalty_area,
-            sps.crosses_into_penalty_area,
             sps.assisted_shots,
-            spn.passes_received,
-            spn.progressive_passes_received,
             sps.passes_completed_short,
-            sps.passes_short,
             sps.passes_pct_short,
             sps.passes_completed_medium,
-            sps.passes_medium,
             sps.passes_pct_medium,
-            spn.take_ons,
-            spn.take_ons_won,
-            spn.take_ons_tackled,
-            spn.take_ons_tackled_pct,
+            spn.passes_received,
+            spn.progressive_passes_received,
             sms.aerials_won,
-            sms.aerials_lost
+            spn.take_ons_won
+            
         FROM
 
             match_statistics ms
@@ -621,7 +455,7 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_delantero_centro(match_i
     return query
 
 def get_stats_to_offensive_player_and_tiki_taka_type_of_delantero_extremo(match_id, season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo y defensa mediocentros defensivos")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego ofensivo tiki taka y delantero extremo")
 
 
     query = f"""
@@ -651,28 +485,24 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_delantero_extremo(match_
             sps.passes_completed,
             sps.passes_pct,
             sps.progressive_passes,
-            spn.carries,
-            spn.progressive_carries,
-            spn.take_ons,
-            spn.take_ons_won,
             sps.passes_into_final_third,
             sps.passes_into_penalty_area,
             sps.crosses_into_penalty_area,
             sps.assisted_shots,
+            sps.passes_completed_short,
+            sps.passes_pct_short,
+            spn.carries,
+            spn.progressive_carries,
+            spn.take_ons,
+            spn.take_ons_won,
             spn.passes_received,
             spn.progressive_passes_received,
-            sps.passes_completed_short,
-            sps.passes_short,
-            sps.passes_pct_short,
-            spn.take_ons_tackled,
-            spn.take_ons_tackled_pct,
-            sms.aerials_won,
-            sms.aerials_lost
+            spn.take_ons_tackled_pct
+
         FROM
             match_statistics ms
         LEFT JOIN stats_summary ss ON ms.player_id = ss.player_id AND ms.estadistica_id = ss.stat_id
         LEFT JOIN stats_passing_summary sps ON ms.player_id = sps.player_id AND ms.estadistica_id = sps.stat_id
-        LEFT JOIN stats_miscellaneous_summary sms ON ms.player_id = sms.player_id AND ms.estadistica_id = sms.stat_id
         LEFT JOIN stats_possession_summary spn ON ms.player_id = spn.player_id AND ms.estadistica_id = spn.stat_id
         LEFT JOIN position_player pp ON ms.player_id = pp.player_id AND pp.match_id = ms.match_id
         LEFT JOIN football_match fm ON ms.match_id = fm.match_id

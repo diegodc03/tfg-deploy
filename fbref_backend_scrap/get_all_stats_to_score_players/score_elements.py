@@ -38,7 +38,8 @@ negative_stats = [
 #       - spark_df: Spark DataFrame, cada fila tiene a un jugador y sus estadísticas
 ############################################################################################################
 def get_score_for_positions_with_only_match_stats(players_spark_df):
-
+    
+    print("Comienzo con la adición de puntuación de stats de los jugadores por posición1")
     stats_schema = StructType([
         StructField("stat_name", StringType(), True),
         StructField("avg", FloatType(), True),
@@ -116,7 +117,7 @@ def calc_score(player_stat, avg, desv, stat_name, mode=None, base=6.5, multiplie
 
     # Ajuste de la media usando moda si la desviación es muy alta
     if avg != 0 and desv / avg > desviacion_umbral and mode is not None:
-        base = 6.5
+        base = 5.6
         avg = (avg * peso_media) + (mode * (1 - peso_media))
 
     # Cálculo del score

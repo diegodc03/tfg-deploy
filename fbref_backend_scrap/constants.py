@@ -6,6 +6,9 @@ required_football_match_columns = [
 ]
 
 
+football_match_league_columns = ['Wk', 'Day', 'Date', 'Home', 'Away', 'Score', 'Attendance', 'Venue', 'Referee']
+football_match_cup_columns = ['Round', 'Day', 'Date', 'Home', 'Away', 'Score', 'Attendance', 'Venue', 'Referee']
+
 
 ############################################################################################################
 
@@ -158,6 +161,8 @@ body_parts = ["Right Foot", "Left Foot", "Head", "Other"]
 outcomes = ["Goal", "Saved", "Off Target", "Post", "Blocked", "Wayward", "Own Goal", "Penalty Saved", "Penalty Missed", "Woodwork", "Other"]
 # Table position_on_the_field
 type_positions = ["GK", "DF", "MF", "FW", "FB", "LB", "RB", "CB", "DM", "CM", "LM", "RM", "WM", "LW", "RW", "AM"]
+# Tabla categorias básicas de juego
+basic_positions = ["goalkeepers", "defenders", "midfielders", "forwards"]
 
 
 # Table Type_of_game

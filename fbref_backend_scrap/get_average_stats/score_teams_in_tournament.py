@@ -25,13 +25,11 @@ def get_teams_average_of_5_leagues(spark, jdbc_url, db_properties):
     try:
         for row in league_df.collect():
             
-            season_id = row["season_tournament_id"]
             season_year = row["season_year"]
             tournament_id = row["tournament_id"]
             tournament_name = row["nombre_liga"]
             tournament_name = tournament_name.replace(' ', '-')
             tournament_fbref_id = row["tournament_fbref_id"]
-            type_of_competition = row["type_of_competition"]
             
             if tournament_id == 130 or tournament_id == 128:
                 continue

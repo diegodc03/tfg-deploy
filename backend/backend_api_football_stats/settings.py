@@ -12,9 +12,33 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import base64
+import tempfile
+import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+base64_cert = os.environ.get('DATABASE_SSL_CA')
+
+
+
+if base64_cert:
+    # Decodifica y escribe archivo temporal
+    
+    cert_bytes = base64.b64decode(base64_cert)
+    tmp_cert = tempfile.NamedTemporaryFile(delete=False, suffix='.pem')
+    tmp_cert.write(cert_bytes)
+    tmp_cert.flush()
+    print(f"Certificado temporal creado en: {tmp_cert.name}")
+    SSL_OPTIONS = {
+        'ssl': {
+            'ca': tmp_cert.name,
+        }
+    }
+else:
+    SSL_OPTIONS = {}
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -78,6 +102,7 @@ WSGI_APPLICATION = 'backend_api_football_stats.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+"""
 
 DATABASES = {
     'default': {
@@ -88,8 +113,33 @@ DATABASES = {
         'HOST': 'db',
         'PORT': '3306',
         
+        
     }
 }
+"""
+
+"""
+    sudo apt-get install mysql-client
+    wget --no-check-certificate https://dl.cacerts.digicert.com/DigiCertGlobalRootCA.crt.pem
+    mysql -h diegovps.mysql.database.azure.com -u diegodecastro -p --ssl-mode=REQUIRED --ssl-ca=DigiCertGlobalRootCA.crt.pem
+ """
+
+
+
+BASE_DIR1 = Path(__file__).resolve().parent
+print(os.path.abspath(os.path.join(BASE_DIR1, 'certs/BaltimoreCyberTrustRoot.crt.pem')))
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'football_stats_performance_db',  # tu nombre de base de datos
+        'USER': 'diegodecastro',          # usuario MySQL (normalmente user@servidor)
+        'PASSWORD': '71043687eEEEE&',              # tu contraseña
+        'HOST': 'diegovps.mysql.database.azure.com',  # el hostname de Azure MySQL
+        'PORT': '3306',
+    }
+}
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:80",  # 👈 Tu Vite frontend

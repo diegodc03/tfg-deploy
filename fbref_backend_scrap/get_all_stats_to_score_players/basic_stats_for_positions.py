@@ -39,11 +39,6 @@ def get_stats_by_position(spark, jdbc_url, db_properties, match_id, league_id):
         position_name = position["category_name"]
         position_id = position["category_id"]
         
-        """number_of_rows = get_number_of_scores_by_type_of_game_mode_and_basic_position_id(spark, jdbc_url, db_properties, match_id, position_id)
-        if number_of_rows > 0:
-            print("Ya existe las puntuaciones para el modo de juego y la posicion", position_name)
-            continue"""
-
         
         avg, comp_match = get_stats_basic_position(spark, jdbc_url, db_properties, match_id, league_id, position_name, position_id)
         if avg is None or comp_match is None:
@@ -82,6 +77,9 @@ def get_stats_basic_position(spark, jdbc_url, db_properties, match_id, league_id
         
         return score_comparison_with_league_avg, score_comparison_with_players_of_match
 
+    else:
+        print("No hay jugadores en la posicion", position_name)
+        return None, None
         
         
 def add_position_id_to_df(df, position_id):

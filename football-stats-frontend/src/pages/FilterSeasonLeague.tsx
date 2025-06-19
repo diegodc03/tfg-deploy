@@ -1,17 +1,13 @@
 
 
-import { Box, Typography, Grid, Button, Container} from '@mui/material';
+import { Typography, Grid, Button, Container} from '@mui/material';
 
-import realMadridImg from '../images/real_madrid.jpg';
-import CardShow from '../components/Cards';
 
 import {useEffect, useState} from 'react';
 
 import { useNavigate } from 'react-router-dom';
 import {LeagueAPI} from '../model/LeagueAPI';
-import GenericSelectProps from '../components/MultipleSelect';
 import {Season} from '../model/SeaonAPI';
-
 import {Tournament} from '../model/TournamentAPI';
 import LoadingIndicator from '../components/LoaqdingIndicator';
 import LeagueSelect from '../components/filters/LeagueFilters';
@@ -107,106 +103,89 @@ const FilterSeasonLeague = () => {
 
     return (
 
-        
+        <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
 
-        <Box
-        
-            sx={{
-                backgroundImage: `url(${realMadridImg})`,
-                backgroundRepeat: 'no-repeat',
-                backgroundAttachment: 'fixed',
-                backgroundSize: 'cover',
-                minHeight: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
+            <Typography>
+                <strong>Filtrar por temporada y liga</strong>
+            </Typography>
+
+            <Grid 
+                container
+                columnSpacing={{ xs: 1, sm: 2 }}
+                rowSpacing={{ xs: 1, sm: 2, md: 3 }}
+                spacing={{ xs: 1, sm: 2, md: 4 }}
                 
-            }}>
-                
-        
-            <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
+                justifyContent="center"
 
-                <Typography>
-                    <strong>Filtrar por temporada y liga</strong>
-                </Typography>
-
-                <Grid 
-                    container
-                    columnSpacing={{ xs: 1, sm: 2 }}
-                    rowSpacing={{ xs: 1, sm: 2, md: 3 }}
-                    spacing={{ xs: 1, sm: 2, md: 4 }}
-                    
-                    justifyContent="center"
-
-                    sx={{
-                        backgroundColor: '#f8f9fa',
-                        padding: 2,
-                        borderRadius: 2,
-                        marginTop: 1,
-                        marginBottom: 5,
-                    }}
-                >
-                    <Grid  size={{xs:12, md:5}}>
-                        <LeagueSelect
-                            leagues={leagues}
-                            value={leagueElement || ''}
-                            onChange={handleChangeLeague}
-                        />
-                    </Grid>
-                    
-                    <Grid  size={{xs:12, md:5}}>
-                        <SeasonSelect
-                            seasons={seasons}
-                            value={seasonElement || ''}
-                            onChange={handleChangeSeason}
-                        />
-                    </Grid>
-
-                    <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
-                        <Button
-                                variant="contained"
-                                color="primary"
-                                fullWidth
-                                onClick={filteredTournaments}
-                            >
-                            Filtrar
-                        </Button>
-                    </Grid>
+                sx={{
+                    backgroundColor: '#f8f9fa',
+                    padding: 2,
+                    borderRadius: 2,
+                    marginTop: 1,
+                    marginBottom: 5,
+                }}
+            >
+                <Grid  size={{xs:12, md:5}}>
+                    <LeagueSelect
+                        leagues={leagues}
+                        value={leagueElement || ''}
+                        onChange={handleChangeLeague}
+                    />
                 </Grid>
                 
-                <Typography gutterBottom>
-                    <strong>Listado de resultados </strong>
-                </Typography>
-                
-                <Grid
-                    container 
-                    spacing={2} 
-                    justifyContent="center" 
-                    alignItems="center" 
-                    sx={{ 
-                        marginTop: 4, 
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)', 
-                        padding: 3, 
-                        borderRadius: 2 
-                    }} 
-                >
-                    <LoadingIndicator isLoading={isLoading} />
-                    {
-                    filteredResults.map((item, index) => (
-                        <Grid size={{ xs: 6, sm: 6, md: 3 }} sx={{ display: 'flex', justifyContent: 'center' }}  key={index} onClick={() => handleChangeLeagueView(item.tournament_id)} >
-                            <CardShowOptions 
-                                title={item.nombre_liga} 
-                                season={item.season_tournament.season_year} 
-                            /> 
-                        </Grid>   
-                                        ))
-                    }
+                <Grid  size={{xs:12, md:5}}>
+                    <SeasonSelect
+                        seasons={seasons}
+                        value={seasonElement || ''}
+                        onChange={handleChangeSeason}
+                    />
                 </Grid>
 
+                <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
+                    <Button
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                            onClick={filteredTournaments}
+                        >
+                        Filtrar
+                    </Button>
+                </Grid>
+            </Grid>
+            
+            <Typography gutterBottom>
+                <strong>Listado de resultados </strong>
+            </Typography>
+            
+            <Grid
+                container 
+                spacing={2} 
+                justifyContent="center" 
+                alignItems="center" 
+                sx={{ 
+                    marginTop: 4, 
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)', 
+                    padding: 3, 
+                    borderRadius: 2 
+                }} 
+            >
+                <LoadingIndicator isLoading={isLoading} />
+                {
+                filteredResults.map((item, index) => (
+                    <Grid size={{ xs: 6, sm: 6, md: 3 }} sx={{ display: 'flex', justifyContent: 'center' }}  key={index} onClick={() => handleChangeLeagueView(item.tournament_id)} >
+                        <CardShowOptions 
+                            title={item.nombre_liga} 
+                            season={item.season_tournament.season_year} 
+                        /> 
+                    </Grid>   
+                                    ))
+                }
+            </Grid>
 
 
-            </Container>
-        </Box>
+
+        </Container>
+
     );
 }
 

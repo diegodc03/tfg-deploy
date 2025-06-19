@@ -11,9 +11,8 @@
  */
 
 
-import { Box, Button, Container, Grid, keyframes, Stack, Typography } from "@mui/material";
+import { Button, Container, Grid, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import realMadridImg from '../../images/real_madrid.jpg';
 import LoadingIndicator from "../../components/LoaqdingIndicator";
 import { StatAPI } from "../../model/StatsAPI/StatsAPI";
 import StatsTables from "../../components/StatsTables";
@@ -166,23 +165,12 @@ export default function ShowStatsComparisonFromLeague() {
 
 
     return (
-        <Box
-            sx={{
-            backgroundImage: `url(${realMadridImg})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundAttachment: 'fixed',
-            backgroundSize: 'cover',
-            minHeight: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            }}
-        >
-            <LoadingIndicator isLoading={isLoading} />
 
 
             <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
-            
+                
+                <LoadingIndicator isLoading={isLoading} />
+
                 <Typography>
                     <strong>Filtrar Si ha jugado mas de 70 min</strong>
                 </Typography>
@@ -311,16 +299,7 @@ export default function ShowStatsComparisonFromLeague() {
                         </Stack>
                     </Grid>
                 </Grid>
-
-
-
-                
-        
             </Container>
-
-            
-        </Box>
-            
     );
 
 }

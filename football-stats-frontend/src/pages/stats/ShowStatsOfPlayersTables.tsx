@@ -3,16 +3,14 @@
 
 
 
-import { Box, Button, Container, Grid, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Button, Container, Grid, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 import LoadingIndicator from '../../components/LoaqdingIndicator';
-import realMadridImg from "../../images/real_madrid.jpg";
 import GenericSelectProps from '../../components/MultipleSelect';
 import { TablesStats } from '../../model/tablesStats/TablesStats';
 import StatsOfMatchPlayers from '../../components/statsOfMatchPlayers';
-import { StatsList } from '../../components/charts/StatsList';
 import { BasicPositionAPI } from '../../model/BasicPositionAPI';
+import { useParams } from 'react-router-dom';
 /**
  * 
  * Este componente se va a encargar de mostrar las tablas de las diferentes estadísticas de los jugadores en un partido
@@ -133,23 +131,11 @@ export default function ShowStatsOfPlayersOnMatch() {
 
 
     return (
-        <Box
-            sx={{
-            backgroundImage: `url(${realMadridImg})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundAttachment: 'fixed',
-            backgroundSize: 'cover',
-            minHeight: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            }}
-        >
-            <LoadingIndicator isLoading={isLoading} />
-
 
             <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
-            
+                
+                <LoadingIndicator isLoading={isLoading} />
+
                 <Typography>
                     <strong>Filtrar por tipo de estadística y equipo</strong>
                 </Typography>
@@ -210,10 +196,7 @@ export default function ShowStatsOfPlayersOnMatch() {
                                 Filtrar
                             </Button>
                           </Grid>
-                          
                         </Grid>
-                
-                
                 <Typography gutterBottom>
                     <strong>Listado de resultados </strong>
                 </Typography>
@@ -223,13 +206,6 @@ export default function ShowStatsOfPlayersOnMatch() {
                 <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: 4, backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: 3, borderRadius: 2 }} >
                     <StatsOfMatchPlayers data={data} />
                 </Grid>
-                
-
-            </Container>
-
-            
-        </Box>
-            
-        
+            </Container>        
     );
 }

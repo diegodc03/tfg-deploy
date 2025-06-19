@@ -3,7 +3,7 @@
 
 
 def get_avg_stats_to_defensive_player_and_contraataque_type_of_defense_laterales(season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego ofensivo y defensa mediocentros defensivos")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo contraataque y defensa mediocentros defensivos")
 
 
     query = f"""
@@ -44,7 +44,7 @@ def get_avg_stats_to_defensive_player_and_contraataque_type_of_defense_laterales
 
 
 def get_avg_stats_to_defensive_player_and_contraataque_type_of_defense_central_defenders(season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego ofensivo y defensa mediocentros defensivos")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo contraataque y defensa mediocentros defensivos")
 
 
     query = f"""
@@ -86,7 +86,7 @@ def get_avg_stats_to_defensive_player_and_contraataque_type_of_defense_central_d
 # MIDFIELDERS
 
 def get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_defensivo(season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo y defensa mediocentros defensivos\n")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo contraataque y defensa mediocentros defensivos\n")
 
     query = f"""
         SELECT 
@@ -95,68 +95,31 @@ def get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_de
             apssp.starter_status,
             apssp.type_of_stat,
             
-            -- Defensive
             tackles,
             tackles_won,
             tackles_def_3rd,
             tackles_mid_3rd,
-            tackles_att_3rd,
             tackles_interceptions,
             interceptions,
-            blocks,
-            blocked_shots,
-            blocked_passes,
             clearances,
+            blocks,
+            blocked_passes,
             errors,
-            
-            
-            fouls,
-            fouled,
-            aerials_won,
-            aerials_lost,
-            aerials_won_pct,
             ball_recoveries,
-    
-            -- Passing
-            passes_completed,
-            passes,
-            passes_pct,
+            aerials_won,
+            aerials_won_pct,
             progressive_passes,
             passes_completed_long,
-            passes_long,
             passes_pct_long,
-            passes_completed_medium,
-            passes_medium,
-            passes_pct_medium,
-            passes_total_distance,
             passes_progressive_distance,
             passes_into_final_third,
-            passes_into_penalty_area,
-            crosses_into_penalty_area,
-
-
-            -- Possession
-            take_ons,
-            take_ons_won,
-            take_ons_won_pct,
-            take_ons_tackled,
-            carries,
-            carries_distance,
-            carries_progressive_distance,
             progressive_carries,
-            carries_into_final_third,
-            carries_into_penalty_area,
+            carries_distance,
             miscontrols,
             dispossessed,
-
-            -- Receiving
             passes_received,
             progressive_passes_received,
-
-            -- Creation
-            sca,
-            gca,
-            xg_assist
+            fouls
         
         FROM
             avg_player_stats_by_specific_positions apssp
@@ -168,7 +131,7 @@ def get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_de
 
 
 def get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_ofensivo(season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo y defensa mediocentros defensivos\n")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo contraataque y defensa mediocentros ofernsivo\n")
 
     query = f"""
         SELECT 
@@ -177,77 +140,32 @@ def get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_of
             apssp.starter_status,
             apssp.type_of_stat,
             
-            -- Pase
-            passes_completed,
-            passes,
-            passes_pct,
-            passes_progressive_distance,
-            passes_completed_short,
-            passes_pct_short,
-            passes_completed_medium,
-            passes_pct_medium,
-            passes_completed_long,
-            passes_pct_long,
             progressive_passes,
             passes_into_final_third,
             passes_into_penalty_area,
-            crosses_into_penalty_area,
+            assisted_shots,
+            pass_xa,
             assists,
             xg_assist,
-            pass_xa,
-            assisted_shots,
-
-            -- Regates
+            sca,
+            gca,
             take_ons,
             take_ons_won,
             take_ons_won_pct,
-
-            -- Carreras y progresión
-            carries,
-            carries_distance,
-            carries_progressive_distance,
             progressive_carries,
             carries_into_final_third,
             carries_into_penalty_area,
-
-            -- Recibos
             passes_received,
             progressive_passes_received,
-
-            -- Tiros y goles
             shots,
             shots_on_target,
-            goals,
-            pens_made,
-            pens_att,
             xg,
             npxg,
-            sca,
-            gca,
-
-            -- Toques
-            touches,
-            touches_mid_3rd,
             touches_att_3rd,
             touches_att_pen_area,
-            touches_live_ball,
-
-            -- Faltas
             fouled,
+            ball_recoveries
 
-            -- Defensa
-            interceptions,
-            tackles,
-
-            blocks,
-            ball_recoveries,
-            miscontrols,
-            dispossessed,
-
-            -- Aéreos
-            aerials_won,
-            aerials_lost,
-            aerials_won_pct
         
         FROM
             avg_player_stats_by_specific_positions apssp
@@ -259,7 +177,7 @@ def get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_of
 
 
 def get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_creativo(season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo y defensa mediocentros defensivos\n")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo contraataque y defensa mediocentros creativo\n")
 
     query = f"""
         SELECT 
@@ -268,66 +186,32 @@ def get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_cr
             apssp.starter_status,
             apssp.type_of_stat,
             
-            -- Pases
-            passes_completed,
-            passes,
-            passes_pct,
-            passes_total_distance,
-            passes_progressive_distance,
-            passes_completed_short,
-            passes_pct_short,
-            passes_completed_medium,
-            passes_pct_medium,
-            passes_completed_long,
-            passes_pct_long,
             progressive_passes,
             passes_into_final_third,
             passes_into_penalty_area,
-            crosses_into_penalty_area,
             through_balls,
-
-            -- Regates
+            passes_completed_long,
+            passes_pct_long,
+            passes_completed_medium,
+            passes_pct_medium,
+            xg_assist,
+            sca,
+            gca,
             take_ons,
             take_ons_won,
             take_ons_won_pct,
-
-            -- Carreras y progresión
-            carries,
-            carries_distance,
-            carries_progressive_distance,
             progressive_carries,
             carries_into_final_third,
             carries_into_penalty_area,
-            -- Recibos
             passes_received,
             progressive_passes_received,
-
-            -- Creación de gol
-            sca,
-            gca,
-
- 
-            xg_assist,
-
-            -- Defensa
+            ball_recoveries,
+            interceptions,
             tackles,
             tackles_won,
-            interceptions,
-            blocks,
             tackles_interceptions,
-            ball_recoveries,
-            clearances,
-            errors,
+            blocks
 
-       
-            fouls,
-            fouled,
-            offsides,
-
-            -- Aéreos
-            aerials_won,
-            aerials_lost,
-            aerials_won_pct
             
         FROM
             avg_player_stats_by_specific_positions apssp
@@ -338,7 +222,7 @@ def get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_cr
 
 
 def get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_lateral(season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo y defensa mediocentros defensivos\n")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo contraataque y defensa mediocentros lateral\n")
     
     query = f"""
         SELECT 
@@ -347,73 +231,32 @@ def get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_la
             apssp.starter_status,
             apssp.type_of_stat,
             
-            -- Pases
-            passes_completed,
-            passes,
-            passes_pct,
             progressive_passes,
-            passes_total_distance,
-            passes_progressive_distance,
-            passes_completed_short,
-            passes_short,
-            passes_pct_short,
-            passes_completed_medium,
-            passes_medium,
-            passes_pct_medium,
-            passes_completed_long,
-            passes_long,
-            passes_pct_long,
-            assists,
-            pass_xa,
-            assisted_shots,
             passes_into_final_third,
             passes_into_penalty_area,
             crosses_into_penalty_area,
-
-            -- Toques
-            touches,
-            touches_mid_3rd,
-            touches_att_3rd,
-            touches_att_pen_area,
-
-            -- Regates
+            assisted_shots,
+            pass_xa,
+            assists,
             take_ons,
             take_ons_won,
             take_ons_won_pct,
-
-            -- Carreras
             carries,
-            carries_distance,
-            carries_progressive_distance,
             progressive_carries,
+            carries_progressive_distance,
             carries_into_final_third,
             carries_into_penalty_area,
-
-            -- Errores y pérdidas
-            miscontrols,
-            dispossessed,
-
-            -- Recibos
             passes_received,
             progressive_passes_received,
-
-            -- Defensa
-            tackles,
-            tackles_won,
-            tackles_mid_3rd,
+            touches_att_3rd,
+            touches_att_pen_area,
             tackles_att_3rd,
             challenge_tackles,
             challenges,
-            challenge_tackles_pct,
             interceptions,
-            tackles_interceptions,
-            clearances,
             ball_recoveries,
+            dispossessed
 
-            -- Faltas y tarjetas
-            fouls,
-            fouled,
-            offsides
         
         FROM
             avg_player_stats_by_specific_positions apssp
@@ -425,7 +268,7 @@ def get_avg_stats_to_defensive_player_and_contraataque_type_of_centrocampista_la
 # FORWARD
 
 def get_avg_stats_to_defensive_player_and_contraataque_type_of_forward_delantero_centro(season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego ofensivo y defensa mediocentros defensivos\n")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo contraataque y defensa mediocentros defensivos\n")
 
     query = f"""
         SELECT 
@@ -434,8 +277,6 @@ def get_avg_stats_to_defensive_player_and_contraataque_type_of_forward_delantero
             apssp.starter_status,
             apssp.type_of_stat,
             
-            pens_made,
-            pens_att,
             shots,
             shots_on_target,
             xg,
@@ -443,31 +284,25 @@ def get_avg_stats_to_defensive_player_and_contraataque_type_of_forward_delantero
             xg_assist,
             sca,
             gca,
-
-            -- Passing Summary (sps)
-            passes_completed,
-            passes_pct,
+            pens_made,
+            pens_att,
+            assisted_shots,
             progressive_passes,
             passes_into_final_third,
             passes_into_penalty_area,
-            crosses_into_penalty_area,
-            assisted_shots,
+            passes_completed,
+            passes_pct,
             passes_completed_short,
             passes_short,
             passes_pct_short,
-            passes_completed_medium,
-            passes_medium,
-            passes_pct_medium,
-
-            -- Possession (psn)
             take_ons,
             take_ons_won,
             take_ons_tackled,
             take_ons_tackled_pct,
-
-            -- Miscellaneous (sms)
             aerials_won,
-            aerials_lost
+            aerials_lost,
+            aerials_won_pct
+
         
        FROM
             avg_player_stats_by_specific_positions apssp
@@ -478,7 +313,7 @@ def get_avg_stats_to_defensive_player_and_contraataque_type_of_forward_delantero
 
 
 def get_avg_stats_to_defensive_player_and_contraataque_type_of_forward_delantero_extremo(season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego ofensivo y defensa mediocentros defensivos \n")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo contraataque y defensa mediocentros defensivos \n")
 
     query = f"""
         SELECT 
@@ -492,32 +327,27 @@ def get_avg_stats_to_defensive_player_and_contraataque_type_of_forward_delantero
             xg,
             npxg,
             xg_assist,
-
-            -- Passing Summary (ps)
-            passes_completed,
-            passes_pct,
+            assisted_shots,
             progressive_passes,
             passes_into_final_third,
             passes_into_penalty_area,
             crosses_into_penalty_area,
-            assisted_shots,
-            passes_completed_short,
-            passes_short,
-            passes_pct_short,
-
-            -- Possession (pos)
+            passes_completed,
+            passes_pct,
             carries,
             progressive_carries,
+            carries_into_final_third,
             take_ons,
             take_ons_won,
             take_ons_tackled,
             take_ons_tackled_pct,
             passes_received,
             progressive_passes_received,
-
-            -- Miscellaneous (sms)
             aerials_won,
-            aerials_lost
+            aerials_lost,
+            aerials_won_pct,
+            fouled
+
         
         FROM
             avg_player_stats_by_specific_positions apssp

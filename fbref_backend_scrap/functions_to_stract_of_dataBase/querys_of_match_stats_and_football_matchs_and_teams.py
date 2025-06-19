@@ -35,14 +35,16 @@ def select_football_match(spark, jdbc_url, db_properties, match_id):
 
 def get_all_matchs_ids_of_league_id(spark, jdbc_url, db_properties, league_id):
     query = f"""
-        SELECT match_id FROM football_match WHERE league_id = {league_id}
+        SELECT match_id FROM football_match WHERE Season = {league_id}
     """
-    return spark.read.jdbc(
-        url=jdbc_url,
-        table=f"({query}) as match_ids",
-        properties=db_properties
-    )
     
+    return read_data_with_spark(
+        spark, 
+        jdbc_url, 
+        db_properties, 
+        query
+    )
+        
     
     
     

@@ -1,19 +1,17 @@
-import { Box, Button, Container, Grid, Stack, Typography } from "@mui/material";
+import { Button, Container, Grid, Stack, Typography } from "@mui/material";
 
-import realMadridImg from '../images/real_madrid.jpg';
+
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { LeagueAPI } from "../model/LeagueAPI";
+
 import GenericSelectProps from "../components/MultipleSelect";
-import { Season } from "../model/SeaonAPI";
+
 import { ScoreAPI } from "../model/ScoreAPI";
 import EnhancedTable from "../components/TablePlayersScore";
 
 import { SpecificPositionAPI } from "../model/SpecificPositionAPI";
 import { BasicPositionAPI } from "../model/BasicPositionAPI";
 import { GameModeTypeAPI } from "../model/GameModeTypeAPI";
-
-import { FootballField } from "../components/FootballField";
 
 import { ChartOfNumbersOfScores } from "../components/charts/chartOfNumbers";
 import { PlayersIdName } from "../model/PlayersIdName";
@@ -201,18 +199,7 @@ export default function ShowScores() {
 
 
     return (
-        <Box
-            sx={{
-                backgroundImage: `url(${realMadridImg})`,
-                backgroundRepeat: 'no-repeat',
-                backgroundAttachment: 'fixed',
-                backgroundSize: 'cover',
-                minHeight: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                
-            }}>
+        
             <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
 
                 <Typography>
@@ -349,7 +336,7 @@ export default function ShowScores() {
                     </Grid>
                 </Grid>
             </Container>
-        </Box> 
+        
                 
     );
 }

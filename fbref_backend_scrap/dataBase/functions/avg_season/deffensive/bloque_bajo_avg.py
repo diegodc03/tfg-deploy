@@ -3,7 +3,7 @@
 
 ### DEFENSIVE STATS
 def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_defense_laterales(season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego ofensivo y defensa laterales")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo bloque bajo y defensa laterales")
 
 
     query = f"""
@@ -34,6 +34,7 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_defense_laterales(
         
         
     """
+    print("Query para laterales:", query)
     return query
     
 positions = [
@@ -84,6 +85,7 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_defense_central_de
         WHERE apssp.league_id = {season} 
         AND apssp.position_player = ({specific_position_id})
     """
+    print("Query para defensas centrales:", query)
     return query
 
 
@@ -91,7 +93,7 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_defense_central_de
 #### CENTROCAMPISTAS ####
 
 def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_defensivo(season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo y defensa mediocentros defensivos\n")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo bloque bajo y defensa mediocentros defensivos\n")
 
     query = f"""
         SELECT
@@ -103,8 +105,6 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_def
             tackles,
             tackles_won,
             tackles_def_3rd,
-            tackles_mid_3rd,
-            tackles_att_3rd,
             challenge_tackles,
             challenges,
             challenge_tackles_pct,
@@ -116,16 +116,8 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_def
             tackles_interceptions,
             clearances,
             errors,
-
-            -- Possession (psn)
             miscontrols,
             dispossessed,
-
-            crosses_into_penalty_area,
-            passes_into_final_third,
- 
-
-            -- Passing Summary (sps)
             passes_completed,
             passes,
             passes_pct,
@@ -134,14 +126,8 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_def
             passes_completed_short,
             passes_short,
             passes_pct_short,
-            passes_completed_medium,
-            passes_medium,
-            passes_pct_medium,
-            passes_completed_long,
-            passes_long,
-            passes_pct_long,
-            passes_into_penalty_area,
-            pass_xa
+            passes_into_final_third,
+            passes_into_penalty_area
             
             FROM
             avg_player_stats_by_specific_positions apssp
@@ -149,13 +135,14 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_def
         AND apssp.position_player = ({specific_position_id})
     
     """
+    print("Query para mediocentros defensivos:", query)
     return query
 
 
 
 
 def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_ofensivo(season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo y defensa mediocentros defensivos\n")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo bloque bajo y defensa mediocentros ofensivos\n")
 
     query = f"""
         SELECT
@@ -164,71 +151,33 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_ofe
             apssp.starter_status,
             apssp.type_of_stat,
             
-            -- Defensive Actions (sds)
             tackles,
             tackles_won,
-            tackles_def_3rd,
             tackles_mid_3rd,
-            tackles_att_3rd,
-            challenge_tackles,
-            challenges,
-            challenge_tackles_pct,
-            challenged_lost,
-            blocks,
-            blocked_shots,
-            blocked_passes,
             interceptions,
-            tackles_interceptions,
             clearances,
-            errors,
-
-            -- Possession (psn)
             touches,
-            touches_def_pen_area,
-            touches_def_3rd,
-            touches_mid_3rd,
             touches_att_3rd,
             touches_att_pen_area,
-            touches_live_ball,
             take_ons,
             take_ons_won,
-            take_ons_won_pct,
-            take_ons_tackled,
-            take_ons_tackled_pct,
             carries,
-            carries_distance,
             carries_progressive_distance,
-            progressive_carries,
             carries_into_final_third,
             carries_into_penalty_area,
-            miscontrols,
-            dispossessed,
             passes_received,
             progressive_passes_received,
-
-            -- Passing Summary (sps)
             passes_completed,
-            passes,
             passes_pct,
-            passes_total_distance,
             passes_progressive_distance,
-            passes_completed_short,
-            passes_short,
-            passes_pct_short,
             passes_completed_medium,
             passes_medium,
-            passes_pct_medium,
-            passes_completed_long,
-            passes_long,
-            passes_pct_long,
             xg_assists,
-            pass_xa,
             assisted_shots,
             passes_into_final_third,
             passes_into_penalty_area,
-            crosses_into_penalty_area,
             progressive_passes
-            
+
 
         FROM
             avg_player_stats_by_specific_positions apssp
@@ -236,6 +185,7 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_ofe
         AND apssp.position_player = ({specific_position_id})
     
     """
+    print("Query para mediocentros ofensivos:", query)
     return query
 
 
@@ -247,7 +197,7 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_ofe
 
 
 def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_creativo(season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo y defensa mediocentros defensivos\n")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo bloque bajo y defensa mediocentros creativo\n")
 
     query = f"""
         SELECT
@@ -256,39 +206,18 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_cre
             apssp.starter_status,
             apssp.type_of_stat,
             
-            -- Defensive Actions (sda)
             tackles,
             tackles_won,
             tackles_def_3rd,
-            tackles_mid_3rd,
-            tackles_att_3rd,
-            challenge_tackles,
-            challenges,
-            challenge_tackles_pct,
-            challenged_lost,  -- Mapeado como tackled_lost
-            blocks,
-            blocked_shots,
-            blocked_passes,
             interceptions,
-            tackles_interceptions,
             clearances,
-
-            -- Miscellaneous (sms)
-            fouls,
-            fouled,
             ball_recoveries,
-            aerials_won,
-            aerials_lost,
             aerials_won_pct,
-
-            -- Passing Summary (sps)
             passes_completed,
-            passes,
             passes_pct,
             progressive_passes,
             passes_into_final_third,
             passes_into_penalty_area,
-            passes_total_distance,
             passes_progressive_distance,
             passes_short,
             passes_pct_short,
@@ -297,29 +226,11 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_cre
             passes_long,
             passes_pct_long,
             xg_assists,
-            pass_xa,
-            assisted_shots,
- 
-            -- Possession Summary (psn)
             take_ons,
             take_ons_won,
-            take_ons_won_pct,
-            miscontrols,
-            dispossessed,
             progressive_passes_received,
-            touches,
-            touches_def_pen_area,
-            touches_def_3rd,
             touches_mid_3rd,
-            touches_att_3rd,
-            touches_live_ball,
-            passes_received,
-            progressive_carries,
-            carries,
-            carries_distance,
-            carries_progressive_distance,
-            carries_into_final_third,
-            carries_into_penalty_area
+            carries_into_final_third
 
 
 
@@ -329,12 +240,13 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_cre
         AND apssp.position_player = ({specific_position_id})
     
     """
+    print("Query para mediocentros creativos:", query)
     return query
     
     
     
 def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_lateral(season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo y defensa mediocentros defensivos\n")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo bloque bajo y defensa mediocentros lateral\n")
 
     
     query = f"""
@@ -350,67 +262,27 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_lat
         tackles_won,
         tackles_def_3rd,
         tackles_mid_3rd,
-        tackles_att_3rd,
-        challenge_tackles,
-        challenges,
-        challenge_tackles_pct,
-        challenged_lost,
         blocks,
-        blocked_shots,
-        blocked_passes,
         interceptions,
-        tackles_interceptions,
         clearances,
-        errors,
-
-        -- Possession Summary (psn)
         touches,
-        touches_def_pen_area,
         touches_def_3rd,
         touches_mid_3rd,
-        touches_att_3rd,
         touches_live_ball,
         take_ons,
         take_ons_won,
-        take_ons_won_pct,
-        take_ons_tackled,
-        take_ons_tackled_pct,
         progressive_carries,
         carries,
-        carries_distance,
-        carries_progressive_distance,
         carries_into_final_third,
-        carries_into_penalty_area,
-
-        -- Passing Summary (sps)
         passes_completed,
-        passes,
         passes_pct,
         passes_into_final_third,
-        passes_into_penalty_area,
         passes_completed_short,
         passes_short,
-        passes_pct_short,
-        passes_completed_medium,
-        passes_medium,
-        passes_pct_medium,
-        passes_completed_long,
-        passes_long,
-        passes_pct_long,
-        passes_progressive_distance,
         progressive_passes,
         xg_assists,
-        pass_xa,
-        assisted_shots,
-        crosses_into_penalty_area,
-
-        -- Miscellaneous (sms)
-        fouls,
-        fouled,
         ball_recoveries,
         aerials_won_pct
-
-
 
         FROM
             avg_player_stats_by_specific_positions apssp
@@ -426,7 +298,7 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_centrocampista_lat
 #### DELANTEROS ####
 
 def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_forward_delantero_centro(season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego ofensivo y defensa mediocentros defensivos\n")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo bloque bajo y delantero centro\n")
 
     query = f"""
         SELECT
@@ -435,20 +307,15 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_forward_delantero_
             apssp.starter_status,
             apssp.type_of_stat,
 
-            pens_made,
-            pens_att,
             shots,
             shots_on_target,
             tackles,
             tackles_won,
-            tackles_def_3rd,
-            tackles_mid_3rd,
-            tackles_att_3rd,
             interceptions,
             blocks,
             xg,
             npxg,
-            xg_assists AS xg_assist,
+            xg_assists,
             sca,
             gca,
             passes_completed,
@@ -462,14 +329,7 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_forward_delantero_
             progressive_passes_received,
             clearances,
             fouls,
-            offsides,
-            ball_recoveries,
-            aerials_won,
-            aerials_lost,
-            aerials_won_pct,
-            pens_won,
-            pens_conceded,
-            own_goals
+            ball_recoveries
 
     FROM
             avg_player_stats_by_specific_positions apssp
@@ -484,7 +344,7 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_forward_delantero_
 
 
 def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_forward_delantero_extremo(season, specific_position_id):
-    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego ofensivo y defensa mediocentros defensivos\n")
+    print("Comienzo con la adición de puntuación de stats de los jugadores por tipo de juego defensivo bloque bajo y delantero extremo\n")
 
     query = f"""
         SELECT
@@ -495,19 +355,16 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_forward_delantero_
 
             shots,
             shots_on_target,
-
             tackles,
             tackles_won,
             interceptions,
             blocks,
             xg,
             npxg,
-            xg_assists AS xg_assist,
-
+            xg_assists,
             passes_completed,
             passes_pct,
             progressive_passes,
-
             carries,
             progressive_carries,
             take_ons,
@@ -519,18 +376,9 @@ def get_avg_stats_to_defensive_player_and_bloque_bajo_type_of_forward_delantero_
             touches_mid_3rd,
             touches_att_3rd,
             touches_live_ball,
-
             fouls,
             fouled,
-            dispossessed,
-            crosses,
-            throw_ins,
-            corner_kicks,
-            corner_kicks_in,
-            corner_kicks_out,
-            corner_kicks_straight,
-            passes_live,
-            passes_dead
+            dispossessed
             
         
         FROM

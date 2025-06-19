@@ -16,6 +16,7 @@ import About from './pages/About.tsx'
 import TfgDocs from './pages/TfgDocs.tsx'
 import ShowStatsComparisonFromLeague from './pages/stats/ShowStatsComparisonFromLeague.tsx'
 import ShowStatsFromTeams from './pages/stats/ShowStatsFromTeams.tsx'
+import HelpingPage from './pages/HelpingPage.tsx'
 
 const router = createHashRouter([
   {
@@ -34,6 +35,7 @@ const router = createHashRouter([
       { path: 'documentacion-tfg', element: <TfgDocs /> },
       { path: 'leagues-comparison', element: <ShowStatsComparisonFromLeague />},
       { path: 'show-stats-comparison-from-teams/:league_id', element: <ShowStatsFromTeams /> },
+      { path: 'helping-page', element: <HelpingPage /> },
     ],
   },
   {

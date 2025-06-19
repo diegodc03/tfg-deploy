@@ -13,8 +13,7 @@ import { StatsList } from '../../components/charts/StatsList';
 import { useParams } from 'react-router-dom';
 import { TablesStats } from '../../model/tablesStats/TablesStats';
 import { Stats } from '../../model/statsTypes/StatsModel';
-import { Box, Button, Container, Grid, Stack, Typography } from '@mui/material';
-import realMadridImg from '../../images/real_madrid.jpg';
+import { Button, Container, Grid, Stack, Typography } from '@mui/material';
 import GenericSelectProps from '../../components/MultipleSelect';
 import { BasicPositionAPI } from '../../model/BasicPositionAPI';
 
@@ -116,18 +115,6 @@ export const ShowStatsChartFromMatch = () => {
 
   return (
 
-    <Box
-      sx={{
-          backgroundImage: `url(${realMadridImg})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundAttachment: 'fixed',
-          backgroundSize: 'cover',
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          
-      }}>
       <Container>
         <Grid 
           container
@@ -190,8 +177,6 @@ export const ShowStatsChartFromMatch = () => {
           <StatsList name={columna} stats={stats} typeOfChart={'bar'}  />
         </Stack>
       </Container>
-    
-    </Box>
   );
 };
 

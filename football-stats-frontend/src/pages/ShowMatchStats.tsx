@@ -1,5 +1,5 @@
-import { Box, Container, Grid, Stack, Typography } from "@mui/material";
-import realMadridImg from "../images/real_madrid.jpg";
+import { Container, Grid, Stack, Typography } from "@mui/material";
+
 import CardShow from "../components/Cards";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -55,18 +55,7 @@ const ShowMatchStats = () => {
     : [];
 
     return (
-        <Box
-                sx={{
-                    backgroundImage: `url(${realMadridImg})`,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundAttachment: 'fixed',
-                    backgroundSize: 'cover',
-                    minHeight: '100vh',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    
-                }}>
+    
             <Container>
                             
                 <Typography gutterBottom sx={{ marginTop: 4, fontWeight: 'bold' }}>
@@ -108,7 +97,7 @@ const ShowMatchStats = () => {
                 </Stack>
 
             </Container>
-        </Box>
+        
     );
 }
 
