@@ -3,8 +3,8 @@ import { Container, Grid, CssBaseline, Typography, Box } from '@mui/material';
 import statsImage from '../images/stats.png';
 import CardShow from './Cards';
 import React from 'react';
-import About from '../pages/About';
-import TfgDocs from '../pages/TfgDocs';
+import About from '../pages/NavContentAndPrincipalPage/About';
+import TfgDocs from '../pages/AcademicResource/TfgDocs';
 import { serviceItems } from '../model/constants/menuItems';
 
 import { useNavigate } from 'react-router-dom';

@@ -16,8 +16,6 @@ export const colorTeamCharts = {
 }
 
 
-
-
 export const getBackgroundColorByLeague = (leagueName?: string): string => {
   switch (leagueName) {
     case 'La Liga':
