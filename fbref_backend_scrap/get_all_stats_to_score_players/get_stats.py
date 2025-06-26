@@ -9,11 +9,11 @@ from pyspark.sql.functions import col
 from pyspark.sql.functions import lit
 
 from functions_to_stract_of_dataBase.querys_score_match import get_number_of_scores_by_type_of_game_mode_and_basic_position_id
-from write_dataframe_to_mysql_file import write_dataframe_to_mysql
+from fbref_backend_scrap.utils.write_dataframe_to_mysql_file import write_dataframe_to_mysql
 from pyspark.sql.types import StructType
 from get_all_stats_to_score_players.specific_stats_for_type_game_mode import get_stats_by_type_of_play_form
 from get_all_stats_to_score_players.score_local_visitant_win_lose import score_by_local_visitant_and_win_lose
-from get_all_stats_to_score_players.score_by_goals_and_assits import get_score_by_goals_and_assist
+from fbref_backend_scrap.functions_to_stract_of_dataBase.querys_scores_by_goals_and_assits import get_score_by_goals_and_assist
 from get_all_stats_to_score_players.basic_stats_for_positions import get_stats_by_position 
 from get_all_stats_to_score_players.create_unique_score_of_players import score_players_by_zone_of_field, score_players_by_type_of_play
 
@@ -27,10 +27,6 @@ from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_a
 # Para ello, voy a coger la media de cada estadística, es decir, la media de los centrocampistas de ese partido
 # para conseguir eso, en pct sera facil, por que es 0 un 0 y un 10, 100, mientras que para los que no son valores, se cogera el menor y el mayor valor, poniendo a 0 el menor y a 10 el mayor
 # Por último, con el min y el max, se hará una regla de tres para conseguir la puntuación de cada jugador
-
-
-
-
 
 
 

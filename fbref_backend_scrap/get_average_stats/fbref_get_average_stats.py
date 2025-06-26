@@ -5,14 +5,14 @@ import pandas as pd
 from pyspark.sql.functions import col
 from pyspark.sql.types import StructType
 
-from constants import table_dic_to_insert
+from fbref_backend_scrap.utils.constants import table_dic_to_insert
 
-from simple_functions.functions import fill_stats_dict, introduce_in_data
+from fbref_backend_scrap.utils.functions import fill_stats_dict, introduce_in_data
 from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import get_match_of_tournaments
 from functions_to_stract_of_dataBase.selects_of_positions import query_to_get_all_specific_positions, query_to_get_specific_position, query_to_select_all_positions_category
-from get_average_stats.fbref_get_average_stats_by_specific_position import check_if_avg_stats_of_league_exists, check_if_avg_stats_of_league_exists_by_basic_position, check_if_avg_stats_of_league_exists_by_specific_position, init_dicts_specific, loop_throgh_all_columns_avg, loop_throgh_all_columns_basic_positions, query_to_get_stats, query_to_get_stats_by_position, query_to_get_stats_by_specific_position
-from get_average_stats.spark_average_schema import get_average_spark_schema, get_average_spark_schema_by_positions_field_player, get_average_spark_schema_by_positions_gk
-from write_dataframe_to_mysql_file import write_dataframe_to_mysql
+from get_average_stats.fbref_get_average_stats_by_specific_position import check_if_avg_stats_of_league_exists, check_if_avg_stats_of_league_exists_by_basic_position, check_if_avg_stats_of_league_exists_by_specific_position, init_dicts_specific, loop_throgh_all_columns_avg, query_to_get_stats, query_to_get_stats_by_position, query_to_get_stats_by_specific_position
+from fbref_backend_scrap.Esquemas.spark_average_schema import get_average_spark_schema, get_average_spark_schema_by_positions_field_player, get_average_spark_schema_by_positions_gk
+from fbref_backend_scrap.utils.write_dataframe_to_mysql_file import write_dataframe_to_mysql
 
 
 
@@ -162,8 +162,8 @@ def get_stats_avg_devs_tip_for_competition_by_players_position(spark, jdbc_url, 
                 expected_columns = spark_df_more_70.columns
 
                 
-                fill_stats_dict(spark_df_more_70, expected_columns, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns, table_name)
-                fill_stats_dict(spark_df_less_70, expected_columns, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less, table_name)
+                fill_stats_dict(spark_df_more_70, expected_columns, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
+                fill_stats_dict(spark_df_less_70, expected_columns, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less)
                                      
                 print("Table: ", table_name, "added to the dictionary")
         
@@ -267,8 +267,8 @@ def get_stats_avg_devs_tip_for_competition_by_players_specific_position(spark, j
                 
                 expected_columns = spark_df_more_70.columns
                   
-                fill_stats_dict(spark_df_more_70, expected_columns, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns, table_name)
-                fill_stats_dict(spark_df_less_70, expected_columns, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less, table_name)
+                fill_stats_dict(spark_df_more_70, expected_columns, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
+                fill_stats_dict(spark_df_less_70, expected_columns, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less)
                                                           
                 print("Table: ", table_name, "added to the dictionary")       
 

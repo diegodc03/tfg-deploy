@@ -2,7 +2,7 @@
 # This script contains functions to extract data from the database.
 # Game modes - position_specifics_by_category - basic_specific_positions_relation
 
-from w_read_dataframe_to_mysql_file import read_data_with_spark
+from fbref_backend_scrap.utils.read_dataframe_to_mysql_file import read_data_with_spark
 
 
 
@@ -39,7 +39,7 @@ def get_all_game_modes(spark, jdbc_url, db_properties):
 #
 ####################################################################################
 def get_all_positions_by_specific_position(spark, jdbc_url, db_properties):
-    # no poner ; al final de la query, ya que da error al leer el dataframe
+    
     query = f"""
         SELECT 
             psc.specific_position_id, psc.specific_position_name, 

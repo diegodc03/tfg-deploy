@@ -2,7 +2,7 @@
 
 from functions_to_stract_of_dataBase.querys_score_match import get_number_of_scores_by_type_of_game_mode_and_specific_position_id
 from get_all_stats_to_score_players.score_elements import calculate_player_scores_by_avg_of_season, get_score_for_positions_with_only_match_stats
-from w_read_dataframe_to_mysql_file import read_data_with_spark
+from fbref_backend_scrap.utils.read_dataframe_to_mysql_file import read_data_with_spark
 from dataBase.functions.registry import FUNCTION_REGISTRY
 from pyspark.sql.functions import lit
 from functions_to_stract_of_dataBase.selects_of_positions import get_all_game_modes, get_all_positions_by_specific_position, get_specific_basic_positions_id
@@ -52,14 +52,12 @@ def get_stats_by_type_of_play_form(spark, jdbc_url, db_properties, match_id, lea
             specific_position_id = position["specific_position_id"]
             specific_position_name = position["specific_position_name"]
             
-            
             # Comprobamos si existe en la base de datos la posicion y el modo de juego ya introducis para ese partido
             number_of_rows = get_number_of_scores_by_type_of_game_mode_and_specific_position_id(spark, jdbc_url, db_properties, match_id, game_mode_id, specific_position_id)
             if number_of_rows > 0:
                 print("Ya existe las puntuaciones para el modo de juego y la posicion")
                 continue
-            
-            
+             
             function_name = FUNCTION_REGISTRY.get((type_of_game_name, specific_position_name, game_mode_name))
             
             basic_position_id = relation_basic_specific_df.filter(relation_basic_specific_df["stat_specific"] == specific_position_id).select("stat_basic").first()["stat_basic"]

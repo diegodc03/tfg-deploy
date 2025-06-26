@@ -6,13 +6,13 @@
 import pandas as pd
 from pyspark.sql.functions import col
 from pyspark.sql.types import StructType
-from simple_functions.functions import fill_stats_dict, introduce_in_data
-from get_average_stats.spark_average_teams_schema import get_teams_average_spark_schema, get_teams_average_spark_schema_by_positions_field_player_and_team, get_teams_average_spark_schema_by_positions_gk
+from fbref_backend_scrap.utils.functions import fill_stats_dict, introduce_in_data
+from fbref_backend_scrap.Esquemas.spark_average_teams_schema import get_teams_average_spark_schema, get_teams_average_spark_schema_by_positions_field_player_and_team, get_teams_average_spark_schema_by_positions_gk
 from functions_to_stract_of_dataBase.selects_of_positions import query_to_get_specific_position, query_to_select_all_positions_category
 from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import get_match_of_tournaments, get_teams_in_competition
 from get_average_stats.fbref_get_average_stats_by_specific_position import check_if_avg_teams_stats_of_league_exists, check_if_avg_teams_stats_of_league_exists_by_basic_position, init_dicts_specific_teams, loop_throgh_all_columns_avg, query_to_get_basic_positions_stats_with_teams, query_to_get_stats_by_position, query_to_get_stats_with_team
-from constants import table_dic_to_insert
-from write_dataframe_to_mysql_file import write_dataframe_to_mysql
+from fbref_backend_scrap.utils.constants import table_dic_to_insert
+from fbref_backend_scrap.utils.write_dataframe_to_mysql_file import write_dataframe_to_mysql
 
 
 def get_teams_average_of_5_leagues(spark, jdbc_url, db_properties):
@@ -176,8 +176,8 @@ def get_teams_stats_avg_devs_tip_for_competition_by_players_position(spark, jdbc
                 expected_columns = spark_df_more_70.columns
 
                 
-                fill_stats_dict(spark_df_more_70, expected_columns, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns, table_name)
-                fill_stats_dict(spark_df_less_70, expected_columns, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less, table_name)
+                fill_stats_dict(spark_df_more_70, expected_columns, dict_val_columns, dict_val_desv_columns, dict_val_mode_columns)
+                fill_stats_dict(spark_df_less_70, expected_columns, dict_val_columns_less, dict_val_desv_columns_less, dict_val_mode_columns_less)
                                  
                 print("Table: ", table_name, "added to the dictionary")
             # Comprobar longitus, ya que no entra en este if FACIL

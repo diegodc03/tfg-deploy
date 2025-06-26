@@ -5,8 +5,8 @@
 import pandas as pd
 from pyspark.sql.types import StructType
 from pyspark.sql.functions import lit, when
-from w_read_dataframe_to_mysql_file import read_data_with_spark
-from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import select_football_match
+from fbref_backend_scrap.utils.read_dataframe_to_mysql_file import read_data_with_spark
+from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import get_team_id_from_player_id, select_football_match
     
 ###########################################################################
 # 
@@ -93,17 +93,7 @@ def get_winning_losing_match(spark, jdbc_url, db_properties, match_id):
             winning_team = away_team
             lossing_team = home_team
             home_away = "Draw"
-        
-        print("El equipo ganador es", winning_team, "y el perdedor es", lossing_team, "y el local es", home_away)
     
     return winning_team, lossing_team, home_away
 
 
-
-def get_team_id_from_player_id(spark, jdbc_url, db_properties, match_id, winning_team, lossing_team):
-    query = f"""
-            SELECT tp.player_id, tp.team_id FROM match_statistics ms JOIN team_player tp ON ms.player_id = tp.player_id WHERE ms.match_id = {match_id} AND tp.team_id IN ({winning_team}, {lossing_team})
-    """ 
-    spark_df = read_data_with_spark(spark, jdbc_url, db_properties, query)
-    
-    return spark_df

@@ -7,7 +7,7 @@ from dataBase.selects_of_stats_by_position import dict_stats_position
 from functions_to_stract_of_dataBase.querys_score_match import get_number_of_scores_by_type_of_game_mode_and_basic_position_id
 from functions_to_stract_of_dataBase.selects_of_positions import query_to_select_all_positions_category
 from get_all_stats_to_score_players.score_elements import calculate_player_scores_by_avg_of_season, get_score_for_positions_with_only_match_stats
-from w_read_dataframe_to_mysql_file import read_data_with_spark
+from fbref_backend_scrap.utils.read_dataframe_to_mysql_file import read_data_with_spark
 
 
 
@@ -19,18 +19,9 @@ def get_position_id_of_basic_positions(position_name):
     return query
 
 
-def get_result_of_match(spark, jdbc_url, db_properties, match_id):
-    query = f"""
-        SELECT fm.Score, fm.Home, fm.Away FROM football_match fm WHERE match_id = {match_id}
-    """
-    return query
-
-
-
 def get_stats_by_position(spark, jdbc_url, db_properties, match_id, league_id):
     print("Comienzo con la adición de puntuación de stats de los jugadores por posición")
 
-    # Puedo hacerlo en una unica funcion, solo tengo que mandarle el string de forwards, midfielders, defenders y goalkeepers, si hago un diccionario con las posiciones y las funciones, puedo hacerlo en un for
     spark_positions = query_to_select_all_positions_category(spark, jdbc_url, db_properties)
 
     dict_stats_position = {}

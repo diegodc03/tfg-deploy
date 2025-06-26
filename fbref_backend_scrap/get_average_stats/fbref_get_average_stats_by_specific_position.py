@@ -4,7 +4,7 @@
 from pyspark.sql import functions as F
 from pyspark.sql.functions import col, sum
 import numpy as np
-from w_read_dataframe_to_mysql_file import read_data_with_spark
+from fbref_backend_scrap.utils.read_dataframe_to_mysql_file import read_data_with_spark
 
 
 valid_type_of_stat_values = ['avg', 'max', 'min', 'desv', 'mode', 'sum']
@@ -247,7 +247,7 @@ def value_setting(value, avg, desv):
     return value
 
 
-def loop_throgh_all_columns_basic_positions(spark_df, number_of_rows, table_name):
+def loop_throgh_all_columns_basic_positions(spark_df, number_of_rows):
     dict_val_columns = {}
     dict_val_desv_columns = {}
     dict_val_mode_columns = {}

@@ -1,5 +1,5 @@
    
-from w_read_dataframe_to_mysql_file import read_data_with_spark
+from fbref_backend_scrap.utils.read_dataframe_to_mysql_file import read_data_with_spark
 from pyspark.sql.functions import col
     
 def get_rows_of_match_statistics(spark, jdbc_url, db_properties, match_id):
@@ -157,6 +157,17 @@ def get_teams_in_competition(spark, jdbc_url, db_properties, tournament_id):
 
     """
     return read_data_with_spark(spark, jdbc_url, db_properties, query)
+
+
+
+
+def get_team_id_from_player_id(spark, jdbc_url, db_properties, match_id, winning_team, lossing_team):
+    query = f"""
+            SELECT tp.player_id, tp.team_id FROM match_statistics ms JOIN team_player tp ON ms.player_id = tp.player_id WHERE ms.match_id = {match_id} AND tp.team_id IN ({winning_team}, {lossing_team})
+    """ 
+    spark_df = read_data_with_spark(spark, jdbc_url, db_properties, query)
+    
+    return spark_df
 
 
 
