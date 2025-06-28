@@ -10,7 +10,7 @@ import ShowMatchStats from './pages/FiltersAndSelection/ShowMatchStats.tsx'
 import ShowScores from './pages/MatchStatistics/ShowScores.tsx'
 import ShowStatsOfPlayersTables from './pages/MatchStatistics/ShowStatsOfPlayersTables.tsx'
 
-import { ShowStatsChartFromMatch } from './pages/MatchStatistics/ShowStatsFromMatch.tsx'
+import {ShowStatsChartFromMatch}  from './pages/MatchStatistics/ShowStatsUnitaryChartFromMatch.tsx'
 import ShowStatsFromMatch from './pages/MatchStatistics/ShowStatsChartsFromMatch.tsx'
 import About from './pages/NavContentAndPrincipalPage/About.tsx'
 import TfgDocs from './pages/AcademicResource/TfgDocs.tsx'

@@ -21,10 +21,15 @@ import { ChartOfNumbersOfScores } from "../../components/charts/chartOfNumbers";
 import { ChartAPI } from "../../model/ChartsAPI/ChartAPI";
 import { TablesStats } from "../../model/tablesStats/TablesStats";
 import GenericSelectProps from '../../components/MultipleSelect';
+import { ChartType, StatEntry } from "../../model/statsTypes/stats";
+import { ReusableChart1 } from "../../components/charts/reusableChart1";
+import { generateScoreValuesChart } from "./utilsComparison";
+
+
 export default function ShowStatsComparisonFromLeague() {
 
     
-
+    const chartType: ChartType = 'bar';
     const [chartData, setChartData] = useState<ChartAPI[]>([]);
 
     const [isLoading, setIsLoading] = useState(true);
@@ -52,6 +57,11 @@ export default function ShowStatsComparisonFromLeague() {
                     fetch(API_ENDPOINTS.FILTER_STATS_MODIFIED),
                     fetch(API_ENDPOINTS.FILTER_COLUMNS),
                 ]);
+                
+                console.log(API_ENDPOINTS.LEAGUES_STATS);
+                console.log(API_ENDPOINTS.LEAGUE_CHART);
+                console.log(API_ENDPOINTS.FILTER_STATS_MODIFIED);
+                console.log(API_ENDPOINTS.FILTER_COLUMNS);
 
                 if (!responseData.ok || !responseChartAPI.ok || !filterTables.ok || !columns_tables.ok) {
                     throw new Error('Error fetching data');
@@ -64,12 +74,7 @@ export default function ShowStatsComparisonFromLeague() {
                     columns_tables.json(),
                 ]);
                 setChartData(chartData);
-                console.log(chartData);
-
-                console.log(data);
-                setData(data);
-
-                console.log(filter_columns_table);
+                setData(data);;
                 setFilterColumnsTable(filter_columns_table);
 
                 const filtersArrayTransform: TablesStats[] = Object.entries(filterDataTables).map(([key, value]) => ({
@@ -89,7 +94,6 @@ export default function ShowStatsComparisonFromLeague() {
         fetchData();
 
     }, []);
-
 
 
     const handleChangeSelectedTableFilters = (value: string) => {
@@ -164,8 +168,10 @@ export default function ShowStatsComparisonFromLeague() {
     }
 
 
-    return (
+        
 
+
+    return (
 
             <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
                 
@@ -295,7 +301,7 @@ export default function ShowStatsComparisonFromLeague() {
                             Estadísticas que se muestra una unica estadística para cada Liga
                         </Typography>
                         <Stack sx={{ marginTop: 6, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
-                            <ChartOfNumbersOfScores stat={chartScores} typeOfChart={'bar'} labels={chartLabels}/>
+                            <ReusableChart1 stat={generateScoreValuesChart(chartData, selectColumn)} typeOfChart={'bar'} typeOfChartColor="other"/>
                         </Stack>
                     </Grid>
                 </Grid>
@@ -304,6 +310,3 @@ export default function ShowStatsComparisonFromLeague() {
 
 }
 
-function useParams(): { league_id: any; } {
-    throw new Error("Function not implemented.");
-}

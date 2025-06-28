@@ -11,9 +11,10 @@ export type StatEntry = {
         is_home: boolean;       // Ej: true (si es el equipo local)
         team_name: string;      // Ej: "Real Madrid"
 
-    };
+};
 
-    
+
+
 // Si quieres comparar muchas estadísticas de un equipo/jugador
 export type StatValues = {
     stat: string;              // Nombre de la estadística 

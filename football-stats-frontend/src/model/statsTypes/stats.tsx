@@ -15,3 +15,5 @@ export type StatEntry = {
         name: string;              // Nombre del jugador o equipo
         stats: StatEntry[];        // Todas las métricas que quieras mostrar
     };
+
+

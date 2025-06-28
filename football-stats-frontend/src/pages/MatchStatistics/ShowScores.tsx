@@ -3,7 +3,7 @@ import { Button, Container, Grid, Stack, Typography } from "@mui/material";
 
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
+import {StatEntry, ChartType} from "../../model/statsTypes/stats";
 import GenericSelectProps from "../../components/MultipleSelect";
 
 import { ScoreAPI } from "../../model/ScoreAPI";
@@ -18,6 +18,7 @@ import { PlayersIdName } from "../../model/PlayersIdName";
 import { MatchPlayerScore } from "../../model/ShowMatchPlayerScore";
 
 import { API_ENDPOINTS } from "../../model/constants/UrlConstants";
+import { ReusableChart1 } from "../../components/charts/reusableChart1";
 
 
 
@@ -45,7 +46,7 @@ export default function ShowScores() {
 
     const [playerScores, setPlayerScores] = useState<MatchPlayerScore[]>([]);
 
-
+    const chartType: ChartType = "bar"
     const navigate = useNavigate();
 
     
@@ -98,8 +99,10 @@ export default function ShowScores() {
                 setPlayersScores(players_scoresData);
                 setPlayersScoresFiltered(players_scoresData); // Initialize filteredMatches with all matches
                 setPlayersFilter(playersFilterData);
+                setSelectedPlayerId(playersFilterData[0]?.player_id.toString() || ''); // Set default player id if available
+                
+                handleChangePlayerElection();
 
-                console.log('Datos de los jugadores:', players_scoresData);
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -147,11 +150,13 @@ export default function ShowScores() {
         console.log('Datos de las puntuaciones del jugador:', data);
     }
     
-    let players_labels: string[] = [];
-    const labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-    const generateValuesStats = (players_scores_filtered) => {
+    
+    
+    
+    const generateValuesStats = (players_scores_filtered): StatEntry => {
 
         const bins = new Array(11).fill(0);
+        const labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
         
         players_scores_filtered.forEach(element => {
            const value = element.score;
@@ -167,35 +172,56 @@ export default function ShowScores() {
             values.push(bins[i]);
         }
 
-        return values;
+        return {
+            title: "Numero",
+            labels: labels,
+            data: values,
+            type: chartType,
+        };
     };
 
 
     // Yo aqui paso un elemtnto
-    const generateScoreValuesChart = (players_scores_filtered: MatchPlayerScore[]) => {
+    const generateScoreValuesChart = (players_scores_filtered: MatchPlayerScore[]): StatEntry => {
         
-
-        players_labels = [];
-        let values: number[] = [];
         
+        let players_labels: Set<string> = new Set();
+        let data: number[] = [];
+        
+        console.log('Datos de las puntuaciones del jugador:', players_scores_filtered);
         for (let i = 0; i < players_scores_filtered.length; i++) {
-            const score = players_scores_filtered[i].score;
-            if (typeof score !== 'number' || score < 0 || score > 10) {
+            let score = players_scores_filtered[i].score;
+            if (typeof score !== 'number') {
                 console.error(`Invalid score at index ${i}: ${score}`);
                 continue; 
-            }
-            else {
+            } else if (score < 0 || score > 10) {
+                if (score < 0) {
+                    score = 0; // Asignar 0 si el score es negativo
+                } else {
+                    score = 10; // Asignar 10 si el score es mayor a 10
+                }
+            } 
 
-                console.log(`Valid score at index ${i}: ${score}`);
-                values.push(score);
-                players_labels.push(players_scores_filtered[i].game_mode_id.game_mode_name);
+            data.push(score);
+            if (players_scores_filtered[i].game_mode_id.game_mode_name != "no_existencia") {
+                players_labels.add(players_scores_filtered[i].game_mode_id.game_mode_name);
             }
         }
 
-        console.log('Labels de los jugadores:', players_labels);
-        console.log('Valores de las puntuaciones:', values);
-        return values;
+        if (data.length === 0) {
+            console.error('No valid scores found in players_scores_filtered');
+        }
+
+        return {
+            title: playersFilter.find(player => player.player_id === Number(selectedPlayerId))?.name || 'Jugador',
+            labels: Array.from(players_labels),
+            data,
+            type: chartType,
+        };
     }
+
+
+
 
 
 
@@ -287,7 +313,7 @@ export default function ShowScores() {
                     <strong>Gráficas interesantes </strong>
                 </Typography>
                 <Stack  sx={{marginTop: 6,  backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
-                    <ChartOfNumbersOfScores stat={generateValuesStats(players_scores_filtered)} typeOfChart={'bar'} labels={labels}/>
+                    <ReusableChart1 stat={generateValuesStats(players_scores_filtered)} typeOfChart={'bar'} typeOfChartColor="totalScores"/>
                 </Stack>
 
                 <Grid
@@ -323,7 +349,7 @@ export default function ShowScores() {
                                 sx={{ width: '100%' }}
                                 onClick={() => handleChangePlayerElection()}
                             >
-                                Filtros
+                                Filtrar
                             </Button>
                         </Grid>
                     </Grid>
@@ -333,7 +359,7 @@ export default function ShowScores() {
                             Aquí se pueden añadir más gráficas si se desea. La intención es hacer un menú para elegir jugadores. El jugador se le van a mostrar las puntuaciones según el tipo de juego que pide el entrenador.
                         </Typography>
                         <Stack sx={{ marginTop: 6, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
-                            <ChartOfNumbersOfScores stat={generateScoreValuesChart(playerScores)} typeOfChart={'bar'} labels={players_labels}/>
+                            <ReusableChart1 stat={generateScoreValuesChart(playerScores)} typeOfChart={'bar'} typeOfChartColor="gameModes"/>
                         </Stack>
                     </Grid>
                 </Grid>

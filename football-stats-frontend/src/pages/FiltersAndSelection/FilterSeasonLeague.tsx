@@ -14,6 +14,8 @@ import LeagueSelect from '../../components/filters/LeagueFilters';
 import CardShowOptions from '../../components/CardShowOptions';
 import SeasonSelect from '../../components/filters/SeasonFilters';
 import { API_ENDPOINTS } from '../../model/constants/UrlConstants';
+import { ERROR_MESSAGES } from '../../model/constants/errorConstants';
+import ErrorSnackbar from '../../components/showError';
 
 
 
@@ -22,7 +24,8 @@ import { API_ENDPOINTS } from '../../model/constants/UrlConstants';
 const FilterSeasonLeague = () => {
 
     const [isLoading, setIsLoading] = useState(true);
-
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const [seasons, setSeasons] = useState<Season[]>([]);
     const [leagues, setLeagues] = useState<LeagueAPI[]>([]);
@@ -47,7 +50,7 @@ const FilterSeasonLeague = () => {
                    
                 
                 if (!seasonsResponse.ok || !leaguesResponse.ok || !tournamentsResponse.ok) {
-                    throw new Error('Error fetching data');
+                    throw new Error(ERROR_MESSAGES.NOT_FOUND_LEAGUES);
                 }
 
                 const [seasonsData, leaguesData, tournamentsData] = await Promise.all([
@@ -64,8 +67,10 @@ const FilterSeasonLeague = () => {
                 console.log(seasonsResponse, leaguesResponse, tournamentsResponse);
                 setIsLoading(false);
 
-            } catch (error) {
-                console.error('Error fetching seasons:', error);
+            } catch (error: any) {
+                setErrorMessage(ERROR_MESSAGES.NOT_FOUND_LEAGUES);
+                setShowError(true);
+                setIsLoading(false); 
             }
         }
 
@@ -104,6 +109,14 @@ const FilterSeasonLeague = () => {
     return (
 
         <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
+            <ErrorSnackbar
+                open={showError}
+                onClose={() => setShowError(false)}
+                message={errorMessage ?? "Ha ocurrido un error inesperado"}
+                position={{ vertical: 'top', horizontal: 'right' }}
+                large={true}
+            />
+
 
             <Typography>
                 <strong>Filtrar por temporada y liga</strong>

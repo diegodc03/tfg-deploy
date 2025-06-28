@@ -8,6 +8,44 @@ export const colorBasicPositionsCharts = {
     other: '#CCCCCC',
 }
 
+export const colorGameModesCharts = {
+    bloque_medio: '#FF5733',
+    bloque_bajo: '#3357FF',
+    tiki_taka: '#FF33A1',
+    contraataque: '#CCCCCC',
+    presion_alta: '#FF8C00',
+    juego_por_bandas: '#1E90FF',
+}
+
+export const otherColors = {
+    yellow: '#FFFF00',
+    red: '#FF0000',
+    green: '#00FF00',
+    blue: '#0000FF',
+    black: '#000000',
+    gray: '#808080',
+    orange: '#FFA500',
+    purple: '#800080',
+    pink: '#FFC0CB',
+    brown: '#A52A2A',
+    cyan: '#00FFFF',
+    magenta: '#FF00FF',
+    lightBlue: '#ADD8E6',
+}
+
+export const colorTotalScoresCharts = {
+    1: '#FF5733',
+    2: '#33FF57',
+    3: '#3357FF',
+    4: '#FF33A1',
+    5: '#CCCCCC',
+    6: '#FF8C00',
+    7: '#1E90FF',
+    8: '#FFB6C1',
+    9: '#FFD700',
+    10: '#FF4500',
+}
+
 
 export const colorTeamCharts = {
     home: '#FF8C00',

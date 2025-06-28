@@ -43,12 +43,6 @@ app_name = 'season_tournament'  # Esto le da un nombre a este conjunto de rutas
 urlpatterns = [
 
 
-
-
-    
-
-
-    
     ##########################################################################################################################
     
     ############ Filtros  ############

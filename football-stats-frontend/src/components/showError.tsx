@@ -1,15 +1,46 @@
-
 import React from 'react';
-import { Box, Container, Grid, Typography } from "@mui/material";
+import { Snackbar, Alert, AlertColor } from '@mui/material';
 
+interface ErrorSnackbarProps {
+  open: boolean;
+  onClose: () => void;
+  message: string;
+  severity?: AlertColor; // "error" | "warning" | "info" | "success"
+  position?: {
+    vertical: 'top' | 'bottom';
+    horizontal: 'left' | 'center' | 'right';
+  };
+  large?: boolean; // si true, agranda visualmente el Alert
+}
 
-
-const ShowError = () => {
+const ErrorSnackbar: React.FC<ErrorSnackbarProps> = ({
+  open,
+  onClose,
+  message,
+  severity = 'error',
+  position = { vertical: 'top', horizontal: 'center' },
+  large = false,
+}) => {
   return (
-    <Box component="footer" sx={{ backgroundColor: '#212529', color: '#fff', py: 2 }}>
-      
-    </Box>
-);
+    <Snackbar
+      open={open}
+      autoHideDuration={6000}
+      onClose={onClose}
+      anchorOrigin={position}
+    >
+      <Alert
+        onClose={onClose}
+        severity={severity}
+        sx={{
+          width: large ? '100%' : 'auto',
+          fontSize: large ? '1.2rem' : 'inherit',
+          p: large ? 3 : 1,
+        }}
+      >
+        {message}
+      </Alert>
+    </Snackbar>
+  );
 };
 
-export default ShowError;
+export default ErrorSnackbar;

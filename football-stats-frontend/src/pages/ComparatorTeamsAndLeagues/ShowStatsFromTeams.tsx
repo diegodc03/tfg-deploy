@@ -18,6 +18,11 @@ import { ChartAPI } from '../../model/ChartsAPI/ChartAPI';
 import { StatAPI } from '../../model/StatsAPI/StatsAPI';
 import { ChartOfNumbersOfScores } from '../../components/charts/chartOfNumbers';
 import StatsTables from '../../components/StatsTables';
+import { ReusableChart } from '../../components/charts/reusableChart';
+import { ReusableChart1 } from '../../components/charts/reusableChart1';
+import { StatEntry, ChartType } from '../../model/statsTypes/stats';
+import { Chart } from 'chart.js';
+import { generateScoreValuesChart } from './utilsComparison';
 /**
  * 
  * Este componente se va a encargar de mostrar las tablas de las diferentes estadísticas de los jugadores en un partido
@@ -46,6 +51,8 @@ export default function ShowStatsFromTeams() {
 
     const [teamsArray, setTeamsArray] = useState<TablesStats[]>([]);
     const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+    
+    const chartType: ChartType = 'bar'; 
     const navigate = useNavigate();
 
     const [selectedFiltersTable, setSelectedFiltersTable] = useState<string | null>(null);
@@ -237,6 +244,9 @@ export default function ShowStatsFromTeams() {
     }
 
 
+    
+
+
 
     return (
        
@@ -365,7 +375,7 @@ export default function ShowStatsFromTeams() {
                                 sx={{ width: '100%' }}
                                 onClick={() => handleChangeColumnElection()}
                             >
-                                Filtros
+                                Filtrar
                             </Button>
                         </Grid>
                         
@@ -376,7 +386,7 @@ export default function ShowStatsFromTeams() {
                                 Tabla de estadísticas los equipos segun la temporada
                             </Typography>
                         <Stack sx={{ marginTop: 6, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
-                            <ChartOfNumbersOfScores stat={chartScores} typeOfChart={'bar'} labels={chartLabels}/>
+                            <ReusableChart1 stat={generateScoreValuesChart(chartData, selectColumn)} typeOfChart={'bar'} typeOfChartColor="other"/>
                         </Stack>
                     </Grid>
                 </Grid>

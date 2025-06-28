@@ -2,6 +2,7 @@ import { MatchAPISearch } from "../MatchAPI";
 
 
 
+
 export const matchBasicInfo = (matchStats: MatchAPISearch) => {
     return [
         { label: "Partido", value: matchStats.Home.team_name + " - " + matchStats.Away.team_name },

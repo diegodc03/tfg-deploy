@@ -9,12 +9,18 @@ import LoadingIndicator from '../../components/LoaqdingIndicator';
 import CardShowOptions from '../../components/CardShowOptions';
 import { API_ENDPOINTS } from '../../model/constants/UrlConstants';
 import FiltersElements from '../../components/filters/filter';
+import { ERROR_MESSAGES } from '../../model/constants/errorConstants';
+import ErrorSnackbar from '../../components/showError';
 
-
+import { startTransition } from 'react';
 
 export default function FilterMatch() {
 
     const navigate = useNavigate();
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [isLoadingFilters, setIsLoadingFilters] = useState(true);
+
 
     const { leagueId } = useParams();
     const [weeks, setWeeks] = useState<string[]>([]);
@@ -30,34 +36,45 @@ export default function FilterMatch() {
 
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchPartidos = async () => {
-            try {
-                const response = await fetch(API_ENDPOINTS.ALL_MATCHES_BY_LEAGUE_ID + `${leagueId}`);
-                if (!response.ok) {
-                    throw new Error('Error fetching partidos');
-                }
-                const data = await response.json();
     
-                setMatches(data);
-                
-                setFilteredMatches(data);
-                setIsLoading(false);
-            } catch (error) {
-                console.error('Error fetching matches:', error);
-            }
-        }
-        fetchPartidos();
-    }
-    , [leagueId]);
 
     useEffect(() => {
-        if (matches.length > 0) {
-            setWeeks(getAllUniqueWeeks(matches));
-            setTeams(getAllUniqueTeams(matches));
-            setResults(getAllUniqueResults(matches));
+    const fetchAndPrepareMatches = async () => {
+        try {
+        const response = await fetch(API_ENDPOINTS.ALL_MATCHES_BY_LEAGUE_ID + leagueId);
+        if (!response.ok) throw new Error('Error fetching partidos');
+
+        const data = await response.json();
+
+        // Estado principal (carga inmediata)
+        setMatches(data);
+        setFilteredMatches(data);
+        setIsLoading(false);
+
+        // Filtros (menos urgentes, diferidos)
+        startTransition(async () => {
+            if (data.length > 0) {
+            const [w, t, r] = await Promise.all([
+                getAllUniqueWeeks(data),
+                getAllUniqueTeams(data),
+                getAllUniqueResults(data),
+            ]);
+            setWeeks(w);
+            setTeams(t);
+            setResults(r);
+            }
+        });
+
+        } catch (error: any) {
+        setErrorMessage(ERROR_MESSAGES.NOT_FOUND_MATCHES_ON_LEAGUE);
+        setShowError(true);
+        setIsLoading(false);
         }
-    }, [matches]);  // This effect runs when 'matches' is updated
+    };
+
+    fetchAndPrepareMatches();
+    }, [leagueId]);
+
 
 
     const getAllUniqueResults = (matches: MatchAPI[]) => {
@@ -112,9 +129,6 @@ export default function FilterMatch() {
         console.log("match", match);
         navigate(`/show-match/${match.match_id}`);
     }
-
-
-    // En MultipleSelect hago el onChange de MaterialUI, aqui ya es un onChange normal
     const handleChangeWeeks = (value: string) => {
         setSelectedWeek(value);
     };
@@ -127,9 +141,16 @@ export default function FilterMatch() {
 
     return (
 
-
         <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
-                <LoadingIndicator isLoading={isLoading} />
+            <ErrorSnackbar
+                open={showError}
+                onClose={() => setShowError(false)}
+                message={errorMessage ?? "Ha ocurrido un error inesperado"}
+                position={{ vertical: 'top', horizontal: 'right' }}
+                large={true}
+            />
+            <LoadingIndicator isLoading={isLoading} />
+            
             <Typography  gutterBottom>
                 <strong>Filtrar por Jornada, Equipos y Resultado</strong>
             </Typography>
@@ -155,33 +176,47 @@ export default function FilterMatch() {
                     <Typography gutterBottom>
                         <strong>Jornadas</strong>
                     </Typography>
-                    <FiltersElements
-                        itemsToSelect={weeks}
-                        selectedValue={selectedWeek || ""}
-                        onChange={handleChangeWeeks}
-                    />
+                    {isLoadingFilters ? (
+                        <Typography variant="body2">Cargando jornadas...</Typography>
+                    ) : (
+                        <FiltersElements
+                            itemsToSelect={weeks}
+                            selectedValue={selectedWeek || ""}
+                            onChange={handleChangeWeeks}
+                        />
+                    )}
+
                 </Grid>
         
                 <Grid  size={{xs:12, sm:6, md:3}}>
                     <Typography gutterBottom>
                         <strong>Equipos</strong>
                     </Typography>
-                    <FiltersElements
-                            itemsToSelect={teams}
-                            selectedValue={selectedTeam || ""}
-                            onChange={handleChangeTeams}
-                    />
+                    {isLoadingFilters ? (
+                        <Typography variant="body2">Cargando jornadas...</Typography>
+                    ) : (
+                        <FiltersElements
+                                itemsToSelect={teams}
+                                selectedValue={selectedTeam || ""}
+                                onChange={handleChangeTeams}
+                        />
+                    )}
+
                 </Grid>
         
                 <Grid size={{xs:12, sm:6, md:3}}>
                     <Typography gutterBottom>
                         <strong>Resultado</strong>
                     </Typography>
-                    <FiltersElements 
-                        itemsToSelect={results}
-                        selectedValue={selectedResult || ""}
-                        onChange={handleChangeResult}
-                    />
+                    {isLoadingFilters ? (
+                        <Typography variant="body2">Cargando jornadas...</Typography>
+                    ) : (
+                        <FiltersElements 
+                            itemsToSelect={results}
+                            selectedValue={selectedResult || ""}
+                            onChange={handleChangeResult}
+                        />
+                    )}
                     
                     
                 </Grid>

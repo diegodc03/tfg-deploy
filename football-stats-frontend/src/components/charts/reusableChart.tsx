@@ -54,8 +54,9 @@ interface Props {
 
 
 
+
 export const ReusableChart = ({ stat, typeOfChart }: Props) => {
-  
+  console.log("stat", stat);
   const typeOfChartColor = "positions"; // Default color scheme, can be 'positions' or 'teams'
 
   const ChartComponent = chartMap[typeOfChart as keyof typeof chartMap] || Bar;

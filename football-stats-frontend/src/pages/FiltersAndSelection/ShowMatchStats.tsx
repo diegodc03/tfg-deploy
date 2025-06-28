@@ -6,14 +6,18 @@ import { useParams } from "react-router-dom";
 
 import { MatchAPISearch } from "../../model/MatchAPI";
 import BasicInfoMatch from "../../components/BasicInfoMatch";
-import ShowBasicStats from "../../components/showBasicStats";
+import ShowBasicStats from "./showBasicStats";
 import { API_ENDPOINTS } from "../../model/constants/UrlConstants";
 import { serviceItemsStatsPage } from "../../model/constants/menuItems";
 import { matchBasicInfo } from "../../model/constants/GeneralInfoOfMatch";
+import ErrorSnackbar from "../../components/showError";
+import {ERROR_MESSAGES} from '../../model/constants/errorConstants';
 
 
 const ShowMatchStats = () => {
 
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     const { match_id } = useParams();
@@ -25,17 +29,20 @@ const ShowMatchStats = () => {
         const fetchData = async () => {
             try {
                 const response = await fetch(API_ENDPOINTS.PRINCIPAL_MATCH_STATS + `${match_id}`);
+                
                 if (!response.ok) {
-                    throw new Error('Error fetching match stats');
+                    throw new Error(ERROR_MESSAGES.NOT_FOUND_MATCH_INFO);
                 }
                 const data = await response.json();
                 
                 setMatchStats(data);
                 setTournamentId(data.Season?.tournament_id);
-                console.log(data);
                 setIsLoading(false);
-            } catch (error) {
-                console.error('Error fetching match stats:', error);
+
+            } catch (error: any) {
+                setErrorMessage(ERROR_MESSAGES.NOT_FOUND_MATCH_INFO);
+                setShowError(true);
+                setIsLoading(false); 
             }
         };
         
@@ -43,16 +50,29 @@ const ShowMatchStats = () => {
     }
     , [match_id]);
 
+    
+
+
 
     return (
-    
-            <Container>
-                            
+        <>
+            <ErrorSnackbar
+                open={showError}
+                onClose={() => setShowError(false)}
+                message={errorMessage ?? "Ha ocurrido un error inesperado"}
+                position={{ vertical: 'top', horizontal: 'right' }}
+                large={true}
+            />
+
+
+            <Container>           
                 <Typography gutterBottom sx={{ marginTop: 4, fontWeight: 'bold' }}>
                     <strong>Listado de resultados </strong>
                 </Typography>
                     
-                <BasicInfoMatch  stats={matchBasicInfo(matchStats)} />
+                {matchStats && matchStats.Home && matchStats.Away && (
+                    <BasicInfoMatch stats={matchBasicInfo(matchStats)} />
+                )}
 
                 <Typography gutterBottom sx={{ marginTop: 6, fontWeight: 'bold', color: 'black' }}>
                     <strong>Estadísticas disponibles del partido</strong>
@@ -85,7 +105,10 @@ const ShowMatchStats = () => {
                 <Stack  sx={{  backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 3, marginBottom:6, marginTop: 8 }} >
                     <ShowBasicStats matchId={Number(match_id)} />
                 </Stack>
+                
+               
             </Container>
+        </>
     );
 }
 
