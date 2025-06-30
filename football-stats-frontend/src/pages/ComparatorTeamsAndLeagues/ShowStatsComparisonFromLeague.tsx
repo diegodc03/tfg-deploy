@@ -11,7 +11,7 @@
  */
 
 
-import { Button, Container, Grid, Stack, Typography } from "@mui/material";
+import { Box, Button, Container, Grid, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import LoadingIndicator from "../../components/LoaqdingIndicator";
 import { StatAPI } from "../../model/StatsAPI/StatsAPI";
@@ -24,6 +24,9 @@ import GenericSelectProps from '../../components/MultipleSelect';
 import { ChartType, StatEntry } from "../../model/statsTypes/stats";
 import { ReusableChart1 } from "../../components/charts/reusableChart1";
 import { generateScoreValuesChart } from "./utilsComparison";
+import ErrorSnackbar from "../../components/showError";
+import { ERROR_MESSAGES } from "../../model/constants/errorConstants";
+import { Stroller } from "@mui/icons-material";
 
 
 export default function ShowStatsComparisonFromLeague() {
@@ -31,6 +34,8 @@ export default function ShowStatsComparisonFromLeague() {
     
     const chartType: ChartType = 'bar';
     const [chartData, setChartData] = useState<ChartAPI[]>([]);
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const [isLoading, setIsLoading] = useState(true);
     const [data, setData] = useState<StatAPI[]>([]); 
@@ -85,7 +90,9 @@ export default function ShowStatsComparisonFromLeague() {
                 setFiltersArray(filtersArrayTransform);
 
             } catch (error) {
-                console.error('Error fetching data:', error);
+                setErrorMessage(ERROR_MESSAGES.NOT_FOUND_COMPARTORSEASONS_LEAGUES);
+                setShowError(true);
+                setIsLoading(false);
             } finally {
                 setIsLoading(false);
             }
@@ -173,104 +180,149 @@ export default function ShowStatsComparisonFromLeague() {
 
     return (
 
-            <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
+            <Container maxWidth="lg" sx={{ marginTop: '3rem', marginBottom: '5vh' }}>
                 
+                <ErrorSnackbar
+                    open={showError}
+                    onClose={() => setShowError(false)}
+                    message={errorMessage ?? "Ha ocurrido un error inesperado"}
+                    position={{ vertical: 'top', horizontal: 'right' }}
+                    large={true}
+                />
+
                 <LoadingIndicator isLoading={isLoading} />
 
-                <Typography>
-                    <strong>Filtrar Si ha jugado mas de 70 min</strong>
-                </Typography>
 
-                <Grid 
-                    container
-                    columnSpacing={{ xs: 1, sm: 2 }}
-                    rowSpacing={{ xs: 1, sm: 2, md: 3 }}
-                    spacing={{ xs: 1, sm: 2, md: 4 }}
-                    
-                    justifyContent="center"
+
+                <Box
                     sx={{
                         backgroundColor: '#f8f9fa',
-                        padding: 2,
-                        borderRadius: 2,
-                        marginTop: 1,
+                        boxShadow: 2,
+                        overflow: 'hidden',
                         marginBottom: 5,
+                        borderRadius: 4,
                     }}
                 >
-
-                    <Grid  size={{xs:12, md:5}}>
+                    <Box
+                        sx={{
+                            backgroundColor: '#ffffff',
+                            padding: 2,
+                            paddingBottom:0,
+                            paddingLeft: 3,
+                        }}
+                    > 
                         <Typography>
-                            <strong>Tablas a consultar</strong>
+                            <strong>Filtrar si ha jugado mas o menos de 70 min</strong>
                         </Typography>
-                        <div>
+                    </Box>
+
+                    <Grid 
+                        container
+                        columnSpacing={{ xs: 1, sm: 2 }}
+                        rowSpacing={{ xs: 1, sm: 2, md: 3 }}
+                        spacing={{ xs: 1, sm: 2, md: 4 }}
+                        
+                        justifyContent="center"
+                        sx={{
+                            backgroundColor: '#f8f9fa',
+                            padding: 2,
                             
-                            <GenericSelectProps<TablesStats>
-                                items={filtersArray}
-                                value={selectedFiltersTable || ""}
-                                onChange={handleChangeSelectedTableFilters}
-                                getId={(item) => item.categoryName}
-                                getLabel={(item) => item.categoryDescription}
-                            />
-                        </div>
-                    </Grid>
+                        }}
+                    >
 
-                    <Grid  size={{xs:12, md:5}}>
-                        <Typography>
-                            <strong>Rendimiento del Jugador suplente y titular</strong>
+                        <Grid  size={{xs:12, md:5}}>
+                            <Typography>
+                                <strong>Tablas a consultar</strong>
+                            </Typography>
+                            <div>
+                                
+                                <GenericSelectProps<TablesStats>
+                                    items={filtersArray}
+                                    value={selectedFiltersTable || ""}
+                                    onChange={handleChangeSelectedTableFilters}
+                                    getId={(item) => item.categoryName}
+                                    getLabel={(item) => item.categoryDescription}
+                                />
+                            </div>
+                        </Grid>
+
+                        <Grid  size={{xs:12, md:5}}>
+                            <Typography>
+                                <strong>Rendimiento del Jugador suplente y titular</strong>
+                            </Typography>
+                            <div>
+                                <GenericSelectProps<TablesStats>
+                                    items={typePlayersFilter}
+                                    value={selectedTypePlayer || ""}
+                                    onChange={handleChangeSelectedTypePlayer}
+                                    getId={(item) => item.categoryName}
+                                    getLabel={(item) => item.categoryDescription}
+                                />
+                            </div>
+                        </Grid>
+
+                        {/** Aqui faltaría meter tipo de jugador básico */}
+                        <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
+                            <Button
+                                    variant="contained"
+                                    color="primary"
+                                    fullWidth
+                                    onClick={handleFilter}
+                                >
+                                Filtrar
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Box>
+                
+
+
+                <Box
+                    sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                        borderRadius: 4,
+                        boxShadow: 2,
+                        marginBottom: 5,
+                        overflow: 'hidden',
+                    }}
+                >
+                    <Box
+                        sx={{
+                            padding: 2,
+                            paddingBottom:0,
+                            paddingLeft: 3,
+                        }}
+                    >
+                        <Typography gutterBottom>
+                            <strong>Listado de resultados </strong>
                         </Typography>
-                        <div>
-                            <GenericSelectProps<TablesStats>
-                                items={typePlayersFilter}
-                                value={selectedTypePlayer || ""}
-                                onChange={handleChangeSelectedTypePlayer}
-                                getId={(item) => item.categoryName}
-                                getLabel={(item) => item.categoryDescription}
-                            />
-                        </div>
+                        <Typography variant="body1">
+                            Tabla de estadísticas los equipos segun la temporada
+                        </Typography>
+                    </Box>
+   
+                    <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{  padding: 3, borderRadius: 4 }} >
+                        <StatsTables data={data} />
                     </Grid>
+                </Box>
 
-                    {/** Aqui faltaría meter tipo de jugador básico */}
-                    <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
-                        <Button
-                                variant="contained"
-                                color="primary"
-                                fullWidth
-                                onClick={handleFilter}
-                            >
-                            Filtrar
-                        </Button>
-                    </Grid>
-                </Grid>
-                
-                
-                <Typography gutterBottom>
-                    <strong>Listado de resultados </strong>
-                </Typography>
-                <Typography variant="body1">
-                    Tabla de estadísticas los equipos segun la temporada
-                </Typography>
-                <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: 4, backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: 3, borderRadius: 2 }} >
-                    <StatsTables data={data} />
-                </Grid>
-
-                <Typography gutterBottom sx={{ marginTop: 6, fontWeight: 'bold', color: 'black' }}>
-                    <strong>Estadísticas disponibles de la liga</strong>
-                </Typography>
 
 
                 <Grid
                     container
                     spacing={2}
                     sx={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        borderRadius: 2,
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                        borderRadius: 4,
                         padding: 3,
-                        marginTop: 4
+                        marginTop: 4,
+                        boxShadow: 2,
                     }}
                 >
                     <Grid size={{ xs: 12, md: 3 }}>
                         <Grid  size={{xs:12, md:12}}>
                             <Typography>
-                                Filtro de Posición a elegir
+                                <strong>Seleccionar estadística</strong>
                             </Typography>
                             <div>
                                 <GenericSelectProps<string[]>
@@ -279,6 +331,7 @@ export default function ShowStatsComparisonFromLeague() {
                                     onChange={handleChangeColumn}
                                     getId={(item) => String(item)}
                                     getLabel={(item) => String(item)}
+                                    labelTodosShow={false}
                                 />
                             </div>
                         </Grid>
@@ -298,7 +351,7 @@ export default function ShowStatsComparisonFromLeague() {
 
                     <Grid size={{ xs: 12, md: 9 }}>
                         <Typography>
-                            Estadísticas que se muestra una unica estadística para cada Liga
+                            <strong> Estadísticas que se muestra una unica estadística para cada Liga </strong>
                         </Typography>
                         <Stack sx={{ marginTop: 6, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
                             <ReusableChart1 stat={generateScoreValuesChart(chartData, selectColumn)} typeOfChart={'bar'} typeOfChartColor="other"/>

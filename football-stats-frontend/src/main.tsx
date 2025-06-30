@@ -17,6 +17,7 @@ import TfgDocs from './pages/AcademicResource/TfgDocs.tsx'
 import ShowStatsComparisonFromLeague from './pages/ComparatorTeamsAndLeagues/ShowStatsComparisonFromLeague.tsx'
 import ShowStatsFromTeams from './pages/ComparatorTeamsAndLeagues/ShowStatsFromTeams.tsx'
 import HelpingPage from './pages/NavContentAndPrincipalPage/HelpingPage.tsx'
+import { StadiumProvider } from './layout/StadiumContext.tsx'
 
 const router = createHashRouter([
   {
@@ -47,6 +48,8 @@ const router = createHashRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <StadiumProvider>
+      <RouterProvider router={router} />
+    </StadiumProvider>
   </StrictMode>,
 )

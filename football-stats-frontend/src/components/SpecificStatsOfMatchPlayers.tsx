@@ -25,7 +25,7 @@ export default function SpecificStatsOfMatchPlayers({data}: Props) {
 
     // Se tiene que convertir en texto plano para que se pueda mostrar el datagrid
     const transformedData = data.map((row) => {
-        const base = {id: row.values[0]?.player_id || row.jugador, nombre: row.jugador,};
+        const base = {Nombre: row.jugador};
         row.values.forEach((value) => {
             base[value.column] = value.value;
         });
@@ -40,7 +40,7 @@ export default function SpecificStatsOfMatchPlayers({data}: Props) {
       <DataGrid
         rows={transformedData}
         columns={columns}
-        //getRowId={(row) => transformedData.player_id}
+        getRowId={(row) => row.Nombre}
         initialState={{
           pagination: {
             paginationModel: {

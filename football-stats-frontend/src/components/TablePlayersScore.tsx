@@ -231,8 +231,8 @@ export default function EnhancedTable({rows}: {rows: ScoreAPI[]}) {
     );
 
     return (
-        <Box sx={{ width: '100%' }}>
-        <Paper sx={{ width: '100%', mb: 2 }}>
+        <Box sx={{ width: '100%',  backgroundColor: 'rgba(255, 255, 255, 0.7)' }}>
+        <Paper sx={{ width: '100%', mb: 2, borderRadius: 4, backgroundColor: 'rgba(255, 255, 255, 0.8)' }}>
         <Toolbar
             sx={[
                 {
@@ -241,16 +241,11 @@ export default function EnhancedTable({rows}: {rows: ScoreAPI[]}) {
                 }
             ]}
             >
-            <Typography
-                sx={{ flex: '1 1 100%' }}
-                variant="h6"
-                id="tableTitle"
-                component="div"
-                >
-                Puntuaciones
+            <Typography variant="h6" gutterBottom>
+                <strong>Puntuaciones </strong>
             </Typography>
         </Toolbar>
-            <TableContainer>
+            <TableContainer sx={{  borderRadius: 2}}>
                 <Table
                     sx={{ minWidth: 750 }}
                     aria-labelledby="tableTitle"
@@ -278,7 +273,7 @@ export default function EnhancedTable({rows}: {rows: ScoreAPI[]}) {
                             role="checkbox"
                             tabIndex={-1}
                             key={row.match_player_score_id}
-                            sx={{ cursor: 'pointer' }}
+                            sx={{ cursor: 'pointer'}}
                         >
                             <TableCell padding="checkbox">
                             </TableCell>
@@ -332,8 +327,8 @@ export default function EnhancedTable({rows}: {rows: ScoreAPI[]}) {
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
         </Paper>
-        <FormControlLabel
-            control={<Switch checked={dense} onChange={handleChangeDense} />}
+        <FormControlLabel sx={{ marginLeft: 2, marginBottom: 1,  }}
+            control={<Switch checked={dense} onChange={handleChangeDense}  />}
             label="Dense padding"
         />
         </Box>

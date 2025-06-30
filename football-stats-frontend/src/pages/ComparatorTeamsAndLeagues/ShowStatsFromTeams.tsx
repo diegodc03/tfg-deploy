@@ -7,7 +7,7 @@
 
 
 
-import { Button, Container, Grid, Stack, Typography } from '@mui/material';
+import { Box, Button, Container, Grid, Stack, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import LoadingIndicator from '../../components/LoaqdingIndicator';
@@ -23,6 +23,8 @@ import { ReusableChart1 } from '../../components/charts/reusableChart1';
 import { StatEntry, ChartType } from '../../model/statsTypes/stats';
 import { Chart } from 'chart.js';
 import { generateScoreValuesChart } from './utilsComparison';
+import ErrorSnackbar from '../../components/showError';
+import { ERROR_MESSAGES } from '../../model/constants/errorConstants';
 /**
  * 
  * Este componente se va a encargar de mostrar las tablas de las diferentes estadísticas de los jugadores en un partido
@@ -41,7 +43,8 @@ export default function ShowStatsFromTeams() {
 
     const {league_id} = useParams();
     const [isLoading, setIsLoading] = useState(true);
-
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const [chartData, setChartData] = useState<ChartAPI[]>([]);
     const [data, setData] = useState<StatAPI[]>([]); 
@@ -50,7 +53,7 @@ export default function ShowStatsFromTeams() {
     const [filterColumnsTable, setFilterColumnsTable] = useState<string[]>([]);
 
     const [teamsArray, setTeamsArray] = useState<TablesStats[]>([]);
-    const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+    const [selectedTeam, setSelectedTeam] = useState<string | null>('Real Madrid');
     
     const chartType: ChartType = 'bar'; 
     const navigate = useNavigate();
@@ -117,7 +120,9 @@ export default function ShowStatsFromTeams() {
                 setFilterColumnsTable(filter_columns_table);
                 
             } catch (error) {
-                console.error('Error fetching player stats:', error);
+                setErrorMessage(ERROR_MESSAGES.NOT_FOUND_COMPARTOR_TEAMS);
+                setShowError(true);
+                setIsLoading(false);
             } finally {
                 setIsLoading(false);
             }
@@ -250,96 +255,141 @@ export default function ShowStatsFromTeams() {
 
     return (
        
-        <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
+        <Container maxWidth="lg" sx={{ marginTop: '3rem', marginBottom: '5vh' }}>
+            
+            <ErrorSnackbar
+                open={showError}
+                onClose={() => setShowError(false)}
+                message={errorMessage ?? "Ha ocurrido un error inesperado"}
+                position={{ vertical: 'top', horizontal: 'right' }}
+                large={true}
+            />
+            
             <LoadingIndicator isLoading={isLoading} />
-            <Typography>
-                <strong>Filtrar por tipo de estadística y equipo</strong>
-            </Typography>
+            
 
-            <Grid 
-                container
-                columnSpacing={{ xs: 1, sm: 2 }}
-                rowSpacing={{ xs: 1, sm: 2, md: 3 }}
-                spacing={{ xs: 1, sm: 2, md: 4 }}
-                
-                justifyContent="center"
+            <Box
                 sx={{
                     backgroundColor: '#f8f9fa',
-                    padding: 2,
-                    borderRadius: 2,
-                    marginTop: 1,
+                    boxShadow: 2,
+                    overflow: 'hidden',
                     marginBottom: 5,
                 }}
             >
-
-
-                <Grid  size={{xs:12, md:3}}>
+                <Box
+                    sx={{
+                        backgroundColor: '#ffffff',
+                        padding: 2,
+                        paddingBottom:0,
+                        paddingLeft: 3,
+                    }}
+                > 
                     <Typography>
-                        <strong>Tablas a consultar</strong>
+                        <strong>Filtrar por tipo de estadística y equipo</strong>
                     </Typography>
-                    <div>    
-                        <GenericSelectProps<TablesStats>
-                            items={filtersArray}
-                            value={selectedFiltersTable || ""}
-                            onChange={handleChangeSelectedTableFilters}
-                            getId={(item) => item.categoryName}
-                            getLabel={(item) => item.categoryDescription}
-                        />
-                    </div>
-                </Grid>
+                </Box>
 
-                <Grid  size={{xs:12, md:4}}>
-                    <Typography>
-                        <strong>Rendimiento: Suplente o Titular</strong>
-                    </Typography>
-                    <div>
-                        <GenericSelectProps<TablesStats>
-                            items={typePlayersFilter}
-                            value={selectedTypePlayer || ""}
-                            onChange={handleChangeSelectedTypePlayer}
-                            getId={(item) => item.categoryName}
-                            getLabel={(item) => item.categoryDescription}
-                        />
-                    </div>
-                </Grid>
+                <Grid 
+                    container
+                    columnSpacing={{ xs: 1, sm: 2 }}
+                    rowSpacing={{ xs: 1, sm: 2, md: 3 }}
+                    spacing={{ xs: 1, sm: 2, md: 4 }}
+                    
+                    justifyContent="center"
+                    sx={{
+                        backgroundColor: '#f8f9fa',
+                        padding: 2,
+                        borderRadius: 2,
+                    }}
+                >
 
-                <Grid  size={{xs:12, md:4}}>
-                    <Typography>
-                        <strong>Equipo a consultar de la liga</strong>
-                    </Typography>
-                    <div>    
-                        <GenericSelectProps<TablesStats>
-                            items={teamsArray}
-                            value={selectedTeam || ""}
-                            onChange={handleChangeFilterTeam}
-                            getId={(item) => item.categoryDescription}
-                            getLabel={(item) => item.categoryDescription}
-                        />
-                    </div>
-                </Grid>
 
-                <Grid size={{xs:12,md:1}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
-                    <Button
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                            onClick={handleFilter}
-                        >
-                        Filtrar
-                    </Button>
+                    <Grid  size={{xs:12, md:3}}>
+                        <Typography>
+                            <strong>Tablas a consultar</strong>
+                        </Typography>
+                        <div>    
+                            <GenericSelectProps<TablesStats>
+                                items={filtersArray}
+                                value={selectedFiltersTable || ""}
+                                onChange={handleChangeSelectedTableFilters}
+                                getId={(item) => item.categoryName}
+                                getLabel={(item) => item.categoryDescription}
+                            />
+                        </div>
+                    </Grid>
+
+                    <Grid  size={{xs:12, md:4}}>
+                        <Typography>
+                            <strong>Rendimiento: Suplente o Titular</strong>
+                        </Typography>
+                        <div>
+                            <GenericSelectProps<TablesStats>
+                                items={typePlayersFilter}
+                                value={selectedTypePlayer || ""}
+                                onChange={handleChangeSelectedTypePlayer}
+                                getId={(item) => item.categoryName}
+                                getLabel={(item) => item.categoryDescription}
+                            />
+                        </div>
+                    </Grid>
+
+                    <Grid  size={{xs:12, md:4}}>
+                        <Typography>
+                            <strong>Equipo a consultar de la liga</strong>
+                        </Typography>
+                        <div>    
+                            <GenericSelectProps<TablesStats>
+                                items={teamsArray}
+                                value={selectedTeam || ""}
+                                onChange={handleChangeFilterTeam}
+                                getId={(item) => item.categoryDescription}
+                                getLabel={(item) => item.categoryDescription}
+                            />
+                        </div>
+                    </Grid>
+
+                    <Grid size={{xs:12,md:1}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
+                        <Button
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                                onClick={handleFilter}
+                            >
+                            Filtrar
+                        </Button>
+                    </Grid>
                 </Grid>
-            </Grid>
+            </Box>
             
             
-            <Typography gutterBottom>
-                <strong>Listado de resultados </strong>
-            </Typography>
-            <Typography variant="body1">
-                Tabla de estadísticas los equipos segun la temporada
-            </Typography>
-            <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: 4, backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: 3, borderRadius: 2 }} >
-                <StatsTables data={data} />
-            </Grid>
+            <Box
+                sx={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                    borderRadius: 4,
+                    boxShadow: 2,
+                    overflow: 'hidden',
+                }}
+            >
+                <Box
+                    sx={{
+                        padding: 2,
+                        paddingBottom:0,
+                        paddingLeft: 3,
+                    }}
+                >
+                    <Typography gutterBottom>
+                        <strong>Listado de resultados </strong>
+                    </Typography>
+                    <Typography variant="body1">
+                        Tabla de estadísticas los equipos segun la temporada
+                    </Typography>
+                </Box>
+            
+                <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{  padding: 3, borderRadius: 4 }} >
+                    <StatsTables data={data} />
+                </Grid>
+            </Box>
 
             <Grid
                 container
@@ -364,6 +414,7 @@ export default function ShowStatsFromTeams() {
                                     onChange={handleChangeColumn}
                                     getId={(item) => String(item)}
                                     getLabel={(item) => String(item)}
+                                    labelTodosShow={false}
                                 />
                             </div>
                         </Grid>

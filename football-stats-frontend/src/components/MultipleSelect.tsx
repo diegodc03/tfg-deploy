@@ -12,6 +12,7 @@ interface GenericSelectProps<T> {
   onChange: (value: string) => void;
   getId?: (item: T) => string;
   getLabel?: (item: T) => string;
+  labelTodosShow?: boolean; // Si es true, muestra la opción "Todos" al inicio
 }
 
 export default function GenericSelect<T>({
@@ -20,6 +21,7 @@ export default function GenericSelect<T>({
   onChange,
   getId,
   getLabel,
+  labelTodosShow = true,
 }: GenericSelectProps<T>) {
   
   const handleChange = (event: SelectChangeEvent) => {
@@ -32,9 +34,12 @@ export default function GenericSelect<T>({
   return (
     <FormControl sx={{ width: '90%' }} size="small">
       <Select value={value} onChange={handleChange} displayEmpty>
-        <MenuItem value="">
-          <em>Todos</em>
-        </MenuItem>
+
+        {labelTodosShow && (
+          <MenuItem value="">
+            <em>Todos</em>
+          </MenuItem>
+        )}
         {isStringArray 
         ? (items as string[]).map((item) => (
             <MenuItem key={item} value={item}>

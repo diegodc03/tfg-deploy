@@ -1,12 +1,7 @@
 
 import { Container, Grid, CssBaseline, Typography, Box } from '@mui/material';
-import statsImage from '../images/stats.png';
 import CardShow from './Cards';
-import React from 'react';
-import About from '../pages/NavContentAndPrincipalPage/About';
-import TfgDocs from '../pages/AcademicResource/TfgDocs';
 import { serviceItems } from '../model/constants/menuItems';
-
 import { useNavigate } from 'react-router-dom';
 
 export default function CardsContainer() {
@@ -18,8 +13,8 @@ export default function CardsContainer() {
     return (
         <>
         <CssBaseline />
-        <Container maxWidth="lg" sx={{ mt: 45 }}>
-            <Grid container spacing={6} justifyContent="center" alignItems="center" sx={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', padding: "1%", borderRadius: 2, 
+        <Container maxWidth="lg" sx={{ mt: '20rem' }}>
+            <Grid container spacing={6} justifyContent="center" alignItems="center" sx={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', padding: "1%", borderRadius: 4, 
             mb: '20vh', mx: 'auto', paddingTop: 5, paddingBottom: 5 }}>
                 <Box>
                     <Typography>

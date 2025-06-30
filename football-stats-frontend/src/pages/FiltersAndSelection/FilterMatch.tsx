@@ -1,6 +1,6 @@
 
 
-import { Grid, Container, Typography, Button } from '@mui/material';
+import { Grid, Container, Typography, Button, Box } from '@mui/material';
 import {useEffect, useState} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -13,6 +13,7 @@ import { ERROR_MESSAGES } from '../../model/constants/errorConstants';
 import ErrorSnackbar from '../../components/showError';
 
 import { startTransition } from 'react';
+import { useStadium } from '../../layout/StadiumContext';
 
 export default function FilterMatch() {
 
@@ -35,13 +36,13 @@ export default function FilterMatch() {
     const [filteredMatches, setFilteredMatches] = useState<MatchAPI[]>(matches);
 
     const [isLoading, setIsLoading] = useState(true);
-
+    const { selected } = useStadium();
     
 
     useEffect(() => {
     const fetchAndPrepareMatches = async () => {
         try {
-        const response = await fetch(API_ENDPOINTS.ALL_MATCHES_BY_LEAGUE_ID + leagueId);
+            const response = await fetch(API_ENDPOINTS.ALL_MATCHES_BY_LEAGUE_ID + leagueId);
         if (!response.ok) throw new Error('Error fetching partidos');
 
         const data = await response.json();
@@ -62,13 +63,15 @@ export default function FilterMatch() {
             setWeeks(w);
             setTeams(t);
             setResults(r);
+            setIsLoadingFilters(false);
             }
         });
 
         } catch (error: any) {
-        setErrorMessage(ERROR_MESSAGES.NOT_FOUND_MATCHES_ON_LEAGUE);
-        setShowError(true);
-        setIsLoading(false);
+            setErrorMessage(ERROR_MESSAGES.NOT_FOUND_MATCHES_ON_LEAGUE);
+            setShowError(true);
+            setIsLoading(false);
+            setIsLoadingFilters(false);
         }
     };
 
@@ -141,7 +144,7 @@ export default function FilterMatch() {
 
     return (
 
-        <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
+        <Container maxWidth="lg" sx={{ marginTop: '3rem', marginBottom: '5vh' }}>
             <ErrorSnackbar
                 open={showError}
                 onClose={() => setShowError(false)}
@@ -151,107 +154,144 @@ export default function FilterMatch() {
             />
             <LoadingIndicator isLoading={isLoading} />
             
-            <Typography  gutterBottom>
-                <strong>Filtrar por Jornada, Equipos y Resultado</strong>
-            </Typography>
-        
-            <Grid
-                container
-                columnSpacing={{ xs: 1, sm: 2 }}
-                rowSpacing={{ xs: 1, sm: 2, md: 3 }}
-                spacing={{ xs: 1, sm: 2, md: 4 }}
-                
-                justifyContent="center"
-                sx={{
-                backgroundColor: '#f8f9fa',
-                padding: 2,
-                borderRadius: 2,
-                marginTop: 1,
-                marginBottom: 5,
 
+            <Box
+                sx={{
+                    backgroundColor: '#f8f9fa',
+                    borderRadius: 4,
+                    boxShadow: 2,
+                    overflow: 'hidden',
+                    marginBottom: 5,
+                    
                 }}
             >
+                <Box
+                    sx={{
+                        backgroundColor: '#ffffff',
+                        padding: 2,
+                        paddingBottom:0,
+                        paddingLeft: 3,
+                    }}
+                >
+                    <Typography >
+                        <strong>Filtrar por Jornada, Equipos y Resultados</strong>
+                    </Typography>
+                </Box>   
+
+                <Grid
+                    container
+                    spacing={{ xs: 1, sm: 2, md: 3 }}
+                    
+                    justifyContent="center"
+                    sx={{
+                    backgroundColor: '#f8f9fa',
+                    padding: 2,
+                    borderRadius: 4,
+                    }}
+                >
+                    
+                    <Grid  size={{xs:12, sm:6, md:3}} sx={{  justifyContent: 'center' }}>
+                        <Typography gutterBottom>
+                            <strong>Jornadas</strong>
+                        </Typography>
+                        {isLoadingFilters ? (
+                            <Typography variant="body2">Cargando jornadas...</Typography>
+                        ) : (
+                            <FiltersElements
+                                itemsToSelect={weeks}
+                                selectedValue={selectedWeek || ""}
+                                onChange={handleChangeWeeks}
+                            />
+                        )}
+
+                    </Grid>
+            
+                    <Grid  size={{xs:12, sm:6, md:3}} sx={{  justifyContent: 'center' }}>
+                        <Typography gutterBottom>
+                            <strong>Equipos</strong>
+                        </Typography>
+                        {isLoadingFilters ? (
+                            <Typography variant="body2">Cargando jornadas...</Typography>
+                        ) : (
+                            <FiltersElements
+                                    itemsToSelect={teams}
+                                    selectedValue={selectedTeam || ""}
+                                    onChange={handleChangeTeams}
+                            />
+                        )}
+
+                    </Grid>
+            
+                    <Grid size={{xs:12, sm:6, md:3 }} sx={{  justifyContent: 'center' }}>
+                        <Typography gutterBottom>
+                            <strong>Resultado</strong>
+                        </Typography>
+                        {isLoadingFilters ? (
+                            <Typography variant="body2">Cargando jornadas...</Typography>
+                        ) : (
+                            <FiltersElements 
+                                
+                                itemsToSelect={results}
+                                selectedValue={selectedResult || ""}
+                                onChange={handleChangeResult}
+                            />
+                        )}
+                    </Grid>
+        
                 
-                <Grid  size={{xs:12, sm:6, md:3}}>
-                    <Typography gutterBottom>
-                        <strong>Jornadas</strong>
-                    </Typography>
-                    {isLoadingFilters ? (
-                        <Typography variant="body2">Cargando jornadas...</Typography>
-                    ) : (
-                        <FiltersElements
-                            itemsToSelect={weeks}
-                            selectedValue={selectedWeek || ""}
-                            onChange={handleChangeWeeks}
-                        />
-                    )}
-
+                    <Grid size={{xs:12, sm:6, md:3}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
+                        <Button
+                            variant="contained"
+                            
+                            fullWidth
+                            sx={{ width: '100%', background:selected.backGcolor }}
+                            onClick={() => filterMatches()}
+                        >
+                        Filtrar
+                        </Button>
+                    </Grid>
                 </Grid>
+            </Box>
+
+            <Box
+                sx={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                    borderRadius: 4,
+                    boxShadow: 2,
+                    overflow: 'hidden',
+                }}
+            >
+                <Box
+                    sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                        padding: 2,
+                        paddingBottom:0,
+                        paddingLeft: 3,
+                    }}
+                >
+                    <Typography >
+                        <strong>Listado de resultados </strong>
+                    </Typography>
+                </Box>   
         
-                <Grid  size={{xs:12, sm:6, md:3}}>
-                    <Typography gutterBottom>
-                        <strong>Equipos</strong>
-                    </Typography>
-                    {isLoadingFilters ? (
-                        <Typography variant="body2">Cargando jornadas...</Typography>
-                    ) : (
-                        <FiltersElements
-                                itemsToSelect={teams}
-                                selectedValue={selectedTeam || ""}
-                                onChange={handleChangeTeams}
-                        />
-                    )}
 
-                </Grid>
-        
-                <Grid size={{xs:12, sm:6, md:3}}>
-                    <Typography gutterBottom>
-                        <strong>Resultado</strong>
-                    </Typography>
-                    {isLoadingFilters ? (
-                        <Typography variant="body2">Cargando jornadas...</Typography>
-                    ) : (
-                        <FiltersElements 
-                            itemsToSelect={results}
-                            selectedValue={selectedResult || ""}
-                            onChange={handleChangeResult}
-                        />
-                    )}
-                    
-                    
-                </Grid>
-       
-            
-                <Grid size={{xs:12, sm:6, md:3}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        sx={{ width: '100%' }}
-                        onClick={() => filterMatches()}
-                    >
-                    Filtros
-                    </Button>
-                </Grid>
-            </Grid>
-            
-            <Typography gutterBottom>
-                <strong>Listado de resultados </strong>
-            </Typography>
-
-            <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: 4, backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: 3, borderRadius: 2 }}>
-                    <LoadingIndicator isLoading={isLoading} />      
+                <Grid container 
+                    spacing={2} 
+                    justifyContent="center" 
+                    alignItems="center" 
+                    sx={{  padding: 3, borderRadius: 4 }}>
+                       
                     {filteredMatches.map((match) => (
                         <Grid size={{xs:12, sm:6, md:3}}  sx={{ display: 'flex', justifyContent: 'center' }} key={match.match_id} onClick={() => handleClickMatch(match)}>
                             <CardShowOptions 
                                 title={match.Home.team_name + "-" + match.Away.team_name} 
                                 result={match.Score}
-                                week={match.Wk.toString()}
+                                week={match.Wk.toString().split('.')[0]}
                             />
                         </Grid>
                     ))}
-            </Grid>
-            
+                </Grid>
+            </Box>
         </Container>
      
         );

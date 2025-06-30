@@ -66,9 +66,26 @@ export const ReusableChart1 = ({ stat, typeOfChart, typeOfChartColor }: Props) =
 
     const colorValues = Object.values(typeColors);
 
-    const backgroundColor = stat.labels.map(entry =>
-    typeColors[entry] || colorValues[Math.floor(Math.random() * colorValues.length)]
-    );
+    
+    
+    
+    const getSeasonFromLabel = (label: string) => label.split(" - ")[0];
+    // Mapear cada temporada única a un color
+    const uniqueSeasons = Array.from(new Set(stat.labels.map(getSeasonFromLabel)));
+    const seasonToColor: Record<string, string> = {};
+
+    uniqueSeasons.forEach((season, index) => {
+        seasonToColor[season] = colorValues[index % colorValues.length]; // Cicla si hay más temporadas que colores
+    });
+
+    
+    
+    
+    const backgroundColor = stat.labels.map(label => {
+        const season = getSeasonFromLabel(label);
+        return seasonToColor[season] || '#000000'; // Color por defecto si algo falla
+    });
+
 
     const tittleIfNotExists = () => {
         if (typeOfChartColor === "positions") {
@@ -91,16 +108,20 @@ export const ReusableChart1 = ({ stat, typeOfChart, typeOfChartColor }: Props) =
             display: true,
             labels: {
             generateLabels: () => {
-                const positionsUsed = new Set(stat.labels.map(label => label || 'other'));
+                const positionsUsed = new Set(
+                    (typeOfChartColor === 'other'
+                        ? stat.labels.map(label => getSeasonFromLabel(label))
+                        : stat.labels.map(label => label || 'other'))
+                );
 
-                return Array.from(positionsUsed).map(element => ({
-                text: element,
-                fillStyle: backgroundColor[stat.labels.indexOf(element)] || '#000000', // Fallback color if not found
-                strokeStyle: backgroundColor[stat.labels.indexOf(element)] || '#000000',
-                lineWidth: 0,
-                hidden: false,
-                index: 0,
-                }));
+                return Array.from(positionsUsed).map((element, i) => ({
+                    text: element,
+                    fillStyle: seasonToColor[element] || backgroundColor[i] || '#000000',
+                    strokeStyle: seasonToColor[element] || backgroundColor[i] || '#000000',
+                    lineWidth: 0,
+                    hidden: false,
+                    index: 0,
+           }));
             },
             },
         },

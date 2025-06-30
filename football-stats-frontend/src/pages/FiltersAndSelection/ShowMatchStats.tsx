@@ -1,4 +1,4 @@
-import { Container, Grid, Stack, Typography } from "@mui/material";
+import { Box, Container, Grid, Stack, Typography } from "@mui/material";
 
 import CardShow from "../../components/Cards";
 import { useEffect, useState } from "react";
@@ -26,6 +26,9 @@ const ShowMatchStats = () => {
 
            
     useEffect(() => {
+
+        if (!match_id) return;
+
         const fetchData = async () => {
             try {
                 const response = await fetch(API_ENDPOINTS.PRINCIPAL_MATCH_STATS + `${match_id}`);
@@ -51,7 +54,30 @@ const ShowMatchStats = () => {
     , [match_id]);
 
     
+    useEffect(() => {
+        if (!match_id) return;
 
+        const preloadPlayerData = async () => {
+            try {
+                const [playersRes] = await Promise.all([
+                    fetch(`${API_ENDPOINTS.ALL_PLAYERS_BY_MATCH}${match_id}`),
+                ]);
+
+                if (!playersRes.ok) {
+                    throw new Error('Error preloading scores or players');
+                }
+
+                const players = await playersRes.json();
+
+                localStorage.setItem(`players_match_${match_id}`, JSON.stringify(players));
+
+            } catch (err) {
+                console.warn('Error precargando datos de jugadores:', err);
+            }
+        };
+
+        preloadPlayerData();
+    }, [match_id]);
 
 
     return (
@@ -65,48 +91,67 @@ const ShowMatchStats = () => {
             />
 
 
-            <Container>           
-                <Typography gutterBottom sx={{ marginTop: 4, fontWeight: 'bold' }}>
-                    <strong>Listado de resultados </strong>
-                </Typography>
-                    
-                {matchStats && matchStats.Home && matchStats.Away && (
-                    <BasicInfoMatch stats={matchBasicInfo(matchStats)} />
-                )}
-
-                <Typography gutterBottom sx={{ marginTop: 6, fontWeight: 'bold', color: 'black' }}>
-                    <strong>Estadísticas disponibles del partido</strong>
-                </Typography>
-                <Grid
-                    container
-                        size={{ xs: 12, sm: 6, md: 3 }}
-                        spacing={5}
-                        sx={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                            borderRadius: 2,
-                            padding: 3,
-                            marginLeft:'auto',
-                            marginRight:'auto',
-                            display: 'flex', 
-                            justifyContent: 'center', 
-                            alignItems: 'center'
-                        }}
-                    >
-                    {serviceItemsStatsPage(
-                        match_id as string,
-                        String(tournamentId)
-                    ).map((item, index) => (
-                        <Grid key={index}  >
-                            <CardShow {...item} />
-                        </Grid>
-                    ))}
-                </Grid>
+            <Container maxWidth="lg" sx={{ marginTop: '3rem', marginBottom: '5vh' }}>           
                 
-                <Stack  sx={{  backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 3, marginBottom:6, marginTop: 8 }} >
+                <Box
+                    sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                        padding: 2,
+                        paddingBottom:0,
+                        paddingLeft: 3,
+                        borderRadius: 4,
+                    }}
+                >
+                    <Typography gutterBottom  variant="h6" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
+                        <strong>Listado de resultados </strong>
+                    </Typography>
+                    {matchStats && matchStats.Home && matchStats.Away && (
+                        <BasicInfoMatch stats={matchBasicInfo(matchStats)} />
+                    )}
+
+
+                </Box>
+          
+
+
+                <Box
+                    sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                        padding: 2,
+                        marginTop: 6,
+                        borderRadius: 4,
+                      
+                    }}
+                >
+                    <Typography gutterBottom  variant="h6" sx={{  fontWeight: 'bold' ,marginBottom: 2 }}>
+                        <strong>Estadísticas disponibles del partido</strong>
+                    </Typography>
+                    <Grid
+                        container
+                            size={{ xs: 12, sm: 6, md: 3 }}
+                            spacing={5}
+                            sx={{
+                                borderRadius: 4,
+                                
+                                display: 'flex', 
+                                justifyContent: 'center', 
+                                alignItems: 'center'
+                            }}
+                        >
+                        {serviceItemsStatsPage(
+                            match_id as string,
+                            String(tournamentId)
+                        ).map((item, index) => (
+                            <Grid key={index}  >
+                                <CardShow {...item} />
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Box>
+                <Stack  sx={{  backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 4, padding: 3, marginBottom:6, marginTop: 8 }} >
                     <ShowBasicStats matchId={Number(match_id)} />
                 </Stack>
                 
-               
             </Container>
         </>
     );

@@ -7,6 +7,8 @@ import Footer from "../components/Footer";
 import { Box, Button } from "@mui/material";
 import { colorsAsociatedToStadium } from "../model/constants/ColorSystemAndBackground";
 import { useNavigate } from "react-router-dom";
+import { X } from "@mui/icons-material";
+import { useStadium } from "./StadiumContext";
 
 
 
@@ -14,7 +16,8 @@ export default function MainLayout() {
 
     const navigate = useNavigate();
     const [showButtons, setShowButtons] = useState(true);
-    const [electedStadium, setElectedStadium] = useState(0);
+    //const [electedStadium, setElectedStadium] = useState(0);
+    const { electedStadium, setElectedStadium, selected } = useStadium();
 
     const handleChangeColor = () => {
         const nextIndex = (electedStadium + 1) % colorsAsociatedToStadium.length;
@@ -56,7 +59,7 @@ export default function MainLayout() {
             
             <Header backGcolor={backgroundColorSelected} backGButtons={secondaryColorSelected} textColor={textColorSelected}/>
             
-            <main style={{ marginTop: '64px' }}>
+            <main style={{ marginTop: '64px'}} >
             
             <Box
                 sx={{
@@ -68,6 +71,7 @@ export default function MainLayout() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
+                
                 }}
             >
                 <Button
@@ -76,9 +80,11 @@ export default function MainLayout() {
                     sx={{ margin: 2, backgroundColor: backgroundColorSelected, color: textColorSelected, position: 'fixed', 
                         bottom: 20, left: 20, zIndex: 1000,         
                         opacity: showButtons ? 1 : 0, transition: 'opacity 0.5s ease', 
-                        '&:hover': { backgroundColor: secondaryColorSelected } }}
+                        '&:hover': { backgroundColor: secondaryColorSelected }, 
+                        display: {xs:'none', sm: 'none', lg: 'block' }
+                    }}
                     >
-                    Cambiar Estadio por si no eres del Real Madrid
+                    Cambiar Estadio por si no eres del {selected.teamName}
                 </Button>
                 <Button
                     variant="contained"
@@ -86,12 +92,14 @@ export default function MainLayout() {
                     sx={{ margin: 2, backgroundColor: backgroundColorSelected, color: textColorSelected, position: 'fixed', 
                         bottom: 20, right: 20, zIndex: 1000,         
                         opacity: showButtons ? 1 : 0, transition: 'opacity 0.5s ease', 
-                        '&:hover': { backgroundColor: secondaryColorSelected } }}
+                        '&:hover': { backgroundColor: secondaryColorSelected } ,
+                        display: {xs:'none', sm: 'none', lg: 'block' }
+                    }}
                     >
                     Ayuda de interfaz de usuario 
                 </Button>
           
-                <Outlet />
+                <Outlet  />
             </Box>
             </main>
             <Footer />

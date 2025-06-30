@@ -10,6 +10,9 @@ import { useNavigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { getBackgroundColorByLeague, getBackgroundGradientByLeague } from '../model/constants/constants';
 import  imgRU  from '../images/flags/inglaterra.png'
+import { useStadium } from '../layout/StadiumContext';
+
+    
 
 type CardShowProps = {
     title: string;
@@ -20,7 +23,7 @@ type CardShowProps = {
 };
 
 const CardShowOptions: React.FC<CardShowProps> = ({ title, season, week, result, navigateElement }) => {
-
+    const { selected } = useStadium();
     const navigate = useNavigate();
 
     const handleChangeScoresView = () => {
@@ -35,6 +38,8 @@ const CardShowOptions: React.FC<CardShowProps> = ({ title, season, week, result,
         }
     }
 
+    const backgroundGradient = getBackgroundGradientByLeague(title);
+    const isDefaultBackground = backgroundGradient === 'default';
 
     return (
         <Card
@@ -47,7 +52,7 @@ const CardShowOptions: React.FC<CardShowProps> = ({ title, season, week, result,
                 borderRadius: 3,
                 position: 'relative',
                 paddingBottom: 1,
-                background  : getBackgroundGradientByLeague(title), 
+                background: isDefaultBackground ? selected.backGcolor : backgroundGradient,
                 backgroundImage: getBackgroundImage(title), 
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
@@ -58,9 +63,9 @@ const CardShowOptions: React.FC<CardShowProps> = ({ title, season, week, result,
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
-                        backgroundColor: '#f5f5f5',  // color neutro claro
                         borderRadius: 2,
                         padding: 2,
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
                         marginLeft: '10px',
                         marginRight: '33px',
                         boxShadow: '0px 10px 15px rgba(0, 0, 0, 0.6)',  // sombra suave
@@ -75,7 +80,7 @@ const CardShowOptions: React.FC<CardShowProps> = ({ title, season, week, result,
                         {season && <>{season}<br /></>}
                         </Typography>
                         <Typography variant="body1">
-                        {week && <><strong>Semana:</strong> {week}<br /></>}
+                        {week && <><strong>Jornada:</strong> {week}<br /></>}
                         {result && <><strong>Resultado:</strong> {result}</>}
                         </Typography>
                     </Box>

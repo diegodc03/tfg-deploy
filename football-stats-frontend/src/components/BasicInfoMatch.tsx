@@ -20,13 +20,11 @@ const BasicInfoMatch = ({ stats }: BasicInfoMatchProps) => {
 
     return (
     <Paper
-      elevation={4}
+   
       sx={{
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        borderRadius: 3,
-        padding: 3,
-        margin: 2,
-        
+        backgroundColor: 'rgba(255, 255, 255, 0.0)',
+        paddingBottom: 2,
+        boxShadow: 0
       }}
     >
       <Grid container spacing={2}>

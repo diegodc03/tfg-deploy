@@ -7,20 +7,46 @@ const TfgDocs = () => {
 
     return (
         
-        <Container maxWidth="xl" sx={{ marginTop: 10, marginBottom: 5 }}>
+        <Container maxWidth="lg">
+
+            <Box sx={{ mt: '3rem', textAlign: 'center' }}>      
+                <Box 
+                    sx={{ 
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)', 
+                        padding: "1%", 
+                        borderRadius: 2, 
+                        mb: '10rem', 
+                        mx: 'auto', 
+                        paddingTop: 5, 
+                        paddingBottom: 3 
+                    }}
+                >
+                    <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
+                        Índice de Anexos del TFG
+                    </Typography>
+                    <Typography variant="h6" fontWeight="bold">
+                        Esta página es un proyecto de TFG de la Universidad de Salamancan del grado en Ingeniería Informática
+                    </Typography>
+                    <Typography variant="h6" fontWeight="bold">
+                        Está realizado por: Diego de Castro Merillas
+                    </Typography>
+                    <Typography variant="subtitle1" fontWeight="bold" mt={2}>
+                        Descarga cada documento en formato PDF desde los enlaces disponibles
+                    </Typography>
+                    <Button
+                        variant="outlined"
+                        href=""
+                        target="_blank"
+                        sx={{ color: 'black', mt:2}}
+                    >
+                        <strong> Descargar Todo </strong>
+                        <DownloadForOfflineRoundedIcon sx={{ ml: 1 }} />
+                    </Button>
+                </Box>    
+            </Box>
+
             <Box sx={{ textAlign: "center", mb: 5 }}>
-                <Typography variant="h5" fontWeight="bold">
-                    Índice de Anexos del TFG
-                </Typography>
-                <Typography variant="h6" fontWeight="bold">
-                    Esta página es un proyecto de TFG de la Universidad de Salamancan del grado en Ingeniería Informática
-                </Typography>
-                <Typography variant="h6" fontWeight="bold">
-                    Está realizado por: Diego de Castro Merillas
-                </Typography>
-                <Typography variant="subtitle1" fontWeight="bold" mt={2}>
-                    Descarga cada documento en formato PDF desde los enlaces disponibles
-                </Typography>
+                
             </Box>
             <Grid container spacing={4}>
                 {TfgDocsContent.map((annex, index) => (

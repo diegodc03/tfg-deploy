@@ -1,4 +1,4 @@
-import { Button, Container, Grid, Stack, Typography } from "@mui/material";
+import { Box, Button, Container, Grid, Stack, Typography } from "@mui/material";
 
 
 import { useEffect, useState } from "react";
@@ -19,12 +19,16 @@ import { MatchPlayerScore } from "../../model/ShowMatchPlayerScore";
 
 import { API_ENDPOINTS } from "../../model/constants/UrlConstants";
 import { ReusableChart1 } from "../../components/charts/reusableChart1";
+import ErrorSnackbar from "../../components/showError";
+import { ERROR_MESSAGES } from "../../model/constants/errorConstants";
+import { STORAGE_KEYS } from "../../model/constants/StorageKeys";
 
 
 
 export default function ShowScores() {
 
-  
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { match_id } = useParams();
 
 
@@ -69,6 +73,7 @@ export default function ShowScores() {
 
     function handleChangePlayer(value: string): void {
         setSelectedPlayerId(value);
+        
     }
 
 
@@ -76,38 +81,43 @@ export default function ShowScores() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [gameTypesResponse, basicPositionsResponse, specificPositionsResponse, players_scores, playersFilter] = await Promise.all([
-                    fetch(API_ENDPOINTS.ALL_GAME_MODES),
-                    fetch(API_ENDPOINTS.ALL_BASIC_POSITIONS),
-                    fetch(API_ENDPOINTS.ALL_SPECIFIC_POSITIONS),
+                // Obtener desde localStorage
+                const gameTypesData = JSON.parse(localStorage.getItem(STORAGE_KEYS.gameModes) || '[]');
+                const basicPositionsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.basicPositions) || '[]');
+                const specificPositionsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.specificPositions) || '[]');
+                const playersFiltersData= JSON.parse(localStorage.getItem(STORAGE_KEYS.playersByMatch(match_id)) || '[]');
+                // Validación opcional: si alguno no está, lanza error
+                if (!gameTypesData.length || !basicPositionsData.length || !specificPositionsData.length || !playersFiltersData.length) {
+                    throw new Error('Missing cached data');
+                }
+
+                const [players_scores] = await Promise.all([
                     fetch(`${API_ENDPOINTS.ALL_SCORES_PLAYERS_MATCH}${match_id}`),
-                    fetch(`${API_ENDPOINTS.ALL_PLAYERS_BY_MATCH}${match_id}`),
                 ]);
-                if (!gameTypesResponse.ok || !basicPositionsResponse.ok || !specificPositionsResponse.ok || !players_scores.ok || !playersFilter.ok) {
+
+                if (!players_scores.ok ) {
                     throw new Error('Error fetching data');
                 }
-                
-                const gameTypesData = await gameTypesResponse.json();
-                const basicPositionsData = await basicPositionsResponse.json();
-                const specificPositionsData = await specificPositionsResponse.json();
-                const players_scoresData = await players_scores.json();
-                const playersFilterData = await playersFilter.json();
 
+                const players_scoresData = await players_scores.json();
+
+                // Setear todo
                 setGameTypes(gameTypesData);
                 setBasicPositions(basicPositionsData);
                 setSpecificPositions(specificPositionsData);
                 setPlayersScores(players_scoresData);
-                setPlayersScoresFiltered(players_scoresData); // Initialize filteredMatches with all matches
-                setPlayersFilter(playersFilterData);
-                setSelectedPlayerId(playersFilterData[0]?.player_id.toString() || ''); // Set default player id if available
-                
-                handleChangePlayerElection();
+                setPlayersScoresFiltered(players_scoresData);
+                setPlayersFilter(playersFiltersData);
+                setSelectedPlayerId(playersFiltersData[0]?.player_id.toString() || '');
+
 
 
             } catch (error) {
-                console.error('Error fetching data:', error);
+                setErrorMessage(ERROR_MESSAGES.NOT_FOUND_SCORES_OF_PLAYERS);
+                setShowError(true);
             }
         };
+
         fetchData();
     }, []);
 
@@ -221,115 +231,165 @@ export default function ShowScores() {
     }
 
 
-
-
-
-
-
     return (
         
-            <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
+            <Container maxWidth="lg" sx={{ marginTop: '3rem', marginBottom: '5vh' }}>
 
-                <Typography>
-                    <strong>Filtrar por Tipo de juego, posiciones basicas y posiciones específicas</strong>
-                </Typography>
-
-                <Grid 
-                    container
-                    columnSpacing={{ xs: 1, sm: 2 }}
-                    rowSpacing={{ xs: 1, sm: 2, md: 3 }}
-                    spacing={{ xs: 1, sm: 2, md: 4 }}
-                    
-                    justifyContent="center"
+                <ErrorSnackbar
+                    open={showError}
+                    onClose={() => setShowError(false)}
+                    message={errorMessage ?? "Ha ocurrido un error inesperado"}
+                    position={{ vertical: 'top', horizontal: 'right' }}
+                    large={true}
+                />
+                <Box
                     sx={{
                         backgroundColor: '#f8f9fa',
-                        padding: 2,
-                        borderRadius: 2,
-                        marginTop: 1,
+                        borderRadius: 4,
+                        boxShadow: 2,
+                        overflow: 'hidden',
                         marginBottom: 5,
                     }}
                 >
-                    <Grid  size={{xs:12, md:3}}>
+                    <Box
+                        sx={{
+                            backgroundColor: '#ffffff',
+                            padding: 2,
+                            paddingBottom:0,
+                            paddingLeft: 3,
+                        }}
+                    > 
                         <Typography>
-                            <strong>Formas de juego</strong>
+                            <strong>Filtrar por Tipo de juego, posiciones basicas y posiciones específicas</strong>
                         </Typography>
-                        <div>
-                            <GenericSelectProps<GameModeTypeAPI>
-                                items={gameTypes}
-                                value={gameTypeElement || ""}
-                                onChange={handleChangeGameType}
-                                getId={(item) => item.game_mode_name}
-                                getLabel={(item) => item.game_mode_name}
-                            />
-                        </div>
-                    </Grid>
-                    <Grid  size={{xs:12, md:3}}>
-                        <Typography>
-                            <strong>Posiciones Básicas</strong>
+                    </Box>
+
+                    <Grid 
+                        container
+                        columnSpacing={{ xs: 1, sm: 2 }}
+                        rowSpacing={{ xs: 1, sm: 2, md: 3 }}
+                        spacing={{ xs: 1, sm: 2, md: 4 }}
+                        
+                        justifyContent="center"
+                        sx={{
+                            backgroundColor: '#f8f9fa',
+                            padding: 2,
+                            borderRadius: 4,
+                        }}
+                    >
+                        <Grid  size={{xs:12, md:3}}>
+                            <Typography>
+                                <strong>Formas de juego</strong>
+                            </Typography>
+                            <div>
+                                <GenericSelectProps<GameModeTypeAPI>
+                                    items={gameTypes}
+                                    value={gameTypeElement || ""}
+                                    onChange={handleChangeGameType}
+                                    getId={(item) => item.game_mode_name}
+                                    getLabel={(item) => item.game_mode_name}
+                                />
+                            </div>
+                        </Grid>
+                        <Grid  size={{xs:12, md:3}}>
+                            <Typography>
+                                <strong>Posiciones Básicas</strong>
+                            </Typography>
+                            <div>
+                                
+                                <GenericSelectProps<BasicPositionAPI>
+                                    items={basicPositions}
+                                    value={basicPositionElement || ""}
+                                    onChange={handleHangeBasicPosition}
+                                    getId={(item) => item.category_name}
+                                    getLabel={(item) => item.category_name}
+                                />
+                            </div>
+                        </Grid>
+                        <Grid  size={{xs:12, md:3}}>
+                            <Typography>
+                                <strong>Posiciones Específicas</strong>
+                            </Typography>
+                            <div> 
+                                <GenericSelectProps<SpecificPositionAPI>
+                                    items={specificPositions}
+                                    value={specificPositionElement || ""}
+                                    onChange={handleChangeSpecificPosition}
+                                    getId={(item) => item.specific_position_name}
+                                    getLabel={(item) => item.specific_position_name}
+                                />
+                            </div>
+                        </Grid>
+                        <Grid size={{xs:12, sm:6, md:3}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                                sx={{ width: '100%' }}
+                                onClick={() => filterScores()}
+                            >
+                                Filtros
+                            </Button>
+                        </Grid>
+                    </Grid> 
+                </Box>
+
+
+                <Box
+                    sx={{
+                        borderRadius: 4,
+                        boxShadow: 2,
+                        overflow: 'hidden',
+                        marginBottom: 5,
+                    }}
+                >
+                    <EnhancedTable 
+                        rows={players_scores_filtered}
+                    />
+                </Box>
+            
+
+                <Box
+                    sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                        borderRadius: 4,
+                        boxShadow: 2,
+                        overflow: 'hidden',
+                        marginBottom: 5
+                    }}
+                >
+                    <Box
+                        sx={{
+                            padding: 2,
+                            paddingBottom:0,
+                            paddingLeft: 3,
+                        }}
+                    >
+                        <Typography variant="h6" gutterBottom>
+                            <strong>Gráficas </strong>
                         </Typography>
-                        <div>
-                            
-                            <GenericSelectProps<BasicPositionAPI>
-                                items={basicPositions}
-                                value={basicPositionElement || ""}
-                                onChange={handleHangeBasicPosition}
-                                getId={(item) => item.category_name}
-                                getLabel={(item) => item.category_name}
-                            />
-                        </div>
-                    </Grid>
-                    <Grid  size={{xs:12, md:3}}>
-                        <Typography>
-                            <strong>Posiciones Específicas</strong>
-                        </Typography>
-                        <div> 
-                            <GenericSelectProps<SpecificPositionAPI>
-                                items={specificPositions}
-                                value={specificPositionElement || ""}
-                                onChange={handleChangeSpecificPosition}
-                                getId={(item) => item.specific_position_name}
-                                getLabel={(item) => item.specific_position_name}
-                            />
-                        </div>
-                    </Grid>
-                    <Grid size={{xs:12, sm:6, md:3}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                            sx={{ width: '100%' }}
-                            onClick={() => filterScores()}
-                        >
-                            Filtros
-                        </Button>
-                    </Grid>
-                </Grid> 
-
-                <EnhancedTable 
-                    rows={players_scores_filtered}
-                />
-
-                <Typography>
-                    <strong>Gráficas interesantes </strong>
-                </Typography>
-                <Stack  sx={{marginTop: 6,  backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
-                    <ReusableChart1 stat={generateValuesStats(players_scores_filtered)} typeOfChart={'bar'} typeOfChartColor="totalScores"/>
-                </Stack>
-
+                    </Box>
+                
+                    <Stack   sx={{ padding: 3, borderRadius: 4, backgroundColor: 'rgba(255, 255, 255, 0.8)', alignItems:'center'}} >
+                        <ReusableChart1 stat={generateValuesStats(players_scores_filtered)} typeOfChart={'bar'} typeOfChartColor="totalScores"/>
+                    </Stack>
+                </Box>
+                
                 <Grid
                     container
                     spacing={2}
                     sx={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        borderRadius: 2,
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                        borderRadius: 4,
                         padding: 3,
-                        marginTop: 4
+           
                     }}
                 >
-                    <Grid size={{ xs: 12, md: 3 }}>
+                    <Grid size={{ xs: 12, md: 3 }}
+                    >
                         <Grid  size={{xs:12, md:12}}>
                             <Typography>
-                                Filtro de jugadores a elegir
+                                <strong>Filtro de jugadores a elegir</strong>
                             </Typography>
                             <div>
                                 <GenericSelectProps<PlayersIdName>
@@ -338,6 +398,7 @@ export default function ShowScores() {
                                     onChange={handleChangePlayer}
                                     getId={(item) => String(item.player_id)}
                                     getLabel={(item) => item.name}
+                                    labelTodosShow={false}
                                 />
                             </div>
                         </Grid>
@@ -356,9 +417,9 @@ export default function ShowScores() {
 
                     <Grid size={{ xs: 12, md: 9 }}>
                         <Typography>
-                            Aquí se pueden añadir más gráficas si se desea. La intención es hacer un menú para elegir jugadores. El jugador se le van a mostrar las puntuaciones según el tipo de juego que pide el entrenador.
+                            <strong>Gráfica de puntuaciones del jugador seleccionado</strong>
                         </Typography>
-                        <Stack sx={{ marginTop: 6, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
+                        <Stack sx={{ marginTop: 3, backgroundColor: 'rgba(255, 255, 255, 0.8)', borderRadius: 4, alignItems: 'center', padding:5 }} >
                             <ReusableChart1 stat={generateScoreValuesChart(playerScores)} typeOfChart={'bar'} typeOfChartColor="gameModes"/>
                         </Stack>
                     </Grid>

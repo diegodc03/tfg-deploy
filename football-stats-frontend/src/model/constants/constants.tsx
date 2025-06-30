@@ -73,6 +73,9 @@ export const getBackgroundColorByLeague = (leagueName?: string): string => {
 
 
 export const getBackgroundGradientByLeague = (leagueName?: string): string => {
+
+
+
   switch (leagueName) {
     case 'La Liga': // España 🇪🇸 (rojo y amarillo)
       return 'linear-gradient(to bottom, rgb(204, 0, 0) 0%, rgb(204, 0, 0) 25%, #FFC107 25% 75%, rgb(204, 0, 0) 75% 100%)';
@@ -85,6 +88,9 @@ export const getBackgroundGradientByLeague = (leagueName?: string): string => {
     case 'Ligue 1': // Francia 🇫🇷 (azul, blanco, rojo)
       return 'linear-gradient(to right, #0055A4 33%, #FFFFFF 33% 66%, #EF4135 66%)';
     default:
-      return 'linear-gradient(135deg, #ECEFF1, #CFD8DC)'; // Gris suave neutro
+      return 'default'; // Gris suave neutro
   }
 };
+
+
+

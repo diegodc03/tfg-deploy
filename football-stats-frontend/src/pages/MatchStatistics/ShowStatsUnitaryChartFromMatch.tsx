@@ -13,15 +13,20 @@ import { StatsList } from '../../components/charts/StatsList';
 import { useParams } from 'react-router-dom';
 import { TablesStats } from '../../model/tablesStats/TablesStats';
 import { Stats } from '../../model/statsTypes/StatsModel';
-import { Button, Container, Grid, Stack, Typography } from '@mui/material';
+import { Box, Button, Container, Grid, Stack, Typography } from '@mui/material';
 import GenericSelectProps from '../../components/MultipleSelect';
 import { BasicPositionAPI } from '../../model/BasicPositionAPI';
 import { API_ENDPOINTS } from '../../model/constants/UrlConstants';
+import ErrorSnackbar from '../../components/showError';
+import { ERROR_MESSAGES } from '../../model/constants/errorConstants';
 
 
 export const ShowStatsChartFromMatch = () => {
 
   const [isLoading, setIsLoading] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  
   const { match_id } = useParams();
 
   const [stats, setStats] = useState<Stats>([]);
@@ -77,7 +82,9 @@ export const ShowStatsChartFromMatch = () => {
         
         
       } catch (error) {
-        console.error('Error fetching data:', error);
+        setErrorMessage(ERROR_MESSAGES.NOT_FOUND_MATCHES_ON_LEAGUE);
+        setShowError(true);
+        setIsLoading(false);
       }
     };
 
@@ -117,68 +124,102 @@ export const ShowStatsChartFromMatch = () => {
 
   return (
 
-      <Container>
-        <Grid 
-          container
-          columnSpacing={{ xs: 1, sm: 2 }}
-          rowSpacing={{ xs: 1, sm: 2, md: 3 }}
-          spacing={{ xs: 1, sm: 2, md: 4 }}
-          
-          justifyContent="center"
+      <Container maxWidth="lg" sx={{ marginTop: '3rem', marginBottom: '5vh' }}>
+
+        <ErrorSnackbar
+            open={showError}
+            onClose={() => setShowError(false)}
+            message={errorMessage ?? "Ha ocurrido un error inesperado"}
+            position={{ vertical: 'top', horizontal: 'right' }}
+            large={true}
+        />
+
+        <Box
           sx={{
               backgroundColor: '#f8f9fa',
-              padding: 2,
-              borderRadius: 2,
-              marginTop: 1,
+              borderRadius: 4,
+              boxShadow: 2,
+              overflow: 'hidden',
               marginBottom: 5,
+              
           }}
         >
-          <Grid  size={{xs:12, md:5}}>
+          <Box
+              sx={{
+                  backgroundColor: '#ffffff',
+                  padding: 2,
+                  paddingBottom:0,
+                  paddingLeft: 3,
+              }}
+          >
               <Typography>
-                  <strong>Tablas a consultar</strong>
+                  <strong>Filtros</strong>
               </Typography>
-              <div>
-                  
-                  <GenericSelectProps<TablesStats>
-                      items={filtersArray}
-                      value={selectedFiltersTable || ""}
-                      onChange={handleChangeSelectedTableFilters}
-                      getId={(item) => item.categoryName}
-                      getLabel={(item) => item.categoryDescription}
+          </Box>
+
+          <Grid 
+            container
+            spacing={{ xs: 1, sm: 2, md: 4 }}
+            
+            justifyContent="center"
+            sx={{
+                backgroundColor: '#f8f9fa',
+                padding: 2,
+                borderRadius: 4,
+                marginTop: 1,
+                marginBottom: 5,
+            }}
+          >
+            <Grid  size={{xs:12, md:5}}>
+                <Typography>
+                    <strong>Tablas a consultar</strong>
+                </Typography>
+                <div>
+                    <GenericSelectProps<TablesStats>
+                        items={filtersArray}
+                        value={selectedFiltersTable || ""}
+                        onChange={handleChangeSelectedTableFilters}
+                        getId={(item) => item.categoryName}
+                        getLabel={(item) => item.categoryDescription}
+                    />
+                </div>
+            </Grid>
+
+            <Grid  size={{xs:12, md:5}}>
+                <Typography>
+                    <strong>Tipos de posiciones</strong>
+                </Typography>
+                <div>  
+                    <GenericSelectProps<BasicPositionAPI>
+                      items={basicPositions}
+                      value={basicPositionElement || ""}
+                      onChange={handleChangeSelectedBasicPosicionsFilters}
+                      getId={(item) => String(item.category_id)}
+                      getLabel={(item) => item.category_name}
                   />
-              </div>
-          </Grid>
+                </div>
+            </Grid>
 
-          <Grid  size={{xs:12, md:5}}>
-              <Typography>
-                  <strong>Tipos de posiciones</strong>
-              </Typography>
-              <div>  
-                  <GenericSelectProps<BasicPositionAPI>
-                    items={basicPositions}
-                    value={basicPositionElement || ""}
-                    onChange={handleChangeSelectedBasicPosicionsFilters}
-                    getId={(item) => String(item.category_id)}
-                    getLabel={(item) => item.category_name}
-                />
-              </div>
+            <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
+              <Button
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      onClick={handleFilter}
+                  >
+                  Filtrar
+              </Button>
+            </Grid>
           </Grid>
+        </Box>
 
-          <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
-            <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    onClick={handleFilter}
-                >
-                Filtrar
-            </Button>
-          </Grid>
-        </Grid>
-        <Stack  sx={{marginTop: 6,  backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
+           
+        <Stack  sx={{marginTop: 6,  backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, alignItems: 'center', paddingTop:5}} >
           <StatsList name={columna} stats={stats} typeOfChart={'bar'}  />
         </Stack>
+        
       </Container>
   );
 };
 
+         

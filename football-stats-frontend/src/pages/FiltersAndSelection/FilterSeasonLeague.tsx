@@ -1,6 +1,6 @@
 
 
-import { Typography, Grid, Button, Container} from '@mui/material';
+import { Typography, Grid, Button, Container, Box} from '@mui/material';
 
 
 import {useEffect, useState} from 'react';
@@ -10,13 +10,13 @@ import {LeagueAPI} from '../../model/LeagueAPI';
 import {Season} from '../../model/SeaonAPI';
 import {Tournament} from '../../model/TournamentAPI';
 import LoadingIndicator from '../../components/LoaqdingIndicator';
-import LeagueSelect from '../../components/filters/LeagueFilters';
 import CardShowOptions from '../../components/CardShowOptions';
 import SeasonSelect from '../../components/filters/SeasonFilters';
-import { API_ENDPOINTS } from '../../model/constants/UrlConstants';
+
 import { ERROR_MESSAGES } from '../../model/constants/errorConstants';
 import ErrorSnackbar from '../../components/showError';
-
+import { STORAGE_KEYS } from '../../model/constants/StorageKeys';
+import FiltersElements from '../../components/filters/filter';
 
 
 
@@ -38,46 +38,32 @@ const FilterSeasonLeague = () => {
     const [filteredResults, setFilteredResults] = useState(tournaments);
 
 
+
     useEffect(() => {
-        
-        const fetchData = async () => {
-            try {
-                const [seasonsResponse, leaguesResponse, tournamentsResponse] = await Promise.all([
-                    fetch(API_ENDPOINTS.ALL_SEASONS),
-                    fetch(API_ENDPOINTS.ALL_LEAGUES),
-                    fetch(API_ENDPOINTS.ALL_SEASON_TOURNAMENTS)
-                ]);  
-                   
-                
-                if (!seasonsResponse.ok || !leaguesResponse.ok || !tournamentsResponse.ok) {
-                    throw new Error(ERROR_MESSAGES.NOT_FOUND_LEAGUES);
-                }
+    const getStoredData = () => {
+        try {
+            const seasonsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.seasons) || '[]');
+            const leaguesData = JSON.parse(localStorage.getItem(STORAGE_KEYS.leagues) || '[]');
+            const tournamentsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.season_tournaments) || '[]');
 
-                const [seasonsData, leaguesData, tournamentsData] = await Promise.all([
-                    seasonsResponse.json(),
-                    leaguesResponse.json(),
-                    tournamentsResponse.json()
-                ]);
-
-                setSeasons(seasonsData);
-                setLeagues(leaguesData);
-                setTournaments(tournamentsData);
-
-                setFilteredResults(tournamentsData); 
-                console.log(seasonsResponse, leaguesResponse, tournamentsResponse);
-                setIsLoading(false);
-
-            } catch (error: any) {
-                setErrorMessage(ERROR_MESSAGES.NOT_FOUND_LEAGUES);
-                setShowError(true);
-                setIsLoading(false); 
+            if (!Array.isArray(seasonsData) || !Array.isArray(leaguesData) || !Array.isArray(tournamentsData)) {
+                throw new Error("Datos corruptos en localStorage");
             }
-        }
 
-        fetchData();
-        
-      
-    }, []);
+            setSeasons(seasonsData);
+            setLeagues(leaguesData);
+            setTournaments(tournamentsData);
+            setFilteredResults(tournamentsData);
+            setIsLoading(false);
+        } catch (error: any) {
+            setErrorMessage(ERROR_MESSAGES.NOT_FOUND_LEAGUES);
+            setShowError(true);
+            setIsLoading(false);
+        }
+    };
+
+    getStoredData();
+}, []);
 
     
     const handleChangeSeason = (value: string) => {
@@ -108,7 +94,8 @@ const FilterSeasonLeague = () => {
 
     return (
 
-        <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
+        <Container maxWidth="lg" sx={{ marginTop: '3rem', marginBottom: '5vh' }}>
+            
             <ErrorSnackbar
                 open={showError}
                 onClose={() => setShowError(false)}
@@ -116,86 +103,124 @@ const FilterSeasonLeague = () => {
                 position={{ vertical: 'top', horizontal: 'right' }}
                 large={true}
             />
+            <LoadingIndicator isLoading={isLoading} />
 
 
-            <Typography>
-                <strong>Filtrar por temporada y liga</strong>
-            </Typography>
-
-            <Grid 
-                container
-                columnSpacing={{ xs: 1, sm: 2 }}
-                rowSpacing={{ xs: 1, sm: 2, md: 3 }}
-                spacing={{ xs: 1, sm: 2, md: 4 }}
-                
-                justifyContent="center"
-
+           
+            <Box
                 sx={{
                     backgroundColor: '#f8f9fa',
-                    padding: 2,
-                    borderRadius: 2,
-                    marginTop: 1,
+                    borderRadius: 4,
+                    boxShadow: 2,
+                    overflow: 'hidden',
                     marginBottom: 5,
                 }}
             >
-                <Grid  size={{xs:12, md:5}}>
-                    <LeagueSelect
-                        leagues={leagues}
-                        value={leagueElement || ''}
-                        onChange={handleChangeLeague}
-                    />
-                </Grid>
-                
-                <Grid  size={{xs:12, md:5}}>
-                    <SeasonSelect
-                        seasons={seasons}
-                        value={seasonElement || ''}
-                        onChange={handleChangeSeason}
-                    />
-                </Grid>
+                <Box
+                    sx={{
+                        backgroundColor: '#ffffff',
+                        padding: 2,
+                        paddingBottom:0,
+                        paddingLeft: 3,
+                    }}
+                >
+                    <Typography >
+                        <strong>Filtrar por temporada y liga</strong>
+                    </Typography>
+                </Box>
 
-                <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
-                    <Button
+                <Grid
+                    container
+                    spacing={{ xs: 1, sm: 2, md: 3 }}
+                    justifyContent="center"
+                    sx={{ padding: 3, borderBottom: '3px solid #ddd' }}
+                >
+                    <Grid size={{ xs: 12, md: 5 }}>
+                        <Typography>
+                            <strong>Liga</strong>
+                        </Typography>
+                        <FiltersElements
+                            itemsToSelect={leagues.map(l => l.name)}
+                            selectedValue={leagueElement || ''}
+                            onChange={handleChangeLeague}
+                        />
+                    </Grid>
+
+                    <Grid size={{ xs: 12, md: 5 }}>
+                        <SeasonSelect
+                            seasons={seasons}
+                            value={seasonElement || ''}
+                            onChange={handleChangeSeason}
+                        />
+                    </Grid>
+
+                    <Grid
+                        size={{ xs: 12, sm: 6, md: 2 }}
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            mt: { xs: 2, md: 3 },
+                        }}
+                    >
+                        <Button
                             variant="contained"
                             color="primary"
                             fullWidth
                             onClick={filteredTournaments}
                         >
-                        Filtrar
-                    </Button>
+                            Filtrar
+                        </Button>
+                    </Grid>
                 </Grid>
-            </Grid>
+            </Box>
+   
             
-            <Typography gutterBottom>
-                <strong>Listado de resultados </strong>
-            </Typography>
-            
-            <Grid
-                container 
-                spacing={2} 
-                justifyContent="center" 
-                alignItems="center" 
-                sx={{ 
-                    marginTop: 4, 
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)', 
-                    padding: 3, 
-                    borderRadius: 2 
-                }} 
+            <Box
+                sx={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                    borderRadius: 4,
+                    boxShadow: 2,
+                    overflow: 'hidden',
+                    marginBottom: 5,
+                }}
             >
-                <LoadingIndicator isLoading={isLoading} />
-                {
-                filteredResults.map((item, index) => (
-                    <Grid size={{ xs: 6, sm: 6, md: 3 }} sx={{ display: 'flex', justifyContent: 'center' }}  key={index} onClick={() => handleChangeLeagueView(item.tournament_id)} >
-                        <CardShowOptions 
-                            title={item.nombre_liga} 
-                            season={item.season_tournament.season_year} 
-                        /> 
-                    </Grid>   
-                                    ))
-                }
-            </Grid>
+                <Box
+                    sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                        padding: 2,
+                        paddingBottom:0,
+                        paddingLeft: 3,
+                    }}
+                >
+                    <Typography gutterBottom>
+                        <strong>Listado de resultados </strong>
+                    </Typography>
+                </Box>
 
-
+                <Grid
+                    container 
+                    spacing={2} 
+                    justifyContent="center" 
+                    alignItems="center" 
+                    sx={{ 
+                        padding: 3, 
+                        borderRadius: 4
+                    }} 
+                >
+                    
+                    {
+                    filteredResults.map((item, index) => (
+                        <Grid size={{ xs: 6, sm: 6, md: 3 }} sx={{ display: 'flex', justifyContent: 'center' }}  key={index} onClick={() => handleChangeLeagueView(item.tournament_id)} >
+                            <CardShowOptions 
+                                title={item.nombre_liga} 
+                                season={item.season_tournament.season_year} 
+                            /> 
+                        </Grid>   
+                                        ))
+                    }
+                </Grid>
+            </Box>
 
         </Container>
 

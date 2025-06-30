@@ -1,6 +1,6 @@
 
 
-import { Button, Container, Grid, Typography } from '@mui/material';
+import { Box, Button, Container, Grid, Typography } from '@mui/material';
 import  { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import LoadingIndicator from '../../components/LoaqdingIndicator';
@@ -9,6 +9,8 @@ import { TablesStats } from '../../model/tablesStats/TablesStats';
 import SpecificStatsOfMatchPlayers from '../../components/SpecificStatsOfMatchPlayers';
 import { BasicPositionAPI } from '../../model/BasicPositionAPI';
 import { API_ENDPOINTS } from '../../model/constants/UrlConstants';
+import ErrorSnackbar from '../../components/showError';
+import { ERROR_MESSAGES } from '../../model/constants/errorConstants';
 /**
  * 
  * Este componente se va a encargar de mostrar las tablas de las diferentes estadísticas de los jugadores en un partido
@@ -27,6 +29,9 @@ export default function ShowStatsFromMatch() {
 
     const {match_id} = useParams();
     const [isLoading, setIsLoading] = useState(true);
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
 
     const [filtersArray, setFiltersArray] = useState<TablesStats[]>([]);
     const [selectedFiltersTable, setSelectedFilterTable] = useState<string>('');
@@ -73,12 +78,10 @@ export default function ShowStatsFromMatch() {
                 setSelectedFilterTable(filtersArrayTransform[0]?.categoryName || ''); // Set default filter if available
                 setIsLoading(false); 
 
-
-                console.log('Datos de las estadísticas de los jugadores:', statsData);
-                console.log('Datos de los filtros de las tablas:', filtersArrayTransform);
-
             } catch (error) {
-                console.error('Error fetching player stats:', error);
+                setErrorMessage(ERROR_MESSAGES.NOT_FOUND_CHARTS_FROM_MATCH);
+                setShowError(true);
+                setIsLoading(false);
             }
     }
         fetchData();
@@ -118,84 +121,127 @@ export default function ShowStatsFromMatch() {
 
     return (
 
-        <Container maxWidth="lg" sx={{ marginTop: '15vh', marginBottom: '5vh' }}>
+        <Container maxWidth="lg" sx={{ marginTop: '3rem', marginBottom: '5vh' }}>
             
+            <ErrorSnackbar
+                open={showError}
+                onClose={() => setShowError(false)}
+                message={errorMessage ?? "Ha ocurrido un error inesperado"}
+                position={{ vertical: 'top', horizontal: 'right' }}
+                large={true}
+            />
+
             <LoadingIndicator isLoading={isLoading} />
 
-            <Typography>
-                <strong>Filtrar por tipo de estadística y equipo</strong>
-            </Typography>
 
-            <Grid 
-                container
-                columnSpacing={{ xs: 1, sm: 2 }}
-                rowSpacing={{ xs: 1, sm: 2, md: 3 }}
-                spacing={{ xs: 1, sm: 2, md: 4 }}
-                
-                justifyContent="center"
+            <Box
                 sx={{
                     backgroundColor: '#f8f9fa',
-                    padding: 2,
-                    borderRadius: 2,
-                    marginTop: 1,
+                    borderRadius: 4,
+                    boxShadow: 2,
+                    overflow: 'hidden',
                     marginBottom: 5,
+                    
                 }}
             >
-                <Grid  size={{xs:12, md:5}}>
+                <Box
+                    sx={{
+                        backgroundColor: '#ffffff',
+                        padding: 2,
+                        paddingBottom:0,
+                        paddingLeft: 3,
+                    }}
+                >
                     <Typography>
-                        <strong>Tablas a consultar</strong>
+                        <strong>Filtrar por tipo de estadística y equipo</strong>
                     </Typography>
-                    <div>
-                        
-                        <GenericSelectProps<TablesStats>
-                            items={filtersArray}
-                            value={selectedFiltersTable || ""}
-                            onChange={handleChangeSelectedTableFilters}
-                            getId={(item) => item.categoryName}
-                            getLabel={(item) => item.categoryDescription}
-                        />
-                    </div>
-                </Grid>
-    
-                <Grid  size={{xs:12, md:5}}>
-                    <Typography>
-                        <strong>Tipos de posiciones</strong>
-                    </Typography>
-                    <div>  
-                        <GenericSelectProps<BasicPositionAPI>
-                        items={basicPositions}
-                        value={basicPositionElement || ""}
-                        onChange={handleChangeSelectedBasicPosicionsFilters}
-                        getId={(item) => String(item.category_id)}
-                        getLabel={(item) => item.category_name}
-                    />
-                    </div>
-                </Grid>
+                </Box>
+
             
-                    <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
-                        <Button
-                                variant="contained"
-                                color="primary"
-                                fullWidth
-                                onClick={handleFilter}
-                            >
-                            Filtrar
-                        </Button>
-                        </Grid>
-                        
+
+                <Grid 
+                    container
+                    spacing={{ xs: 1, sm: 2, md: 4 }}
+                    
+                    justifyContent="center"
+                    sx={{
+                        backgroundColor: '#f8f9fa',
+                        padding: 2,
+                        borderRadius: 4,
+                    }}
+                >
+                    <Grid  size={{xs:12, md:5}}>
+                        <Typography>
+                            <strong>Tablas a consultar</strong>
+                        </Typography>
+                        <div>
+                            
+                            <GenericSelectProps<TablesStats>
+                                items={filtersArray}
+                                value={selectedFiltersTable || ""}
+                                onChange={handleChangeSelectedTableFilters}
+                                getId={(item) => item.categoryName}
+                                getLabel={(item) => item.categoryDescription}
+                            />
+                        </div>
                     </Grid>
-            
-            
-            <Typography gutterBottom>
-                <strong>Listado de resultados </strong>
-            </Typography>
-            <Typography variant="body1">
-                Tabla de estadísticas de los jugadores
-            </Typography>
-            <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: 4, backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: 3, borderRadius: 2 }} >
-                <SpecificStatsOfMatchPlayers data={stats} />
+        
+                    <Grid  size={{xs:12, md:5}}>
+                        <Typography>
+                            <strong>Tipos de posiciones</strong>
+                        </Typography>
+                        <div>  
+                            <GenericSelectProps<BasicPositionAPI>
+                            items={basicPositions}
+                            value={basicPositionElement || ""}
+                            onChange={handleChangeSelectedBasicPosicionsFilters}
+                            getId={(item) => String(item.category_id)}
+                            getLabel={(item) => item.category_name}
+                        />
+                        </div>
+                    </Grid>
                 
-            </Grid>
+                        <Grid size={{xs:12,md:2}} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3 }}>
+                            <Button
+                                    variant="contained"
+                                    color="primary"
+                                    fullWidth
+                                    onClick={handleFilter}
+                                >
+                                Filtrar
+                            </Button>
+                        </Grid>    
+                    </Grid>
+                </Box>
+            
+
+            <Box
+                sx={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                    borderRadius: 4,
+                    boxShadow: 2,
+                    overflow: 'hidden',
+                }}
+            >
+                <Box
+                    sx={{
+                        padding: 2,
+                        paddingBottom:0,
+                        paddingLeft: 3,
+                    }}
+                >
+                    <Typography gutterBottom>
+                        <strong>Listado de resultados </strong>
+                    </Typography>
+                    <Typography variant="body1">
+                        Tabla de estadísticas de los jugadores por tipos
+                    </Typography>
+                </Box>
+            
+                <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ padding: 3, borderRadius: 4 }} >
+                    <SpecificStatsOfMatchPlayers data={stats} />
+                </Grid>
+            </Box>
             
 
         </Container>

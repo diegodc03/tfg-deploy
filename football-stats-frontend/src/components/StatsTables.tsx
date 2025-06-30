@@ -53,7 +53,7 @@ export default function StatsTables({data}: Props) {
   const columns = React.useMemo(() => generateColumns(transformedData), [transformedData]);
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%'}}>
       <DataGrid
         rows={transformedData}
         columns={columns}
