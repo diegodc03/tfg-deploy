@@ -3,7 +3,7 @@
 from bs4 import BeautifulSoup as soup
 import pandas as pd
 import requests
-from fbref_backend_scrap.utils.constants import var_integers, var_floats, var_pct, var_strings
+from utils.constants import var_integers, var_floats, var_pct, var_strings
 
 
 

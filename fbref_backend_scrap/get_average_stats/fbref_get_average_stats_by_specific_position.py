@@ -4,7 +4,7 @@
 from pyspark.sql import functions as F
 from pyspark.sql.functions import col, sum
 import numpy as np
-from fbref_backend_scrap.utils.read_dataframe_to_mysql_file import read_data_with_spark
+from utils.read_dataframe_to_mysql_file import read_data_with_spark
 
 
 valid_type_of_stat_values = ['avg', 'max', 'min', 'desv', 'mode', 'sum']

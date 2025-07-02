@@ -77,7 +77,7 @@ export const ShowStatsChartFromMatch = () => {
         setStats(statsData);
         setFiltersArray(filtersArrayTransform);
         setBasicPositions(filtersBasicPositions);
-        setSelectedFilterTable(filtersArrayTransform[0]?.categoryName || ''); // Set default filter if available
+        setSelectedFilterTable(filtersArrayTransform[0]?.categoryName || ''); 
         setIsLoading(false); 
         
         
@@ -214,9 +214,21 @@ export const ShowStatsChartFromMatch = () => {
         </Box>
 
            
-        <Stack  sx={{marginTop: 6,  backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, alignItems: 'center', paddingTop:5}} >
-          <StatsList name={columna} stats={stats} typeOfChart={'bar'}  />
+        <Stack
+          sx={{
+            marginTop: 6,
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            borderRadius: 2,
+            alignItems: 'center',
+            paddingTop: 5,
+            width: '100%',
+          }}
+        >
+          <Box sx={{ width: '100%', padding: 5, alignItems: 'center' }}>
+            <StatsList name={columna} stats={stats} typeOfChart={'bar'} />
+          </Box>
         </Stack>
+
         
       </Container>
   );

@@ -7,16 +7,8 @@ from dataBase.selects_of_stats_by_position import dict_stats_position
 from functions_to_stract_of_dataBase.querys_score_match import get_number_of_scores_by_type_of_game_mode_and_basic_position_id
 from functions_to_stract_of_dataBase.selects_of_positions import query_to_select_all_positions_category
 from get_all_stats_to_score_players.score_elements import calculate_player_scores_by_avg_of_season, get_score_for_positions_with_only_match_stats
-from fbref_backend_scrap.utils.read_dataframe_to_mysql_file import read_data_with_spark
+from utils.read_dataframe_to_mysql_file import read_data_with_spark
 
-
-
-def get_position_id_of_basic_positions(position_name):
-
-    query = f"""
-        SELECT category_id FROM position_category WHERE category_name = '{position_name}'
-    """
-    return query
 
 
 def get_stats_by_position(spark, jdbc_url, db_properties, match_id, league_id):

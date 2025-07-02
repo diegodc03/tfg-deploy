@@ -18,11 +18,12 @@ export default function CardsContainer() {
             mb: '20vh', mx: 'auto', paddingTop: 5, paddingBottom: 5 }}>
                 <Box>
                     <Typography>
-                        <h1 style={{ fontWeight: 'bold', textAlign: 'center' }}>Nuestros servicios</h1>
-                        <p style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                        <Typography variant="h6" style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                            Nuestros Servicios
+                        </Typography>
+                        <p style={{ fontWeight: 'bold', textAlign: 'center', paddingTop: '1rem', paddingLeft: '2rem', paddingRight: '2rem' }}>
                         Esta página intenta ofrecer otra forma de ver el futbol, puediendo ver las estadisticas de los jugadores y equipos de una forma más visual y sencilla, junto con 
                         una forma diferente de puntuar a los jugadores, pudiendo así ver de una forma más objetiva el rendimiento de los jugadores.
-            
                         </p>
                     </Typography>
                 </Box>

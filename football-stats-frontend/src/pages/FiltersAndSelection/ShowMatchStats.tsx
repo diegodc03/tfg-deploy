@@ -103,17 +103,13 @@ const ShowMatchStats = () => {
                     }}
                 >
                     <Typography gutterBottom  variant="h6" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
-                        <strong>Listado de resultados </strong>
+                        <strong> Información del partido </strong>
                     </Typography>
                     {matchStats && matchStats.Home && matchStats.Away && (
                         <BasicInfoMatch stats={matchBasicInfo(matchStats)} />
                     )}
 
-
                 </Box>
-          
-
-
                 <Box
                     sx={{
                         backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -132,7 +128,6 @@ const ShowMatchStats = () => {
                             spacing={5}
                             sx={{
                                 borderRadius: 4,
-                                
                                 display: 'flex', 
                                 justifyContent: 'center', 
                                 alignItems: 'center'

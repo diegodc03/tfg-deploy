@@ -5,8 +5,8 @@ import requests
 from pyspark.sql.functions import col
 
 from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import get_teams_in_competition
-from fbref_backend_scrap.Esquemas.spark_schema import get_team_schema
-from fbref_backend_scrap.utils.write_dataframe_to_mysql_file import write_dataframe_to_mysql
+from Esquemas.spark_schema import get_team_schema
+from utils.write_dataframe_to_mysql_file import write_dataframe_to_mysql
 from pyspark.sql.types import StructType, StringType
 
 

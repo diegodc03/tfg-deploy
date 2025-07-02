@@ -58,9 +58,7 @@ export default function MainLayout() {
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', overflowY: "auto", flexGrow: 1 }}>
             
             <Header backGcolor={backgroundColorSelected} backGButtons={secondaryColorSelected} textColor={textColorSelected}/>
-            
             <main style={{ marginTop: '64px'}} >
-            
             <Box
                 sx={{
                 backgroundImage: `url(${backgroundImageSelected})`,
@@ -71,7 +69,6 @@ export default function MainLayout() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                
                 }}
             >
                 <Button

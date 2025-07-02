@@ -2,7 +2,7 @@
 # This script contains functions to extract data from the database.
 # Game modes - position_specifics_by_category - basic_specific_positions_relation
 
-from fbref_backend_scrap.utils.read_dataframe_to_mysql_file import read_data_with_spark
+from utils.read_dataframe_to_mysql_file import read_data_with_spark
 
 
 

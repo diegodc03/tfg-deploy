@@ -40,6 +40,12 @@ export const menuItems = [
 
 export const serviceItems = [
     {
+        image: statisticPhoto,
+        title: 'Estadísticas',
+        text: 'Revisa estadísticas detalladas que ofrecemos',
+        navigateElement: 'filter-by-season-and-league',
+    },
+    {
         image: documentationPhoto,
         title: 'Documentación TFG',
         text: 'Accede a la documentación del TFG',
@@ -50,12 +56,6 @@ export const serviceItems = [
         title: 'Sobre Nosotros',
         text: 'Conoce quiénes somos',
         navigateElement: 'contacto',
-    },
-    {
-        image: statisticPhoto,
-        title: 'Estadísticas',
-        text: 'Revisa estadísticas detalladas que ofrecemos',
-        navigateElement: 'filter-by-season-and-league',
     }
 ];
 
@@ -64,7 +64,7 @@ export const serviceItems = [
 // Define CardItem type if not already defined or import it from the correct module
 type CardItem = {
   title: string;
-  text: string;
+  text?: string;
   image: string;
   navigateElement: string;
 };
@@ -77,8 +77,8 @@ export const serviceItemsStatsPage = (match_id: string, tournament_id: string): 
     navigateElement: `/match-players-stats/${match_id}`,
   },
   {
-    title: "Comparación de jugadores y Gráficas",
-    text: "Compara los jugadores del partido para ver cosas que nunca habías visto",
+    title: "Estadísticas de jugadores agrupadas por tipos",
+
     image: ComparacionDeJugadoresYGraficas,
     navigateElement: `/stats-players-match/${match_id}`,
   },
@@ -95,14 +95,14 @@ export const serviceItemsStatsPage = (match_id: string, tournament_id: string): 
     navigateElement: `/stats-chart-of-match/${match_id}`,
   },
   {
-    title: "Gráficos de la liga",
+    title: "Comparación de Temporadas de liga",
     text: "Gráficos de comparacion con la liga",
     image: GraficosDeLiga,
     navigateElement: `/leagues-comparison`,
   },
   {
-    title: "Gráficos de comparación de equipos",
-    text: "Comparación de equipos de la liga como unitarios por temporada",
+    title: "Comparación de equipos",
+    text: "Comparación de equipos de la liga",
     image: GraficosDeComparacionDeEquipos,
     navigateElement: `/show-stats-comparison-from-teams/${tournament_id}`,
   },

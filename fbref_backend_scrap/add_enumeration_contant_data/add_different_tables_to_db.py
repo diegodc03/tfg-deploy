@@ -2,8 +2,8 @@
 
 import pandas as pd
 from pyspark.sql.types import StructType
-from fbref_backend_scrap.utils.write_dataframe_to_mysql_file import write_dataframe_to_mysql
-from fbref_backend_scrap.utils.read_dataframe_to_mysql_file import read_data_with_spark
+from utils.write_dataframe_to_mysql_file import write_dataframe_to_mysql
+from utils.read_dataframe_to_mysql_file import read_data_with_spark
 
 
 def insert_reference_data(spark, jdbc_url, db_properties, table_name, column_name, data_list, schema_function):

@@ -47,7 +47,7 @@ else:
 SECRET_KEY = 'django-insecure-k$pl#kss0ok63lvszjyuqy!%zyojhn5c)upa18u7073btws7x*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -147,6 +147,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # 👈 Tu Vite frontend
     "http://localhost",  # 👈 Tu Vite frontend
     "http://localhost:5173",  # 👈 Tu Vite frontend
+    "https://agreeable-flower-01bc1e103.1.azurestaticapps.net"
 ]
 
 # Password validation

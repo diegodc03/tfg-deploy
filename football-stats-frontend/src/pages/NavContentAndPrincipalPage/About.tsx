@@ -52,17 +52,17 @@ const About = () => {
                     </Typography>
                     <Grid container spacing={2} justifyContent="center">
                         <Grid >
-                            <Link href="https://github.com/tu_usuario" target="_blank" color="inherit">
+                            <Link href="https://github.com/diegodc03" target="_blank" color="inherit">
                                 <GitHub fontSize="large" />
                             </Link>
                         </Grid>
                         <Grid >
-                            <Link href="https://www.linkedin.com/in/tu_usuario" target="_blank" color="inherit">
+                            <Link href="https://www.linkedin.com/in/diegodcm/" target="_blank" color="inherit">
                                 <LinkedIn fontSize="large" />
                             </Link>
                         </Grid>
                         <Grid >
-                            <Link href="mailto:tuemail@ejemplo.com" color="inherit">
+                            <Link href="mailto:diegodecm03@gmail.com" color="inherit">
                                 <Email fontSize="large" />
                             </Link>
                         </Grid>

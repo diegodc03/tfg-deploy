@@ -3,14 +3,14 @@
 import sys
 import time
 from urllib.error import HTTPError
-from fbref_backend_scrap.add_enumeration_contant_data.add_different_tables_to_db import insert_reference_data
-from fbref_backend_scrap.get_stats_data_of_leagues.fbref_scrap import get_5_leagues
+from add_enumeration_contant_data.add_different_tables_to_db import insert_reference_data
+from get_stats_data_of_leagues.fbref_scrap import get_5_leagues
 from get_all_stats_to_score_players.get_stats import get_score_of_5_leagues
 from get_average_stats.fbref_get_average_stats import get_average_of_5_leagues
 from get_average_stats.score_teams_in_tournament import get_teams_average_of_5_leagues
-from fbref_backend_scrap.config.spark_configuration import create_spark_session, jdbc_url, db_properties
-from fbref_backend_scrap.Esquemas.spark_schema import get_type_position_schema, get_event_shots_schema, get_body_part_schema, get_outcome_schema, get_basic_positions_schema
-from fbref_backend_scrap.utils.constants import type_shots, body_parts, outcomes, type_positions, basic_positions
+from config.spark_configuration import create_spark_session, jdbc_url, db_properties
+from Esquemas.spark_schema import get_type_position_schema, get_event_shots_schema, get_body_part_schema, get_outcome_schema, get_basic_positions_schema
+from utils.constants import type_shots, body_parts, outcomes, type_positions, basic_positions
 
 
 

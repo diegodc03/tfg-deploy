@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 type CardShowProps = {
     title: string;
-    text: string;
+    text?: string;
     image: string;
     navigateElement?: string; // Prop opcional para la navegación
     

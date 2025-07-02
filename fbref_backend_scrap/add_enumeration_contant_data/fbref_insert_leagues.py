@@ -2,11 +2,11 @@
 
 
 
-from fbref_backend_scrap.utils.function_type_of_competitions import get_possible_leagues
+from utils.function_type_of_competitions import get_possible_leagues
 from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import check_season_exists, check_tournament_exists
 from functions_to_stract_of_dataBase.querys_score_match import get_season_tournament_id
-from fbref_backend_scrap.Esquemas.spark_schema import get_season_schema, get_tournament_schema
-from fbref_backend_scrap.utils.write_dataframe_to_mysql_file import write_dataframe_to_mysql
+from Esquemas.spark_schema import get_season_schema, get_tournament_schema
+from utils.write_dataframe_to_mysql_file import write_dataframe_to_mysql
 
 
 def insert_league_competition_on_database(spark, url, db_properties):

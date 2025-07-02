@@ -8,13 +8,13 @@ import pandas as pd
 from pyspark.sql import functions as F
 import traceback
 
-from fbref_backend_scrap.utils.constants import table_dic_to_insert, basic_elements_of_player, basic_elements_of_gk, match_statisctics_of_player, match_statisctics_of_gk, stats_goalkeeper_summary, dic_stats
-from fbref_backend_scrap.utils.read_dataframe_to_mysql_file import read_data_with_spark
-from fbref_backend_scrap.Esquemas.spark_schema import get_schema_by_index, get_shots_stats_schema, get_match_stats_schema, get_position_player_schema
+from utils.clean_dataframe_file import clean_dataframe
+from utils.constants import table_dic_to_insert, basic_elements_of_player, basic_elements_of_gk, match_statisctics_of_player, match_statisctics_of_gk, stats_goalkeeper_summary, dic_stats
+from utils.read_dataframe_to_mysql_file import read_data_with_spark
+from Esquemas.spark_schema import get_schema_by_index, get_shots_stats_schema, get_match_stats_schema, get_position_player_schema
 
-from fbref_backend_scrap.utils.write_dataframe_to_mysql_file import write_dataframe_to_mysql
-from fbref_backend_scrap.utils.fbref_db_call_outcome_shots_events import get_player, get_team_id_by_name_andleague_id, get_event_shots, get_body_part, get_outcome
-from clean_dataframe_file import clean_dataframe
+from utils.write_dataframe_to_mysql_file import write_dataframe_to_mysql
+from utils.fbref_db_call_outcome_shots_events import get_player, get_team_id_by_name_andleague_id, get_event_shots, get_body_part, get_outcome
 from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import select_football_match
 
 
@@ -43,13 +43,13 @@ def get_all_data_of_player(match_id, league, league_id, season, season_id, local
         
         print("\n\n")
 
-        success1 = get_player_data(local_field_player, match_id, league, season, local, 0, spark, jdbc_url, db_properties)
+        success1 = get_player_data(local_field_player, match_id, league, local, 0, spark, jdbc_url, db_properties)
         if success1 is None or success1.isEmpty():
             print("Error al procesar datos de algunos jugadores locales")
             return spark.createDataFrame([], StructType([]))   
         print("\n\n")
 
-        success3 = get_player_data(visitor_field_player, match_id, league, season, visitor, 1, spark, jdbc_url, db_properties)
+        success3 = get_player_data(visitor_field_player, match_id, league, visitor, 1, spark, jdbc_url, db_properties)
         if success3 is None or success3.isEmpty():
             print("Error al procesar datos de algunos jugadores visitantes")
             return spark.createDataFrame([], StructType([]))   
@@ -251,7 +251,7 @@ def add_position_on_field_of_each_player(data_frame, spark, jdbc_url, db_propert
 # flag_local_visitor: 0 si es local, 1 si es visitante
 #
 ##############################################################################
-def get_player_data(list_tables_player, match_id, league, season, local_or_visitor_name_team, flag_local_visitor, spark, jdbc_url, db_properties):
+def get_player_data(list_tables_player, match_id, league, local_or_visitor_name_team, flag_local_visitor, spark, jdbc_url, db_properties):
     type_of_player = 0
     stats_element = dic_stats
     print('Getting player data...')
@@ -280,7 +280,7 @@ def get_player_data(list_tables_player, match_id, league, season, local_or_visit
                 data_frame_basic["shirt_number"] = data_frame_basic["shirt_number"].astype(int, errors="ignore")
                 data_frame_basic["age"] = data_frame_basic["age"].str.split('-').str[0].astype(int, errors="ignore")
          
-                inserts_of_player_and_basic_stats = insert_basic_elements_of_player_into_database(index1, type_of_player, data_frame_basic, match_id, league, season, local_or_visitor_name_team, flag_local_visitor, spark, jdbc_url, db_properties)
+                inserts_of_player_and_basic_stats = insert_basic_elements_of_player_into_database( type_of_player, data_frame_basic, match_id, league, flag_local_visitor, spark, jdbc_url, db_properties)
                 if inserts_of_player_and_basic_stats.isEmpty():
                     return spark.createDataFrame([], StructType([]))
 
@@ -447,7 +447,7 @@ def insert_dataframe_into_database_of_player(index, df, local_visitor, match_id,
 
 
 
-def insert_basic_elements_of_player_into_database(index, type_of_player, data_frame_basic, match_id, league, season, local_visitor_team_name, local_visitor_flag, spark, jdbc_url, db_properties):
+def insert_basic_elements_of_player_into_database(type_of_player, data_frame_basic, match_id, league, local_visitor_flag, spark, jdbc_url, db_properties):
     try:
 
         print("Insertando estadísticas básicas de jugadores en la base de datos...")

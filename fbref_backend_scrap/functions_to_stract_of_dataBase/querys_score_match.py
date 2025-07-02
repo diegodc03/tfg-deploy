@@ -1,5 +1,5 @@
 
-from fbref_backend_scrap.utils.read_dataframe_to_mysql_file import read_data_with_spark
+from utils.read_dataframe_to_mysql_file import read_data_with_spark
 from pyspark.sql.functions import col
 
 def get_scores_by_type_of_game_mode(spark, jdbc_url, db_properties, match_id, game_mode_id, league_id):

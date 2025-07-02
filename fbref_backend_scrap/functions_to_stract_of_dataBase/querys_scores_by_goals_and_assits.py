@@ -5,7 +5,7 @@
 # Importar librerías necesarias
 import pandas as pd
 from pyspark.sql.functions import col
-from fbref_backend_scrap.utils.read_dataframe_to_mysql_file import read_data_with_spark
+from utils.read_dataframe_to_mysql_file import read_data_with_spark
 from pyspark.sql.types import StructType
 
 # Por cada gol se le da 0.3 y por cada asistencia 0.15, por lo que si un jugador tiene 2 goles y 1 asistencia, se le da 0.3*2 + 0.15*1 = 0.75

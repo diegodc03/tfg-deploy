@@ -6,16 +6,16 @@ from pyspark.sql.types import StructType
 import pandas as pd
 from pyspark.sql.types import IntegerType
 from pyspark.sql.functions import col, to_date
-from fbref_backend_scrap.utils.constants import required_football_match_columns, football_match_league_columns, football_match_cup_columns
-from fbref_backend_scrap.get_stats_data_of_leagues.fbref_get_general_match_data import get_general_match_data
+from utils.clean_dataframe_file import clean_dataframe
+from utils.constants import required_football_match_columns, football_match_league_columns, football_match_cup_columns
+from get_stats_data_of_leagues.fbref_get_general_match_data import get_general_match_data
 from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import get_match_id_by_teams_and_tournament, get_match_of_tournaments
-from fbref_backend_scrap.Esquemas.spark_schema import get_football_match_schema, get_match_stats_gen_schema
-from fbref_backend_scrap.config.spark_configuration import create_spark_session
-from fbref_backend_scrap.get_stats_data_of_leagues.fbref_functions_stats_introduce import get_all_data_of_player
-from fbref_backend_scrap.utils.write_dataframe_to_mysql_file import write_dataframe_to_mysql
-from clean_dataframe_file import clean_dataframe
-from fbref_backend_scrap.utils.fbref_delete_football_match import delete_football_match
-from fbref_backend_scrap.get_stats_data_of_leagues.fbref_get_teams_of_each_comp import get_teams_of_competition
+from Esquemas.spark_schema import get_football_match_schema, get_match_stats_gen_schema
+from config.spark_configuration import create_spark_session
+from get_stats_data_of_leagues.fbref_functions_stats_introduce import get_all_data_of_player
+from utils.write_dataframe_to_mysql_file import write_dataframe_to_mysql
+from utils.fbref_delete_football_match import delete_football_match
+from get_stats_data_of_leagues.fbref_get_teams_of_each_comp import get_teams_of_competition
 import signal
 import sys
 
@@ -94,6 +94,9 @@ def get_fixture_data(url, league, league_id, season, season_id, type_of_competit
         print('Getting fixture data...')
 
         tables = pd.read_html(url)
+        
+        print(f"Tables found: {len(tables)}")        
+        
         type_of_competition = 'league'
 
         if type_of_competition == 'league':
@@ -427,7 +430,7 @@ def get_5_leagues(spark, jdbc_url, db_properties):
 
         spark_data = get_match_of_tournaments(spark, jdbc_url, db_properties)
         
-        league_df = spark_data.filter(col('nombre_liga') == "La Liga")
+        league_df = spark_data.filter(col('nombre_liga') == "Premier League") 
         print(league_df.show())
 
         for row in league_df.collect():
