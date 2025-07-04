@@ -193,6 +193,7 @@ export default function ShowStatsOfPlayersOnMatch() {
                                     onChange={handleChangeSelectedTableFilters}
                                     getId={(item) => item.categoryName}
                                     getLabel={(item) => item.categoryDescription}
+                                    labelTodosShow={false}
                                 />
                             </div>
                         </Grid>

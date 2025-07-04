@@ -1,6 +1,6 @@
 import { Container, Box, Grid, Typography, Button, CardContent, Card } from "@mui/material";
 import DownloadForOfflineRoundedIcon from '@mui/icons-material/DownloadForOfflineRounded';
-import { TfgDocsContent } from "../../model/constants/TfgDocsContent";
+import { DownloadAllDocsLink, TfgDocsContent } from "../../model/constants/TfgDocsContent";
 
 const TfgDocs = () => {
 
@@ -35,7 +35,7 @@ const TfgDocs = () => {
                     </Typography>
                     <Button
                         variant="outlined"
-                        href=""
+                        href={DownloadAllDocsLink}
                         target="_blank"
                         sx={{ color: 'black', mt:2}}
                     >
@@ -48,7 +48,7 @@ const TfgDocs = () => {
             <Box sx={{ textAlign: "center", mb: 5 }}>
                 
             </Box>
-            <Grid container spacing={4}>
+            <Grid container spacing={4} sx={{ mb: '5rem', mx: 'auto', paddingTop: 5,}}>
                 {TfgDocsContent.map((annex, index) => (
                     <Grid size = {{ xs:12, sm:6, lg:4 }} key={index}>
                         <Card elevation={4} sx={{ borderRadius: "20px", p: 2 }}>
@@ -58,7 +58,8 @@ const TfgDocs = () => {
                                 </Typography>
                                 <Button
                                     variant="outlined"
-                                    color="primary"
+                                    sx={{ backgroundColor: 'black', mt: 2, width: '100%', color: 'white', '&:hover': { backgroundColor: 'darkgray' } }}
+                                    
                                     href={annex.link}
                                     target="_blank"
                                 >

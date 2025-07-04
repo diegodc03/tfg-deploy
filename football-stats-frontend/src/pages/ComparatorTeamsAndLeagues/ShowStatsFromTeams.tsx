@@ -434,7 +434,7 @@ export default function ShowStatsFromTeams() {
 
                     <Grid size={{ xs: 12, md: 9 }}>
                         <Typography variant="body1">
-                            Tabla de estadísticas los equipos segun la temporada
+                            <strong>Tabla de estadísticas los equipos segun la temporada</strong>
                         </Typography>
                         { !selectColumn ? "Selecciona una estadística para ver su gráfico" : ''}
                         <Stack sx={{ marginTop: 6, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >

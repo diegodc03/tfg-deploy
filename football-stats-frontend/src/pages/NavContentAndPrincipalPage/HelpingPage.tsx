@@ -12,10 +12,10 @@ const HelpingPage = () => {
           Ayuda y Soporte
         </Typography>
 
-        <Grid container spacing={6} justifyContent="center" alignItems="center" sx={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: "1%", borderRadius: 2, mb: '20vh', mx: 'auto', paddingTop: 5, paddingBottom: 5 }}>
+        <Grid container spacing={6} justifyContent="center" alignItems="center" sx={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: "2rem", borderRadius: 4, mb: '20vh', mx: 'auto', paddingTop: 5, paddingBottom: 5 }}>
           <Stack sx={{ width: '100%', height: '100%' }} justifyContent="center" alignItems="center">
-            <Typography sx={{ fontWeight: 'bold' }} variant="h6" gutterBottom>
-              Correo de contacto: <a href="mailto:diegodecastro@usal.es" style={{ color: 'inherit', textDecoration: 'none' }}>Enviar correo</a>
+            <Typography sx={{ fontWeight: 'bold' }} variant="h6" gutterBottom align='center'>
+              Para mayor explicación, vaya a Documentacion TFG, donde puede descargar el manual de usuario y el manual técnico del proyecto.
             </Typography>
           </Stack>
 
