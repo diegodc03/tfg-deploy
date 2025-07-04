@@ -170,6 +170,7 @@ export const ShowStatsChartFromMatch = () => {
                 marginBottom: 5,
             }}
           >
+            
             <Grid  size={{xs:12, md:5}}>
                 <Typography>
                     <strong>Tablas a consultar</strong>
