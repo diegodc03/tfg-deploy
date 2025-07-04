@@ -24,6 +24,8 @@ export const useChargeAllFilters = () => {
             fetchAndStore(API_ENDPOINTS.ALL_SPECIFIC_POSITIONS, STORAGE_KEYS.specificPositions),
             fetchAndStore(API_ENDPOINTS.ALL_GAME_MODES, STORAGE_KEYS.gameModes),
             ]);
+
+            
         } catch (error) {
             setErrorMessage(ERROR_MESSAGES.NOT_FOUND_FILTERS);
             setShowError(true);
@@ -32,7 +34,6 @@ export const useChargeAllFilters = () => {
             setIsLoading(false);
         }
         };
-
         fetchAndStoreAllFilters();
     }, []);
 

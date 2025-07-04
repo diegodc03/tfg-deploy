@@ -44,21 +44,25 @@ def get_all_matchs_ids_of_league_id(spark, jdbc_url, db_properties, league_id):
         db_properties, 
         query
     )
-        
     
     
     
 def check_if_match_id_score_exists(spark, jdbc_url, db_properties, match_id):
+    
     query = f"""
-        SELECT COUNT(*) as count FROM match_statistics WHERE match_id = {match_id}
+        SELECT COUNT(*) as count FROM match_players_score J JOIN match_statistics ms ON J.match_player_id = ms.estadistica_id WHERE ms.match_id = {match_id}
     """
-    result_df = spark.read.jdbc(
-        url=jdbc_url,
-        table=f"({query}) as match_stats",
-        properties=db_properties
-    )
+    
+    spark_df = read_data_with_spark(spark, jdbc_url, db_properties, query)
+    
+    if spark_df.count() > 0:
+        return spark_df.collect()[0]['count'] > 0
+    else:
+        return False        
     
     
+    
+
 
 def check_season_exists(season_year, spark, jdbc_url, db_properties):
     # Leer la tabla 'season' desde MySQL usando JDBC

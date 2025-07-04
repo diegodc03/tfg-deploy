@@ -24,6 +24,7 @@ import { visuallyHidden } from '@mui/utils';
 // Models
 import { ScoreAPI } from '../model/ScoreAPI';
 import { useEffect } from 'react';
+import { gameModeTranslation, positionTranslation, specificPositionTranslation } from '../model/constants/Translate';
 
 
 
@@ -70,16 +71,16 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
     {
-        id: 'match_player_score_id',
-        numeric: false,
-        disablePadding: true,
-        label: 'ID',
-    },
-    {
         id: 'match_player_id',
         numeric: false,
         disablePadding: false,
         label: 'Nombre Jugador',
+    },
+    {
+        id: 'team_name',
+        numeric: false,
+        disablePadding: false,
+        label: 'Equipo',
     },
     {
         id: 'specific_position_id',
@@ -162,7 +163,6 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
 export default function EnhancedTable({rows}: {rows: ScoreAPI[]}) {
 
-
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof ScoreAPI>('match_player_score_id');
     const [selected, setSelected] = React.useState<readonly number[]>([]);
@@ -170,12 +170,10 @@ export default function EnhancedTable({rows}: {rows: ScoreAPI[]}) {
     const [dense, setDense] = React.useState(true);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-
     useEffect(() => {
        console.log("Rows updated"); // Log the updated rows
     }
     , [rows]); // Add rows as a dependency
-
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -186,22 +184,21 @@ export default function EnhancedTable({rows}: {rows: ScoreAPI[]}) {
         setOrderBy(property);
     };
 
-
     const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
         const selectedIndex = selected.indexOf(id);
         let newSelected: readonly number[] = [];
 
         if (selectedIndex === -1) {
-        newSelected = newSelected.concat(selected, id);
+            newSelected = newSelected.concat(selected, id);
         } else if (selectedIndex === 0) {
-        newSelected = newSelected.concat(selected.slice(1));
+            newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
-        newSelected = newSelected.concat(selected.slice(0, -1));
+            newSelected = newSelected.concat(selected.slice(0, -1));
         } else if (selectedIndex > 0) {
-        newSelected = newSelected.concat(
-            selected.slice(0, selectedIndex),
-            selected.slice(selectedIndex + 1),
-        );
+            newSelected = newSelected.concat(
+                selected.slice(0, selectedIndex),
+                selected.slice(selectedIndex + 1),
+            );
         }
         setSelected(newSelected);
     };
@@ -277,9 +274,7 @@ export default function EnhancedTable({rows}: {rows: ScoreAPI[]}) {
                         >
                             <TableCell padding="checkbox">
                             </TableCell>
-                            <TableCell 
-                                padding="none">{row.match_player_score_id}
-                            </TableCell> {/* ID visible */}
+          
                             <TableCell
                                 component="th"
                                 id={labelId}
@@ -288,19 +283,23 @@ export default function EnhancedTable({rows}: {rows: ScoreAPI[]}) {
                                 >
                                 {row.match_player_id?.player_id?.player_name ?? 'N/A'}
                             </TableCell>
-                            <TableCell align="right">
-                                {row.specific_position_id?.specific_position_name === "no_existencia"
-                                ? 'Puntuacion Basica'
-                                : row.specific_position_id?.specific_position_name ?? 'N/A'
-                                }
+                            
+                                <TableCell align="right">
+                                {row?.team_name ?? 'N/A'}
                             </TableCell>
-                            <TableCell align="right">{row.basic_position_id?.category_name ?? 'N/A'}</TableCell>
-                            <TableCell align="right">{row.score}</TableCell>
+                            
                             <TableCell align="right">
-                                {row.game_mode_id?.game_mode_name === "no_existencia"
-                                ? 'Puntuacion Basica'
-                                : row.game_mode_id?.game_mode_name ?? 'N/A'
-                                }
+                                {specificPositionTranslation[row.specific_position_id?.specific_position_name ?? "no_existencia"] ?? 'N/A'}
+                            </TableCell>
+
+                            <TableCell align="right">
+                                {positionTranslation[row.basic_position_id?.category_name ?? "no_existencia"] ?? 'N/A'}
+                            </TableCell>
+
+                            <TableCell align="right">{row.score}</TableCell>
+                            
+                            <TableCell align="right">
+                                {gameModeTranslation[row.game_mode_id?.game_mode_name ?? "no_existencia"] ?? 'N/A'}
                             </TableCell>
                         </TableRow>
                         );
@@ -329,7 +328,7 @@ export default function EnhancedTable({rows}: {rows: ScoreAPI[]}) {
         </Paper>
         <FormControlLabel sx={{ marginLeft: 2, marginBottom: 1,  }}
             control={<Switch checked={dense} onChange={handleChangeDense}  />}
-            label="Dense padding"
+            label="Modo compacto"
         />
         </Box>
     );

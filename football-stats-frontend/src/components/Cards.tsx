@@ -58,6 +58,7 @@ const CardShow: React.FC<CardShowProps> = ({ title, text, image, navigateElement
                                 display: 'block',
                                 marginLeft: 'auto',
                                 marginRight: 'auto',
+                                objectFit: 'contain'
                             }}
                     />
                 <CardContent>

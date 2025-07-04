@@ -352,6 +352,8 @@ export default function ShowStatsComparisonFromLeague() {
                     <Grid size={{ xs: 12, md: 9 }}>
                         <Typography>
                             <strong> Estadísticas que se muestra una unica estadística para cada Liga </strong>
+                            <br />
+                            { !selectColumn ? "Selecciona una estadística para ver su gráfico" : ''}
                         </Typography>
                         <Stack sx={{ marginTop: 6, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 2, padding: 10 }} >
                             <ReusableChart1 stat={generateScoreValuesChart(chartData, selectColumn)} typeOfChart={'bar'} typeOfChartColor="other"/>

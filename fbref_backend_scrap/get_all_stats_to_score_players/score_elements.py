@@ -56,6 +56,14 @@ def get_score_for_positions_with_only_match_stats(players_spark_df):
     data = [players_spark_df_more_70, players_spark_df_less_70]
     all_scores = []
     
+    if data[0].count() <= 0 and data[1].count() <= 0:
+        print("No hay jugadores con estadísticas para puntuar")
+        return players_spark_df.sparkSession.createDataFrame([], StructType([]))
+    
+    print("Comenzamos a calcular las puntuaciones de los jugadores")
+    print("Número de jugadores con más de 70 minutos:", data[0].count())
+    print("Número de jugadores con menos de 70 minutos:", data[1].count())
+    
     for df in data:
 
         if df.count() == 0:
@@ -81,7 +89,7 @@ def get_score_for_positions_with_only_match_stats(players_spark_df):
                 ).collect()[0]
                 
                 mode_val = players_spark_df.groupBy(column).count().orderBy(F.desc("count")).first()
-                mode_value = float(mode_val[column])
+                mode_value = float(mode_val[column]) if mode_val[column] is not None else 0.0
                 
                 # Crea una row para cada estadística
                 stats.append(Row(stat_name=column, avg=result["avg"], desv=result["desv"], mode=mode_value))

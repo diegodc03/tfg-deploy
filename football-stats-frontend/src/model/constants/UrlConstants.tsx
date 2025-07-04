@@ -1,6 +1,9 @@
 
 
-const API_BASE_URL = 'https://tfg-backend.blackcliff-a1282891.spaincentral.azurecontainerapps.io/api';
+const API_BASE_URL1 = 'https://tfg-backend.blackcliff-a1282891.spaincentral.azurecontainerapps.io/api';
+const API_BASE_URL2 = 'http://localhost:8000/api'; // For local development, you can switch to this URL
+
+const API_BASE_URL = 'https://backend-stats-deploy-a4g7bzdng4h8f6d6.spaincentral-01.azurewebsites.net/api/'; // For production, you can switch to this URL
 
 const API_STATS = 'stats';
 const API_FILTER = 'filter';

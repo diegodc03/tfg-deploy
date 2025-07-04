@@ -18,7 +18,7 @@ from get_all_stats_to_score_players.basic_stats_for_positions import get_stats_b
 from get_all_stats_to_score_players.create_unique_score_of_players import score_players_by_zone_of_field, score_players_by_type_of_play
 
 from functions_to_stract_of_dataBase.selects_of_positions import get_id_of_specific_and_game_id_when_not_exists
-from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import get_all_matchs_ids_of_league_id, get_match_of_tournaments, get_rows_of_match_statistics, get_teams_in_competition
+from functions_to_stract_of_dataBase.querys_of_match_stats_and_football_matchs_and_teams import check_if_match_id_score_exists, get_all_matchs_ids_of_league_id, get_match_of_tournaments, get_rows_of_match_statistics, get_teams_in_competition
 
 ### PUNTUACIÓN DE LOS JUGADORES EN BASE UNICAMENTE A SUS ESTADÍSTICAS COMPARADAS CON ESE PARTIDO ###
 ############################################################################################################
@@ -46,18 +46,29 @@ def get_score_of_5_leagues(spark, jdbc_url, db_properties):
             tournament_name = row["nombre_liga"]
             tournament_name = tournament_name.replace(' ', '-')
             
-            if tournament_id == 130 or tournament_id == 127:
+            if tournament_id == 130:
                 print("Skipping tournament with ID 130")
                 continue
             
-            print(f"Processing tournament: {tournament_name} with ID: {tournament_id}")
             
+            
+            print(f"Processing tournament: {tournament_name} with ID: {tournament_id}")
             match_ids = get_all_matchs_ids_of_league_id(spark, jdbc_url, db_properties, tournament_id)
             
+            
+            match_ids_not_scored = []
             for match_id in match_ids.collect():
-                print(f"Processing match ID: {match_id['match_id']} for tournament: {tournament_name}")
+                match_checked = check_if_match_id_score_exists(spark, jdbc_url, db_properties, match_id['match_id'])
+                if match_checked is False:
+                    match_ids_not_scored.append(match_id['match_id'])
+                    
+                    
+            print(f"Number of matches not scored for tournament {tournament_name}: {len(match_ids_not_scored)}")
+            
+            for match_id in match_ids_not_scored:
+                print(f"Processing match ID: {match_id} for tournament: {tournament_name}")
 
-                returning_value = get_stats_score(spark, jdbc_url, db_properties, match_id['match_id'], tournament_id)
+                returning_value = get_stats_score(spark, jdbc_url, db_properties, match_id, tournament_id)
                 if returning_value.isEmpty():
                     print('No data to collect')
                     continue
@@ -91,6 +102,12 @@ def get_stats_score(spark, jdbc_url, db_properties, match_id, league_id):
     dict_stats_basic_position = get_stats_by_position(spark, jdbc_url, db_properties, match_id, league_id)
 
     dict_stats_type_play_of_form = get_stats_by_type_of_play_form(spark, jdbc_url, db_properties, match_id, league_id)
+    
+    
+    if dict_stats_basic_position is None or dict_stats_type_play_of_form is None:
+        print("No hay jugadores en el partido")
+        returning_value = spark.createDataFrame([], StructType([]))
+        return returning_value
     
     # Puntuacion que se da por ganar o perder el partido y si es local o visitante
     spark_df_visitant_win_lose = score_by_local_visitant_and_win_lose(spark, jdbc_url, db_properties, match_id, league_id)

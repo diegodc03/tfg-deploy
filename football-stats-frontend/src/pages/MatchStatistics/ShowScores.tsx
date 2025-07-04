@@ -22,6 +22,8 @@ import { ReusableChart1 } from "../../components/charts/reusableChart1";
 import ErrorSnackbar from "../../components/showError";
 import { ERROR_MESSAGES } from "../../model/constants/errorConstants";
 import { STORAGE_KEYS } from "../../model/constants/StorageKeys";
+import LoadingIndicator from "../../components/LoaqdingIndicator";
+import { positionTranslation, specificPositionTranslation, gameModeTranslation } from "../../model/constants/Translate";
 
 
 
@@ -30,6 +32,7 @@ export default function ShowScores() {
     const [showError, setShowError] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { match_id } = useParams();
+    const [isLoading, setIsLoading] = useState(true);
 
 
     const [gameTypes, setGameTypes] = useState<GameModeTypeAPI[]>([]);
@@ -81,7 +84,7 @@ export default function ShowScores() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Obtener desde localStorage
+
                 const gameTypesData = JSON.parse(localStorage.getItem(STORAGE_KEYS.gameModes) || '[]');
                 const basicPositionsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.basicPositions) || '[]');
                 const specificPositionsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.specificPositions) || '[]');
@@ -108,13 +111,14 @@ export default function ShowScores() {
                 setPlayersScores(players_scoresData);
                 setPlayersScoresFiltered(players_scoresData);
                 setPlayersFilter(playersFiltersData);
-                setSelectedPlayerId(playersFiltersData[0]?.player_id.toString() || '');
-
+                //setSelectedPlayerId(playersFiltersData[0]?.player_id.toString() || '');
 
 
             } catch (error) {
                 setErrorMessage(ERROR_MESSAGES.NOT_FOUND_SCORES_OF_PLAYERS);
                 setShowError(true);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -143,8 +147,6 @@ export default function ShowScores() {
     };
 
 
-   
-
     const handleChangePlayerElection = async () => {
 
         let url = baseUrlPlayerScore + match_id_url + player_id_url;
@@ -154,13 +156,9 @@ export default function ShowScores() {
             throw new Error('Error fetching filtered stats');
         }
         
-        const data = await response.json();
-        
+        const data = await response.json(); 
         setPlayerScores(data);
-        console.log('Datos de las puntuaciones del jugador:', data);
     }
-    
-    
     
     
     const generateValuesStats = (players_scores_filtered): StatEntry => {
@@ -191,14 +189,11 @@ export default function ShowScores() {
     };
 
 
-    // Yo aqui paso un elemtnto
     const generateScoreValuesChart = (players_scores_filtered: MatchPlayerScore[]): StatEntry => {
-        
         
         let players_labels: Set<string> = new Set();
         let data: number[] = [];
         
-        console.log('Datos de las puntuaciones del jugador:', players_scores_filtered);
         for (let i = 0; i < players_scores_filtered.length; i++) {
             let score = players_scores_filtered[i].score;
             if (typeof score !== 'number') {
@@ -206,9 +201,9 @@ export default function ShowScores() {
                 continue; 
             } else if (score < 0 || score > 10) {
                 if (score < 0) {
-                    score = 0; // Asignar 0 si el score es negativo
+                    score = 0; 
                 } else {
-                    score = 10; // Asignar 10 si el score es mayor a 10
+                    score = 10; 
                 }
             } 
 
@@ -234,7 +229,7 @@ export default function ShowScores() {
     return (
         
             <Container maxWidth="lg" sx={{ marginTop: '3rem', marginBottom: '5vh' }}>
-
+                <LoadingIndicator isLoading={isLoading} />
                 <ErrorSnackbar
                     open={showError}
                     onClose={() => setShowError(false)}
@@ -287,7 +282,7 @@ export default function ShowScores() {
                                     value={gameTypeElement || ""}
                                     onChange={handleChangeGameType}
                                     getId={(item) => item.game_mode_name}
-                                    getLabel={(item) => item.game_mode_name}
+                                    getLabel={(item) => gameModeTranslation[item.game_mode_name] ?? item.game_mode_name}
                                 />
                             </div>
                         </Grid>
@@ -302,7 +297,7 @@ export default function ShowScores() {
                                     value={basicPositionElement || ""}
                                     onChange={handleHangeBasicPosition}
                                     getId={(item) => item.category_name}
-                                    getLabel={(item) => item.category_name}
+                                    getLabel={(item) => positionTranslation[item.category_name] ?? item.category_name}
                                 />
                             </div>
                         </Grid>
@@ -316,7 +311,8 @@ export default function ShowScores() {
                                     value={specificPositionElement || ""}
                                     onChange={handleChangeSpecificPosition}
                                     getId={(item) => item.specific_position_name}
-                                    getLabel={(item) => item.specific_position_name}
+                                    getLabel={(item) => specificPositionTranslation[item.specific_position_name] ?? item.specific_position_name}
+
                                 />
                             </div>
                         </Grid>
@@ -348,7 +344,6 @@ export default function ShowScores() {
                     />
                 </Box>
             
-
                 <Box
                     sx={{
                         backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -418,6 +413,9 @@ export default function ShowScores() {
                     <Grid size={{ xs: 12, md: 9 }}>
                         <Typography>
                             <strong>Gráfica de puntuaciones del jugador seleccionado</strong>
+                            <br />
+                            { !selectedPlayerId ? 'Elija un jugador' : ''}    
+                            
                         </Typography>
                         <Stack sx={{ marginTop: 3, backgroundColor: 'rgba(255, 255, 255, 0.8)', borderRadius: 4, alignItems: 'center', padding:5 }} >
                             <ReusableChart1 stat={generateScoreValuesChart(playerScores)} typeOfChart={'bar'} typeOfChartColor="gameModes"/>

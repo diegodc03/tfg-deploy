@@ -44,7 +44,7 @@ export const ShowStatsChartFromMatch = () => {
   const dictOfTables: string = "&type_table_stats=";
   const typeOfBasicPosition: string = "&basic_position="; // This can be dynamic based on user selection or other logic
 
-  //let baseurl: string = `http://localhost:8000/api/chart/statsPlayersMatchBasic/?match_id=${match_id}`;
+  
   let baseurl: string = API_ENDPOINTS.STATS_PLAYERS_MATCH_BY_BASIC_POSITION_AND_ORDER_STATS + `${match_id}`;
   
   useEffect(() => {
@@ -224,7 +224,7 @@ export const ShowStatsChartFromMatch = () => {
             width: '100%',
           }}
         >
-          <Box sx={{ width: '100%', padding: 5, alignItems: 'center' }}>
+          <Box sx={{ width: '100%', paddingLeft: 5, paddingRight:5, paddingTop: 2, alignItems: 'center' }}>
             <StatsList name={columna} stats={stats} typeOfChart={'bar'} />
           </Box>
         </Stack>

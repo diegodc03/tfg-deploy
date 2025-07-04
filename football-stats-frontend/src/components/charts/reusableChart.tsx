@@ -62,7 +62,7 @@ export const ReusableChart = ({ stat, typeOfChart }: Props) => {
   const ChartComponent = chartMap[typeOfChart as keyof typeof chartMap] || Bar;
   const typeColors = typeOfChartColors[typeOfChartColor as keyof typeof typeOfChartColors] || colorBasicPositionsCharts;
 
-  const labels = stat.values.map((entry) => entry.player_name);
+  const labels = stat.values.map((entry) => entry.player_name + " -- " +entry.team_name); 
   const dataValues = stat.values.map((entry) => entry.value);
   const backgroundColor = stat.values.map(entry => typeColors[entry.basic_position] || typeColors['other']); // ['#33FF57', '#3357FF', ...]
 

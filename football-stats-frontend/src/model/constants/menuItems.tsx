@@ -78,7 +78,6 @@ export const serviceItemsStatsPage = (match_id: string, tournament_id: string): 
   },
   {
     title: "Estadísticas de jugadores agrupadas por tipos",
-
     image: ComparacionDeJugadoresYGraficas,
     navigateElement: `/stats-players-match/${match_id}`,
   },
