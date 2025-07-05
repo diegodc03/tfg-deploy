@@ -31,6 +31,7 @@ ChartJS.register(
 );
 
 import { colorBasicPositionsCharts, colorTeamCharts } from '../../model/constants/constants';
+import { statTranslation } from '../../model/constants/Translate';
 
 const chartMap = {
   bar: Bar,
@@ -72,7 +73,7 @@ export const ReusableChart = ({ stat, typeOfChart }: Props) => {
     plugins: {
       title: {
         display: true,
-        text: stat.stat,
+        text: statTranslation[stat.stat] || stat.stat.charAt(0).toUpperCase() + stat.stat.slice(1),
       },
       legend: {
         display: true,

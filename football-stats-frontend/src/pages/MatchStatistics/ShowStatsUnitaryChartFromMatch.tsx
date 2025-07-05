@@ -19,6 +19,7 @@ import { BasicPositionAPI } from '../../model/BasicPositionAPI';
 import { API_ENDPOINTS } from '../../model/constants/UrlConstants';
 import ErrorSnackbar from '../../components/showError';
 import { ERROR_MESSAGES } from '../../model/constants/errorConstants';
+import { positionTranslation } from '../../model/constants/Translate';
 
 
 export const ShowStatsChartFromMatch = () => {
@@ -197,7 +198,7 @@ export const ShowStatsChartFromMatch = () => {
                       value={basicPositionElement || ""}
                       onChange={handleChangeSelectedBasicPosicionsFilters}
                       getId={(item) => String(item.category_id)}
-                      getLabel={(item) => item.category_name}
+                      getLabel={(item) => positionTranslation[item.category_name] ?? item.category_name}
                   />
                 </div>
             </Grid>

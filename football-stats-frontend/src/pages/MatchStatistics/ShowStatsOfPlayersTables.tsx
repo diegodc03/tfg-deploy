@@ -14,6 +14,7 @@ import { useParams } from 'react-router-dom';
 import { API_ENDPOINTS } from '../../model/constants/UrlConstants';
 import ErrorSnackbar from '../../components/showError';
 import { ERROR_MESSAGES } from '../../model/constants/errorConstants';
+import { positionTranslation } from '../../model/constants/Translate';
 /**
  * 
  * Este componente se va a encargar de mostrar las tablas de las diferentes estadísticas de los jugadores en un partido
@@ -208,7 +209,7 @@ export default function ShowStatsOfPlayersOnMatch() {
                                     value={basicPositionElement || ""}
                                     onChange={handleChangeSelectedBasicPosicionsFilters}
                                     getId={(item) => String(item.category_id)}
-                                    getLabel={(item) => item.category_name}
+                                    getLabel={(item) => positionTranslation[item.category_name] ?? item.category_name}
                                 />
                             </div>
                         </Grid>

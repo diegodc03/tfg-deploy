@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { statTranslation } from '../model/constants/Translate';
 
 
 
@@ -13,7 +14,7 @@ const generateColumns = (data: any[]): GridColDef[] => {
 
   return Object.keys(data[0]).map((key) => ({
     field: key,
-    headerName: key.charAt(0).toUpperCase() + key.slice(1),
+    headerName:  statTranslation[key]|| key.charAt(0).toUpperCase() + key.slice(1),
     width: 150,
     editable: key !== 'id',
   }));
