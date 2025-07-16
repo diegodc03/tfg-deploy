@@ -95,7 +95,6 @@ export const serviceItemsStatsPage = (match_id: string, tournament_id: string): 
   },
   {
     title: "Comparación de Temporadas de liga",
-    text: "Gráficos de comparacion con la liga",
     image: GraficosDeLiga,
     navigateElement: `/leagues-comparison`,
   },

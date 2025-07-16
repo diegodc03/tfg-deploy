@@ -14,7 +14,16 @@ export const generateScoreValuesChart = (chartData: ChartAPI[], selectColumn: st
 
         data.push(valueStat);
         if (chartData[i].league_year && chartData[i].starter_status) {
-            let label = `${chartData[i].league_year} - ${chartData[i].starter_status}`;
+
+            
+            let status = chartData[i].starter_status === "starter"
+                ? "titular"
+                : chartData[i].starter_status === "substitute"
+                ? "suplente"
+                : chartData[i].starter_status; // por si viene otro valor
+            
+            let label = `${chartData[i].league_year} - ${status}`;
+
             players_labels.add(label);
         }
     }

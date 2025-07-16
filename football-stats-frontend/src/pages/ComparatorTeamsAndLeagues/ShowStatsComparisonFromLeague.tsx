@@ -112,7 +112,14 @@ export default function ShowStatsComparisonFromLeague() {
     }
    
     const { labels: chartLabels, scores: chartScores } = React.useMemo(() => {
-        const labels = chartData.map(player => `${player.league_year} - ${player.starter_status}`);
+        const labels = chartData.map(player => {
+        const status = player.starter_status === "starter"
+            ? "titular"
+            : player.starter_status === "substitute"
+            ? "suplente"
+            : player.starter_status; // por si viene otro valor
+        return `${player.league_year} - ${status}`;
+        });
         const scores = chartData.map(player => player.value);
         return { labels, scores };
     }, [chartData]);

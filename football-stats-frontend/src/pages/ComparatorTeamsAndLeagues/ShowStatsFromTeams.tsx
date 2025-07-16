@@ -100,6 +100,10 @@ export default function ShowStatsFromTeams() {
                     filterTeamsResponse.json(),
                 ]);
 
+                const filteredChartData = chartData.filter(item => item.league_year !== "2023-2024" || item.value !== 0);
+                const filteredData = playersStatsData.filter(item => item.league_year !== "2023-2024");
+
+
                 
                 const filtersArrayTransform: TablesStats[] = Object.entries(filterTablesData).map(([key, value]) => ({
                     categoryName: key,
@@ -111,12 +115,11 @@ export default function ShowStatsFromTeams() {
                     categoryDescription: String(value),
                 }));
                 
-                console.log(playersStatsData);
 
                 setTeamsArray(filterTeamsDataTransform);
                 setFiltersArray(filtersArrayTransform)
-                setData(playersStatsData);
-                setChartData(chartData);
+                setData(filteredData);
+                setChartData(filteredChartData);
                 setFilterColumnsTable(filter_columns_table);
                 
             } catch (error) {
@@ -177,12 +180,14 @@ export default function ShowStatsFromTeams() {
                 throw new Error('Error fetching filtered data');
             }
             const filteredData = await response.json();
+            const filteredData1 = filteredData.filter(item => item.league_year !== "2023-2024");
 
             if (selectedTypePlayer && selectedTypePlayer !== "Todos") {
-                const typeFilteredData = filteredData.filter(player => player.starter_status === selectedTypePlayer);
+                const typeFilteredData = filteredData1.filter(player => player.starter_status === selectedTypePlayer);
+                
                 setData(typeFilteredData);
             } else {
-                setData(filteredData);
+                setData(filteredData1);
             }
 
             handleChangeChart(selectedTeam, selectedFiltersTable);
@@ -390,7 +395,7 @@ export default function ShowStatsFromTeams() {
                     <StatsTables data={data} />
                 </Grid>
             </Box>
-
+        {/* 
             <Grid
                 container
                 spacing={2}
@@ -442,6 +447,8 @@ export default function ShowStatsFromTeams() {
                         </Stack>
                     </Grid>
                 </Grid>
+                */}
         </Container>
+        
     );
 }

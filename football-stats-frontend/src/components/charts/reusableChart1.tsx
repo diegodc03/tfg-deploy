@@ -67,8 +67,6 @@ export const ReusableChart1 = ({ stat, typeOfChart, typeOfChartColor }: Props) =
     const colorValues = Object.values(typeColors);
 
     
-    
-    
     const getSeasonFromLabel = (label: string) => label.split(" - ")[0];
     // Mapear cada temporada única a un color
     const uniqueSeasons = Array.from(new Set(stat.labels.map(getSeasonFromLabel)));
@@ -78,8 +76,6 @@ export const ReusableChart1 = ({ stat, typeOfChart, typeOfChartColor }: Props) =
         seasonToColor[season] = colorValues[index % colorValues.length]; // Cicla si hay más temporadas que colores
     });
 
-    
-    
     
     const backgroundColor = stat.labels.map(label => {
         const season = getSeasonFromLabel(label);
