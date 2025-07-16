@@ -36,6 +36,9 @@ def get_stats_basic_position(spark, jdbc_url, db_properties, match_id, league_id
     print("Comienzo con la adición de puntuación de stats de los jugadores por posición,", position_name)
 
     query = dict_stats_position[position_name](match_id, league_id, position_id)
+    
+    print("Query para obtener los jugadores de la posición:", query)
+    
     players_df = read_data_with_spark(spark, jdbc_url, db_properties, query)
 
     if players_df is not None and players_df.count() > 0:

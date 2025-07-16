@@ -18,11 +18,8 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_defense_laterales(match_
             END AS team_role,  -- Indica si es del equipo local o visitante
             ms.minutes,
             
-            
-            
             ms.assists,
             ms.goals,
-            
             ss.tackles,
             ss.interceptions,
             sda.clearances,
@@ -32,7 +29,6 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_defense_laterales(match_
             spn.take_ons_won,
             sps.passes_completed,
             sps.passes_pct,
-            
             sps.progressive_passes,
             smm.fouls,
             smm.fouled,
@@ -55,8 +51,6 @@ def get_stats_to_offensive_player_and_tiki_taka_type_of_defense_laterales(match_
         LEFT JOIN team_player tp ON ms.player_id = tp.player_id AND tp.team_id IN (fm.Home, fm.Away)
         LEFT JOIN team t ON tp.team_id = t.team_id AND fm.Season = t.tournament_team_id 
         WHERE fm.Season = {season} 
-        -- AND pp.position_id IN (34, 37, 41)
-        -- AND pof.specific_position_id = (SELECT specific_position_id FROM positions_specifics_by_category WHERE specific_position_name = "{specific_position_id}")
         AND pof.specific_position_id = {specific_position_id}
         AND fm.match_id = {match_id}
         GROUP BY ms.player_id

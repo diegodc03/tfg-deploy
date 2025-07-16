@@ -46,8 +46,12 @@ def get_score_of_5_leagues(spark, jdbc_url, db_properties):
             tournament_name = row["nombre_liga"]
             tournament_name = tournament_name.replace(' ', '-')
             
-            if tournament_id == 130:
+            if tournament_id == 130 or tournament_id == 128:
                 print("Skipping tournament with ID 130")
+                continue
+            
+            if tournament_id != 129:
+                print("Skipping tournament distinto de ID 129")
                 continue
             
             
@@ -66,6 +70,10 @@ def get_score_of_5_leagues(spark, jdbc_url, db_properties):
             print(f"Number of matches not scored for tournament {tournament_name}: {len(match_ids_not_scored)}")
             
             for match_id in match_ids_not_scored:
+                
+                if match_id == 1989:
+                    continue
+                
                 print(f"Processing match ID: {match_id} for tournament: {tournament_name}")
 
                 returning_value = get_stats_score(spark, jdbc_url, db_properties, match_id, tournament_id)
@@ -98,9 +106,7 @@ def get_stats_score(spark, jdbc_url, db_properties, match_id, league_id):
     print("Comienzo con la adición de puntuación de stats de los jugadores")
 
     returning_value = spark.createDataFrame([], StructType([]))
-
     dict_stats_basic_position = get_stats_by_position(spark, jdbc_url, db_properties, match_id, league_id)
-
     dict_stats_type_play_of_form = get_stats_by_type_of_play_form(spark, jdbc_url, db_properties, match_id, league_id)
     
     
@@ -118,7 +124,7 @@ def get_stats_score(spark, jdbc_url, db_properties, match_id, league_id):
         ## Puntuacion que se da por goles y asistencias
         spark_df_score_goals_and_assists = get_score_by_goals_and_assist(spark, jdbc_url, db_properties, match_id, league_id)
 
-        if not spark_df_score_goals_and_assists.isEmpty():
+        if not spark_df_score_goals_and_assists.isEmpty() and len(dict_stats_basic_position) > 0 and len(dict_stats_type_play_of_form) > 0:
             create_score_by_all_parts_of_scores(dict_stats_basic_position, spark_df_visitant_win_lose, spark_df_score_goals_and_assists, dict_stats_type_play_of_form, match_id, spark, jdbc_url, db_properties)
         
         returning_value = spark.createDataFrame([("Correcto",)], ["Correcto"])    
@@ -162,6 +168,7 @@ def create_score_by_all_parts_of_scores(dict_stats_basic_position, spark_df_visi
     
 def introduce_scores_into_database(spark, jdbc_url, db_properties, df_scores, match_id):
 
+    print("Introduciendo las puntuaciones de los jugadores en la base de datos")
     # Obtener jugadores del partido en la base de datos
     players_df_of_match = get_rows_of_match_statistics(spark, jdbc_url, db_properties, match_id)
 

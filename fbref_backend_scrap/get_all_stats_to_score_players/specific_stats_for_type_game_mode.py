@@ -67,39 +67,34 @@ def get_stats_by_type_of_play_form(spark, jdbc_url, db_properties, match_id, lea
             if function_name and isinstance(function_name, tuple):
 
                 match_func, avg_func = function_name
-                    
+                
                 query_match = match_func(match_id, league_id, specific_position_id)
                 query_avg = avg_func(league_id, specific_position_id)
+                
+                print("query de los jugadores del partido:", query_match)
+                print("query de la media de los jugadores de la liga:", query_avg)
                   
                 match_players_by_specific_position_df = read_data_with_spark(spark, jdbc_url, db_properties, query_match)
                 avg_by_specific_position_df = read_data_with_spark(spark, jdbc_url, db_properties, query_avg)
                     
                 if match_players_by_specific_position_df.count() == 0 or avg_by_specific_position_df.count() == 0:
                     print("No hay jugadores en el partido con la posicion ", specific_position_name)
-                    boolean_empty_player = True
-                    break
+                    continue
                     
                 match_comparison = get_score_for_positions_with_only_match_stats(match_players_by_specific_position_df)    
                 if match_comparison.isEmpty():
                     print("No hay jugadores en el partido con la posicion ", specific_position_name)
-                    boolean_empty_player = True
-                    break
+                    continue
                 avg_comparison = calculate_player_scores_by_avg_of_season(match_players_by_specific_position_df, avg_by_specific_position_df)
                 if avg_comparison.count() == 0:
                         print("No hay jugadores en la liga con la posicion ", specific_position_name)
-                        boolean_empty_player = True
-                        break     
+                        continue     
                         
                 match_comparison = match_comparison.withColumn("specific_position_id", lit(specific_position_id)).withColumn("basic_position_id", lit(basic_position_id)).withColumn("game_mode_id", lit(game_mode_id))
                 avg_comparison = avg_comparison.withColumn("specific_position_id", lit(specific_position_id)).withColumn("basic_position_id", lit(basic_position_id)).withColumn("game_mode_id", lit(game_mode_id))
                         
                 dict_stats_position[specific_position_name] = {"avg": avg_comparison, "match_comp": match_comparison}
-        
-        if boolean_empty_player:
-            print("No hay jugadores en el partido ", match_id)
-            boolean_empty_player = False
-            break
-        
+
         
         dict_stats_game_mode[game_mode_name] = dict_stats_position    
         print ("El modo de juego es ", game_mode_name)

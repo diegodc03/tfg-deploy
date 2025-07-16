@@ -39,13 +39,13 @@ negative_stats = [
 ############################################################################################################
 def get_score_for_positions_with_only_match_stats(players_spark_df):
     
-    print("Comienzo con la adición de puntuación de stats de los jugadores por posición1")
     stats_schema = StructType([
         StructField("stat_name", StringType(), True),
         StructField("avg", FloatType(), True),
         StructField("desv", FloatType(), True),
         StructField("mode", FloatType(), True)
     ])
+    
     stats = []
     spark_columns = players_spark_df.columns
     
@@ -59,27 +59,24 @@ def get_score_for_positions_with_only_match_stats(players_spark_df):
     if data[0].count() <= 0 and data[1].count() <= 0:
         print("No hay jugadores con estadísticas para puntuar")
         return players_spark_df.sparkSession.createDataFrame([], StructType([]))
-    
-    print("Comenzamos a calcular las puntuaciones de los jugadores")
-    print("Número de jugadores con más de 70 minutos:", data[0].count())
-    print("Número de jugadores con menos de 70 minutos:", data[1].count())
-    
+        
     for df in data:
-
         if df.count() == 0:
             print("No hay jugadores con estadísticas para puntuar")
             continue
         else:
             players_spark_df = df
+   
             
             # Filtrar las columnas que no son estadísticas
             spark_columns = [col for col in spark_columns if col not in [
-                "player_id", "match_id", "estadistica_id", "position_id", "category_id", "team_role", "team_id"    
+                "player_id", "match_id", "estadistica_id", "position_id", "category_id", "team_role", "team_id", "minutes" 
             ]]
             
             stats = []  # reseteamos para cada grupo
             
             for column in spark_columns:
+                 
                 if column == "player_id" or column == "match_id" or column == "estadistica_id" or column == "position_id":
                     continue
                 # Calcular la media y la desviación estándar de cada estadística
@@ -93,14 +90,16 @@ def get_score_for_positions_with_only_match_stats(players_spark_df):
                 
                 # Crea una row para cada estadística
                 stats.append(Row(stat_name=column, avg=result["avg"], desv=result["desv"], mode=mode_value))
-
+                
             if players_spark_df.count() > 0:
-                # Crear un DataFrame de Spark con las estadísticas
                 stats_of_match_spark_df = players_spark_df.sparkSession.createDataFrame(stats, schema=stats_schema)
                 players_score_spark_df = loop_of_stats(stats_of_match_spark_df, players_spark_df, spark_columns)
+                if players_score_spark_df is None:
+                    print("No se han encontrado estadísticas para puntuar")
+                    continue
                 all_scores.append(players_score_spark_df)
     
-    if all_scores:
+    if all_scores and len(all_scores) > 0:
         final_df = all_scores[0]
         for df in all_scores[1:]:
             final_df = final_df.unionByName(df)
@@ -110,12 +109,7 @@ def get_score_for_positions_with_only_match_stats(players_spark_df):
 
         
 
-
-
-
-
-
-def calc_score(player_stat, avg, desv, stat_name, mode=None, base=6.5, multiplier=3.5, desviacion_umbral=0.7, peso_media=0.5):
+def calc_score(player_stat, avg, desv, stat_name, mode=None, base=5.6, multiplier=3.5, desviacion_umbral=0.7, peso_media=0.5):   
     
     if avg is None or desv is None:
         return base
@@ -123,6 +117,7 @@ def calc_score(player_stat, avg, desv, stat_name, mode=None, base=6.5, multiplie
     if desv == 0:
         return base
 
+    
     # Ajuste de la media usando moda si la desviación es muy alta
     if avg != 0 and desv / avg > desviacion_umbral and mode is not None:
         base = 5.6
@@ -141,6 +136,8 @@ def calc_score(player_stat, avg, desv, stat_name, mode=None, base=6.5, multiplie
     elif puntuacion < 0:
         puntuacion = 0.0
     
+    
+    
     return puntuacion
 
 
@@ -152,6 +149,13 @@ calc_score_udf = udf(calc_score, DoubleType())
 
 def loop_of_stats(df_combined, spark_df, stats_columns):
     
+    not_found_stats = 0
+    
+    if df_combined is None or spark_df is None:
+        print("DataFrame combinado o DataFrame de jugadores es None, no se puede procesar")
+        return None
+    
+    
     for stat in df_combined.collect():
         stat_name = stat["stat_name"]
         avg = stat["avg"]
@@ -159,6 +163,12 @@ def loop_of_stats(df_combined, spark_df, stats_columns):
         mode_value = stat["mode"]
 
         if stat_name in spark_df.columns:
+            
+            if avg is None or desv is None:
+                print(f"Columna '{stat_name}' es None, saltando...")
+                not_found_stats += 1
+                continue
+            
             score_col = f"{stat_name}_score"
             spark_df = spark_df.withColumn(
                 score_col,
@@ -172,12 +182,17 @@ def loop_of_stats(df_combined, spark_df, stats_columns):
             
     length_of_stats_columns = len(stats_columns)
 
-    spark_scores = spark_df.withColumn(
-        "total_score",
-        F.round(sum([col(f"{stat}_score") for stat in stats_columns]) / length_of_stats_columns, 2)
-    ).select("player_id", "total_score")
+    if not_found_stats >= (len(stats_columns)-5):
+        print("No se han encontrado estadísticas para puntuar")
+        return None
     
-    return spark_scores
+    else:
+        spark_scores = spark_df.withColumn(
+            "total_score",
+            F.round(sum([col(f"{stat}_score") for stat in stats_columns]) / length_of_stats_columns, 2)
+        ).select("player_id", "total_score")
+  
+        return spark_scores
 
 
 
@@ -273,6 +288,7 @@ def combine_all_stats_and_score_all(df_avg_lt_th_70, spark_df, stats_columns):
                     )    
     
     players_scores = loop_of_stats(df_combined, spark_df, stats_columns)
+
     return players_scores
     
 

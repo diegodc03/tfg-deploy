@@ -45,9 +45,9 @@ def score_players_by_zone_of_field(dict_stats_basic_position, spark_df_score_goa
     df_combined = df_avg_alias.join(df_match_comp_alias,  ["player_id", "basic_position_id"], "left") \
                              .join(df_goals_assists_alias, "player_id", "left") \
                              .join(df_visitant_win_lose_alias, "player_id", "left")
-                             
+              
+          
     
-    # Ahora podemos calcular el score final
     df_combined = df_combined.withColumn(
         "score", 
         (F.col("avg_score") * 0.35) + 
@@ -55,7 +55,6 @@ def score_players_by_zone_of_field(dict_stats_basic_position, spark_df_score_goa
         (F.col("goals_assists_score")) + (F.col("visitant_win_lose_score"))
     ).select("player_id", "basic_position_id", "score")
     
-    print("La puntuación de los jugadores por zona del campo es ")
     for row in df_combined.collect():
         print(row)
     
@@ -108,7 +107,7 @@ def score_players_by_type_of_play(dict_stats_basic_position, dict_stats_type_of_
                 .join(df_visitant_win_lose_alias, ["player_id"], "inner")
 
             
-            # Ahora podemos calcular el score final
+
             df_combined = df_combined.withColumn(
                 "score", 
                 (F.col("avg_specific_score") * 0.7) + 

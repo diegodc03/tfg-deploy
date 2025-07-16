@@ -9,6 +9,7 @@ import { Divider, Paper, Stack, Typography } from '@mui/material';
 import { API_ENDPOINTS } from '../../model/constants/UrlConstants';
 import ErrorSnackbar from '../../components/showError';
 import {ERROR_MESSAGES} from '../../model/constants/errorConstants';
+import { generalStatsTranslation } from '../../model/constants/Translate';
 
 interface MatchIdProp {
     matchId: number;
@@ -98,7 +99,7 @@ const ShowBasicStats = ({ matchId }: MatchIdProp) => {
                                         {stat.local}
                                     </Paper>
                                     <Paper elevation={10} style={{ padding: '10px', width: '100%', textAlign: 'center', minWidth: '120px', fontWeight: 'bold' }}>
-                                        {stat.label}
+                                        {generalStatsTranslation[stat.label] || stat.label}
                                     </Paper>
                                     <Paper elevation={3} style={{ padding: '8px', width: '100%', textAlign: 'center', minWidth: '40px', fontWeight: 'bold' }}>
                                         {stat.visitor}
@@ -137,7 +138,7 @@ const ShowBasicStats = ({ matchId }: MatchIdProp) => {
 
                         <div style={{ marginLeft: '8px', flex: 1, direction: 'rtl' }}>
                             <Tipography variant="body2" fontWeight={1000}>
-                                {stat.visitor} 
+                                {generalStatsTranslation[stat.label] || stat.label}
                             </Tipography>
                             <LinearStatBar value={stat.visitor} reverse/>
                         </div>
